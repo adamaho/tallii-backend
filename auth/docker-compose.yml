@@ -1,0 +1,26 @@
+
+version: "3.7"
+services:
+  database:
+    image: postgres:12
+    restart: always
+    environment:
+      - POSTGRES_USER=tallii_auth
+      - POSTGRES_PASSWORD=tallii_auth
+      - POSTGRES_DB=tallii_auth
+    ports:
+      - 7777:5432
+    deploy:
+      resources:
+        limits:
+          memory: '512M'
+          cpus: '1'
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+
+volumes:
+  database-data:
+
+
+
+# psql --host=database --username=tallii_auth --dbname=tallii_auth
