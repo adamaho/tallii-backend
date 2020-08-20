@@ -1,4 +1,6 @@
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
+use tracing::{info, instrument};
+mod config;
 
 async fn index() -> impl Responder {
     HttpResponse::Ok().body("Hello world!")
@@ -9,15 +11,22 @@ async fn index2() -> impl Responder {
 }
 
 #[actix_rt::main]
+#[instrument]
 async fn main() -> std::io::Result<()> {
+    let config = config::Config::from_env().expect("failed to load environment");
 
-    // setup http server
+    info!(
+        "Starting server at http://{}:{}",
+        config.hostname, config.port
+    );
+
     HttpServer::new(move || {
         App::new()
+            .wrap(Logger::default())
             .route("/", web::get().to(index))
             .route("/again", web::get().to(index2))
     })
-    .bind("127.0.0.1:8088")?
+    .bind(format!("{}:{}", config.hostname, config.port))?
     .run()
     .await
 }
