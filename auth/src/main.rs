@@ -15,6 +15,11 @@ async fn index2() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     let config = config::Config::from_env().expect("failed to load environment");
 
+    let pool = config
+        .setup_database()
+        .await
+        .expect("failed to create database pool");
+
     info!(
         "Starting server at http://{}:{}",
         config.hostname, config.port
@@ -23,10 +28,13 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .wrap(Logger::default())
+            .data(pool.clone())
             .route("/", web::get().to(index))
             .route("/again", web::get().to(index2))
     })
     .bind(format!("{}:{}", config.hostname, config.port))?
     .run()
-    .await
+    .await?;
+
+    Ok(())
 }

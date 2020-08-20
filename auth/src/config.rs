@@ -1,5 +1,6 @@
 use dotenv::dotenv;
 use serde::Deserialize;
+use sqlx::PgPool;
 use tracing::{info, instrument};
 
 #[derive(Debug, Deserialize)]
@@ -27,5 +28,15 @@ impl Config {
         c.merge(config::Environment::default())?;
 
         c.try_into()
+    }
+
+    #[instrument(skip(self))]
+    pub async fn setup_database(&self) -> Result<sqlx::PgPool, sqlx::Error> {
+        info!("setting up database connection pool");
+
+        PgPool::builder()
+            .connect_timeout(std::time::Duration::from_secs(60))
+            .build(&self.database_url)
+            .await
     }
 }
