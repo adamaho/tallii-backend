@@ -1,5 +1,6 @@
 use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
 use tracing::{info, instrument};
+
 mod config;
 
 async fn index() -> impl Responder {
@@ -13,15 +14,18 @@ async fn index2() -> impl Responder {
 #[actix_rt::main]
 #[instrument]
 async fn main() -> std::io::Result<()> {
+
+    // get the config from the environment
     let config = config::Config::from_env().expect("failed to load environment");
 
+    // create database pool of connections
     let pool = config
         .setup_database()
         .await
         .expect("failed to create database pool");
 
     info!(
-        "Starting server at http://{}:{}",
+        "starting server at http://{}:{}",
         config.hostname, config.port
     );
 

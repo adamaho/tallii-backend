@@ -5,9 +5,9 @@ services:
     image: postgres:12
     restart: always
     environment:
-      - POSTGRES_USER=tallii_auth
-      - POSTGRES_PASSWORD=tallii_auth
-      - POSTGRES_DB=tallii_auth
+      - POSTGRES_USER=tallii
+      - POSTGRES_PASSWORD=tallii
+      - POSTGRES_DB=tallii
     ports:
       - 7777:5432
     deploy:
@@ -23,4 +23,4 @@ volumes:
 
 
 
-# psql --host=database --username=tallii_auth --dbname=tallii_auth
+# psql --host=database --username=tallii --dbname=tallii

@@ -1,5 +1,19 @@
-[workspace]
+[package]
+name = "backend"
+version = "0.1.0"
+authors = ["adamaho <adam.aho@hey.com"]
+edition = "2018"
 
-members = [
-    "server",
-]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "2.0"
+actix-rt = "1.0"
+config = "0.10"
+dotenv = "0.15"
+serde = { version = "1.0", features = ["derive"] }
+sqlx = { version = "0.3", default-features = false, features = [ "runtime-tokio", "macros", "postgres", "uuid", "chrono" ] }
+tracing = "0.1"
+tracing-futures = "0.2"
+tracing-log = { version = "0.1", features = ["env_logger"] }
+tracing-subscriber = "0.2"
