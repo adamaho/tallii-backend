@@ -2,6 +2,7 @@ use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer, Responde
 use tracing::{info, instrument};
 
 mod config;
+mod models;
 
 async fn index() -> impl Responder {
     HttpResponse::Ok().body("Hello world!")
