@@ -1,0 +1,22 @@
+@baseUrl = http://localhost:8000
+
+GET {{baseUrl}}/auth/invite-codes HTTP/1.1
+content-type: application/json
+
+###
+
+POST {{baseUrl}}/auth/invite-codes HTTP/1.1
+content-type: application/json
+
+{
+    "id": "vIw5ms"
+}
+
+###
+
+POST {{baseUrl}}/auth/invite-codes/new HTTP/1.1
+content-type: application/json
+
+{
+    "amount": 20
+}
