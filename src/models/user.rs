@@ -10,7 +10,7 @@ pub struct User {
     invite_code: String,
     username: String,
     taunt: Option<String>,
-    created_at: chrono::NaiveDateTime
+    created_at: chrono::NaiveDateTime,
 }
 
 /// Representation of a New User

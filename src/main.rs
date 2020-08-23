@@ -1,21 +1,18 @@
-use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{middleware::Logger, web, App, HttpServer};
 use tracing::{info, instrument};
 
 mod config;
+mod db;
+mod errors;
 mod models;
+mod services;
 
-async fn index() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
-
-async fn index2() -> impl Responder {
-    HttpResponse::Ok().body("Hello world again!")
-}
+// bring in the service trait
+use crate::services::{auth::Auth, Service};
 
 #[actix_rt::main]
 #[instrument]
 async fn main() -> std::io::Result<()> {
-
     // get the config from the environment
     let config = config::Config::from_env().expect("failed to load environment");
 
@@ -34,8 +31,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(Logger::default())
             .data(pool.clone())
-            .route("/", web::get().to(index))
-            .route("/again", web::get().to(index2))
+            .service(web::scope("/auth").configure(Auth::define_routes))
     })
     .bind(format!("{}:{}", config.hostname, config.port))?
     .run()

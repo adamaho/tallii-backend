@@ -17,29 +17,29 @@ create table users (
 );
 
 -- Friends
-create table friends (
-  user_id integer not null references users(user_id),
-  friend_id integer not null references users(user_id),
-  friend_status text not null,
-  created_at timestamp not null default current_timestamp,
-  primary key (user_id, friend_id)
-);
+-- create table friends (
+--   user_id integer not null references users(user_id),
+--   friend_id integer not null references users(user_id),
+--   friend_status text not null,
+--   created_at timestamp not null default current_timestamp,
+--   primary key (user_id, friend_id)
+-- );
 
 
 -- Groups
-create table groups (
-  group_id serial primary key,
-  name text not null,
-  description text,
-  avatar text,
-  created_at timestamp not null default current_timestamp
-);
+-- create table groups (
+--   group_id serial primary key,
+--   name text not null,
+--   description text,
+--   avatar text,
+--   created_at timestamp not null default current_timestamp
+-- );
 
 -- Group Users
-create table group_users (
-  group_id not null references groups(group_id),
-  user_id not null references users(user_id),
-  type varchar(20),
-  created_at timestamp not null default current_timestamp
-  primary key (group_id, user_id)
-);
+-- create table group_users (
+--   group_id not null references groups(group_id),
+--   user_id not null references users(user_id),
+--   type varchar(20),
+--   created_at timestamp not null default current_timestamp
+--   primary key (group_id, user_id)
+-- );
