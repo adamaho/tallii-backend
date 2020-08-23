@@ -1,6 +1,9 @@
-use actix_web::web;
+use actix_web::{web, HttpResponse};
 
+use crate::errors::TalliiError;
 pub mod auth;
+
+type TalliiResponse = Result<HttpResponse, TalliiError>;
 
 /// Representation of a Service
 pub trait Service {

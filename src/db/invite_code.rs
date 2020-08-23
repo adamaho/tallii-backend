@@ -2,7 +2,7 @@ use sqlx::postgres::PgQueryAs;
 use sqlx::PgPool;
 use std::sync::Arc;
 
-use crate::errors::TalliiErrorCode;
+use crate::errors::TalliiError;
 use crate::models::invite_code::InviteCode;
 
 pub struct InviteCodeRepository {
@@ -18,11 +18,11 @@ impl InviteCodeRepository {
     /// Gets an invite code by the provided id
     pub async fn get_by_id(
         &self,
-        provided_code: &InviteCode,
-    ) -> Result<InviteCode, TalliiErrorCode> {
+        id: &String,
+    ) -> Result<Option<InviteCode>, TalliiError> {
         let invite_code = sqlx::query_as::<_, InviteCode>("select * where id = $1")
-            .bind(&provided_code.id)
-            .fetch_one(&*self.pool)
+            .bind(id)
+            .fetch_optional(&*self.pool)
             .await?;
 
         Ok(invite_code)
