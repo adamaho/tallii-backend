@@ -6,6 +6,7 @@ mod errors;
 mod models;
 mod repositories;
 mod services;
+mod token;
 
 // bring in the service trait
 use crate::services::{auth::Auth, Service};

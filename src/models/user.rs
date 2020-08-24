@@ -3,14 +3,14 @@ use serde::{Deserialize, Serialize};
 /// Database representation of a User
 #[derive(sqlx::FromRow, Serialize)]
 pub struct User {
-    user_id: i32,
-    avatar: Option<String>,
-    email: String,
-    password: String,
-    invite_code: String,
-    username: String,
-    taunt: Option<String>,
-    created_at: chrono::NaiveDateTime,
+    pub user_id: i32,
+    pub avatar: Option<String>,
+    pub email: String,
+    pub password: String,
+    pub invite_code: String,
+    pub username: String,
+    pub taunt: Option<String>,
+    pub created_at: chrono::NaiveDateTime,
 }
 
 /// Representation of a New User

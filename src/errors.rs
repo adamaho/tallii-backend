@@ -8,14 +8,13 @@ use serde::export::Formatter;
 #[derive(Serialize)]
 pub enum TalliiError {
     DatabaseError,
+    Unauthorized,
 }
 
 /// Debub trait for the TalliiError
 impl std::fmt::Debug for TalliiError {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            TalliiError::DatabaseError => write!(f, "DatabaseError")
-        }
+        write!(f, "{:?}", self)
     }
 }
 
@@ -47,6 +46,10 @@ impl From<&TalliiError> for TalliiErrorResponse {
             TalliiError::DatabaseError => TalliiErrorResponse {
                 message: "An unexpected error occurred in the database".to_string(),
                 code: "DATABASE_ERROR".to_string()
+            },
+            TalliiError::Unauthorized => TalliiErrorResponse {
+                message: "Please login or signup to continue".to_string(),
+                code: "UNAUTHORIZED".to_string()
             }
         }
     }
@@ -59,11 +62,18 @@ impl From<sqlx::error::Error> for TalliiError {
     }
 }
 
+impl From<jsonwebtoken::errors::Error> for TalliiError {
+    fn from(_error: jsonwebtoken::errors::Error) -> TalliiError {
+        TalliiError::Unauthorized
+    }
+}
+
 /// ResponseError trait for the TalliiError
 impl ResponseError for TalliiError {
     fn status_code(&self) -> StatusCode {
         match self {
-            TalliiError::DatabaseError => StatusCode::INTERNAL_SERVER_ERROR
+            TalliiError::DatabaseError => StatusCode::INTERNAL_SERVER_ERROR,
+            TalliiError::Unauthorized => StatusCode::UNAUTHORIZED
         }
     }
 

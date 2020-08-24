@@ -43,7 +43,6 @@ impl InviteCodeRepository {
         Ok(all_invite_codes)
     }
 
-
     /// Creates invite codes for the specified amount
     /// Note, this query may not be the most performant query
     /// because it is not a bulk insert but that is fine.
