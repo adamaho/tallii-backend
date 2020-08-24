@@ -2,9 +2,9 @@ use actix_web::{middleware::Logger, web, App, HttpServer};
 use tracing::{info, instrument};
 
 mod config;
-mod db;
 mod errors;
 mod models;
+mod repositories;
 mod services;
 
 // bring in the service trait

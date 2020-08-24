@@ -4,7 +4,7 @@ use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
 use super::TalliiResponse;
-use crate::db::invite_code::InviteCodeRepository;
+use crate::repositories::invite_code::InviteCodeRepository;
 use crate::models::invite_code::{InviteCode, CreateInviteCode};
 use crate::services::Service;
 
