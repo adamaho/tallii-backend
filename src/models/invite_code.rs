@@ -6,7 +6,6 @@ pub struct InviteCode {
     pub id: String,
 }
 
-
 /// Representation of struct for creating InviteCodes
 #[derive(Debug, Deserialize)]
 pub struct CreateInviteCode {

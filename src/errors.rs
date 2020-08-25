@@ -1,8 +1,8 @@
-use actix_web::ResponseError;
-use actix_web::web::HttpResponse;
 use actix_web::http::StatusCode;
-use serde::Serialize;
+use actix_web::web::HttpResponse;
+use actix_web::ResponseError;
 use serde::export::Formatter;
+use serde::Serialize;
 
 /// Representation of all possible Tallii error codes
 #[derive(Serialize)]
@@ -29,7 +29,7 @@ impl std::fmt::Display for TalliiError {
 #[derive(Debug, Serialize)]
 pub struct TalliiErrorResponse {
     message: String,
-    code: String
+    code: String,
 }
 
 /// Display trait for TalliiErrorResponse
@@ -45,12 +45,12 @@ impl From<&TalliiError> for TalliiErrorResponse {
         match error {
             TalliiError::DatabaseError => TalliiErrorResponse {
                 message: "An unexpected error occurred in the database".to_string(),
-                code: "DATABASE_ERROR".to_string()
+                code: "DATABASE_ERROR".to_string(),
             },
             TalliiError::Unauthorized => TalliiErrorResponse {
                 message: "Please login or signup to continue".to_string(),
-                code: "UNAUTHORIZED".to_string()
-            }
+                code: "UNAUTHORIZED".to_string(),
+            },
         }
     }
 }
@@ -73,11 +73,11 @@ impl ResponseError for TalliiError {
     fn status_code(&self) -> StatusCode {
         match self {
             TalliiError::DatabaseError => StatusCode::INTERNAL_SERVER_ERROR,
-            TalliiError::Unauthorized => StatusCode::UNAUTHORIZED
+            TalliiError::Unauthorized => StatusCode::UNAUTHORIZED,
         }
     }
 
     fn error_response(&self) -> HttpResponse {
         HttpResponse::build(self.status_code()).json(TalliiErrorResponse::from(self))
-    } 
+    }
 }

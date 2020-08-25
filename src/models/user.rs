@@ -13,9 +13,19 @@ pub struct User {
     pub created_at: chrono::NaiveDateTime,
 }
 
+/// Representation of a user that can be publicized
+#[derive(sqlx::FromRow, Serialize)]
+pub struct PublicUser {
+    pub user_id: i32,
+    pub avatar: Option<String>,
+    pub email: String,
+    pub username: String,
+    pub taunt: Option<String>,
+}
+
 /// Representation of a New User
 #[derive(Debug, Deserialize)]
-pub struct CreateUser {
+pub struct NewUser {
     pub email: String,
     pub invite_code: String,
     pub password: String,
@@ -24,7 +34,7 @@ pub struct CreateUser {
 
 /// Representation of an User to Update
 #[derive(Debug, Deserialize)]
-pub struct UpdateUser {
+pub struct EditUser {
     pub avatar: String,
     pub taunt: String,
 }

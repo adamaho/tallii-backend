@@ -2,11 +2,11 @@ use actix_web::{middleware::Logger, web, App, HttpServer};
 use tracing::{info, instrument};
 
 mod config;
+mod crypto;
 mod errors;
 mod models;
 mod repositories;
 mod services;
-mod token;
 
 // bring in the service trait
 use crate::services::{auth::Auth, Service};
