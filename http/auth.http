@@ -9,7 +9,7 @@ POST {{baseUrl}}/auth/invite-codes HTTP/1.1
 content-type: application/json
 
 {
-    "id": "vIw5ms"
+    "id": "vIw5sms"
 }
 
 ###
@@ -32,3 +32,10 @@ content-type: application/json
     "password": "password",
     "username": "adam.aho"
 }
+
+###
+
+POST {{baseUrl}}/auth/login HTTP/1.1
+content-type: application/json
+
+{}

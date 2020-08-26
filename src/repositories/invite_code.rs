@@ -18,15 +18,21 @@ impl InviteCodeRepository {
         Self { pool }
     }
 
-    /// Gets an invite code by the provided id
-    pub async fn get_by_id(&self, id: &String) -> Result<Option<InviteCode>, TalliiError> {
+    /// Checks if the provided invite code is valid
+    pub async fn is_valid(&self, id: &String) -> Result<bool, TalliiError> {
+        // get the invite code, if it exists
         let invite_code =
             sqlx::query_as::<_, InviteCode>("select * from invite_codes where id = $1")
                 .bind(id)
                 .fetch_optional(&*self.pool)
                 .await?;
 
-        Ok(invite_code)
+        // if invite code doesnt exist return false
+        if invite_code.is_none() {
+            Ok(false)
+        } else {
+            Ok(true)
+        }
     }
 
     /// Gets all invite codes

@@ -1,9 +1,12 @@
 use std::sync::Arc;
+use std::env;
 
+use argonautica::{Hasher, Verifier};
 use chrono::{Duration, Utc};
+use futures::compat::Future01CompatExt;
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
-use std::env;
+use tracing::info;
 
 use crate::errors::TalliiError;
 
@@ -24,11 +27,10 @@ pub struct Crypto {
 impl Crypto {
 
     /// Decodes the provided token to the Token struct
-    pub fn verify_jwt(token: &str) -> Result<jsonwebtoken::TokenData<Claims>, TalliiError> {
-        let secret = env::var("JWT_SECRET").expect("JWT_SECRET has not been defined");
+    pub fn verify_jwt(&self, token: &str) -> Result<jsonwebtoken::TokenData<Claims>, TalliiError> {
         let token = decode::<Claims>(
             &token,
-            &DecodingKey::from_secret(secret.as_ref()),
+            &DecodingKey::from_secret(self.jwt_secret.clone().as_bytes()),
             &Validation::default(),
         )?;
 
@@ -37,8 +39,6 @@ impl Crypto {
 
     /// Encodes the provided token struct to a string
     pub fn generate_jwt(&self, user_id: i32, username: String) -> String {
-        let secret = env::var("JWT_SECRET").expect("JWT_SECRET has not been defined");
-
         let now = Utc::now() + Duration::days(1); // Expires in 1 day
         let claims =  Claims {
             sub: user_id,
@@ -49,13 +49,42 @@ impl Crypto {
         encode(
             &Header::default(),
             &claims,
-            &EncodingKey::from_secret(secret.as_ref()),
+            &EncodingKey::from_secret(self.jwt_secret.clone().as_bytes()),
         )
         .unwrap()
     }
 
     // Hashes the provided password
-    // pub fn hash_password(password: String) -> Result<String, TalliiError> {
+    pub async fn hash_password(&self, password: &str) -> Result<String, TalliiError> {
 
-    // }
+        match Hasher::default()
+            .with_secret_key(&*self.hash_secret)
+            .with_password(password)
+            .hash_non_blocking()
+            .compat()
+            .await {
+                Ok(hashed_password) => Ok(hashed_password),
+                Err(_) => {
+                    info!("Failed to hash password.");
+                    Err(TalliiError::InternalServerError)
+                }
+            }
+
+    }
+
+    pub async fn verify_password(&self, password: &str, hashed_password: &str) -> Result<bool, TalliiError> {
+        match Verifier::default()
+            .with_hash(hashed_password)
+            .with_password(password)
+            .with_secret_key(&*self.hash_secret)
+            .verify_non_blocking()
+            .compat()
+            .await {
+                Ok(is_valid) => Ok(is_valid),
+                Err(_) => {
+                    info!("Failed to verify password.");
+                    Err(TalliiError::Unauthorized)
+                }
+            }
+    }
 }
