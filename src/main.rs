@@ -23,6 +23,9 @@ async fn main() -> std::io::Result<()> {
         .await
         .expect("failed to create database pool");
 
+    // get instance of crypto to be used for hashing
+    let crypto = config.get_crypto();
+
     info!(
         "starting server at http://{}:{}",
         config.hostname, config.port
@@ -32,6 +35,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(Logger::default())
             .data(pool.clone())
+            .data(crypto.clone())
             .service(web::scope("/auth").configure(Auth::define_routes))
     })
     .bind(format!("{}:{}", config.hostname, config.port))?

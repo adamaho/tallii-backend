@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 actix-web = "2.0"
 actix-rt = "1.0"
+argonautica = { version = "0.2", features = ["simd"] }
 chrono = { version = "0.4", features = ["serde"] }
 config = "0.10"
 dotenv = "0.15"

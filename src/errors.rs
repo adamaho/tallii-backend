@@ -8,6 +8,8 @@ use serde::Serialize;
 #[derive(Serialize)]
 pub enum TalliiError {
     DatabaseError,
+    InternalServerError,
+    InvalidInviteCode,
     Unauthorized,
 }
 
@@ -51,6 +53,14 @@ impl From<&TalliiError> for TalliiErrorResponse {
                 message: "Please login or signup to continue".to_string(),
                 code: "UNAUTHORIZED".to_string(),
             },
+            TalliiError::InternalServerError => TalliiErrorResponse {
+                message: "Oops, something has gone wrong on our side.".to_string(),
+                code: "INTERNAL_SERVER_ERROR".to_string(),
+            },
+            TalliiError::InvalidInviteCode => TalliiErrorResponse {
+                message: "The provided invite code is invalid.".to_string(),
+                code: "INVALID_INVITE_CODE".to_string(),
+            },
         }
     }
 }
@@ -62,6 +72,7 @@ impl From<sqlx::error::Error> for TalliiError {
     }
 }
 
+/// Converts a jsonwebtoken error into a TalliiError
 impl From<jsonwebtoken::errors::Error> for TalliiError {
     fn from(_error: jsonwebtoken::errors::Error) -> TalliiError {
         TalliiError::Unauthorized
@@ -74,6 +85,8 @@ impl ResponseError for TalliiError {
         match self {
             TalliiError::DatabaseError => StatusCode::INTERNAL_SERVER_ERROR,
             TalliiError::Unauthorized => StatusCode::UNAUTHORIZED,
+            TalliiError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
+            TalliiError::InvalidInviteCode => StatusCode::BAD_REQUEST
         }
     }
 

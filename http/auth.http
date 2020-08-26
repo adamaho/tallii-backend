@@ -20,3 +20,15 @@ content-type: application/json
 {
     "amount": 20
 }
+
+###
+
+POST {{baseUrl}}/auth/signup HTTP/1.1
+content-type: application/json
+
+{
+    "email": "adam.aho@hey.com",
+    "invite_code": "foo",
+    "password": "password",
+    "username": "adam.aho"
+}

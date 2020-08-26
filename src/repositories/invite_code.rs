@@ -62,3 +62,5 @@ impl InviteCodeRepository {
         Ok(())
     }
 }
+
+// want to get all make suure the invite code exists and that it is not being used by another user

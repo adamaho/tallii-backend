@@ -8,6 +8,7 @@ use super::{Service, TalliiResponse};
 use crate::models::invite_code::{CreateInviteCode, InviteCode};
 use crate::models::user::NewUser;
 use crate::repositories::invite_code::InviteCodeRepository;
+use crate::repositories::user::UserRepository;
 
 /// Gets all invite codes
 pub async fn get_all_invite_codes(pool: web::Data<PgPool>) -> TalliiResponse {
@@ -60,16 +61,20 @@ pub async fn login() -> &'static str {
 }
 
 /// Signs a user up with the provided credentials
-// pub async fn signup(
-//     pool: web::Data<PgPool>,
-//     web::Json(new_user): web::Json<NewUser>,
-// ) -> TalliiResponse {
-//     // get the user repository
-//     let respository = UserRepository::new(pool.deref().clone());
+pub async fn signup(
+    pool: web::Data<PgPool>,
+    web::Json(new_user): web::Json<NewUser>,
+) -> TalliiResponse {
+    // get the user repository
+    let respository = UserRepository::new(pool.deref().clone());
 
-//     // create the user in the db and return some stuff
+    respository.create(new_user).await?;
 
-// }
+    Ok(HttpResponse::Ok().finish())
+
+    // create the user in the db and return some stuff
+
+}
 
 pub struct Auth;
 
@@ -81,7 +86,7 @@ impl Service for Auth {
                 .route(web::get().to(get_all_invite_codes)),
         )
         .service(web::resource("/invite-codes/new").route(web::post().to(create_invite_codes)))
-        .service(web::resource("/login").route(web::post().to(login)));
-        // .service(web::resource("/signup").route(web::post().to(signup)));
+        .service(web::resource("/login").route(web::post().to(login)))
+        .service(web::resource("/signup").route(web::post().to(signup)));
     }
 }
