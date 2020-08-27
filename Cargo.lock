@@ -440,6 +440,7 @@ dependencies = [
  "jsonwebtoken",
  "nanoid",
  "serde 1.0.115",
+ "serde_json",
  "sqlx",
  "tracing",
  "tracing-futures",

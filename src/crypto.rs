@@ -66,7 +66,7 @@ impl Crypto {
                 Ok(hashed_password) => Ok(hashed_password),
                 Err(_) => {
                     info!("Failed to hash password.");
-                    Err(TalliiError::InternalServerError)
+                    Err(TalliiError::INTERNAL_SERVER_ERROR.default())
                 }
             }
 
@@ -83,7 +83,7 @@ impl Crypto {
                 Ok(is_valid) => Ok(is_valid),
                 Err(_) => {
                     info!("Failed to verify password.");
-                    Err(TalliiError::Unauthorized)
+                    Err(TalliiError::INTERNAL_SERVER_ERROR.default())
                 }
             }
     }

@@ -4,60 +4,83 @@ use actix_web::ResponseError;
 use serde::export::Formatter;
 use serde::Serialize;
 
-/// Representation of all possible Tallii error codes
-pub enum TalliiError {
-    DatabaseError,
-    InternalServerError,
-    InvalidInviteCode,
-    Unauthorized,
-}
-
-#[derive(Debug)]
-pub struct Test;
-
-/// Debub trait for the TalliiError
-impl std::fmt::Debug for TalliiError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
-        write!(f, "{:?}", self)
-    }
+/// External Representation of an error
+#[derive(Debug, Serialize)]
+pub struct TalliiError {
+    pub code: TalliiErrorCode,
+    pub message: String
 }
 
 /// Display trait for a TalliiError
-impl std::fmt::Display for Test {
+impl std::fmt::Display for TalliiError {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
         write!(f, "{:?}", self)
     }
 }
 
-/// Represents a Tallii response when there is an error
-#[derive(Debug, Serialize)]
-pub struct TalliiErrorResponse {
-    message: String,
-    code: String,
+impl TalliiError {
+    pub const INTERNAL_SERVER_ERROR: TalliiErrorCode = TalliiErrorCode("INTERNAL_SERVER_ERROR");
 }
 
+/// Representation of the TalliiErrorCodes
+#[derive(Debug, Serialize, PartialEq, Eq)]
+pub struct TalliiErrorCode(&'static str);
 
-/// Converts a sqlx error into a TalliiError
-impl From<sqlx::error::Error> for TalliiError {
-    fn from(_error: sqlx::error::Error) -> TalliiError {
-        TalliiError::DatabaseError
+impl TalliiErrorCode {
+
+    /// Provides the default code and message for the error
+    pub fn default(self) -> TalliiError {
+        let message = match self {
+            TalliiError::INTERNAL_SERVER_ERROR => "Oops, something seems to have gone wrong on our end.",
+            _ => "Oops, something seems to have gone wrong on our end."
+        };
+
+        TalliiError {
+            code: self,
+            message: message.to_string()
+        }
+    }
+
+    /// Provides the ability to override the message
+    pub fn message(self, message: String) -> TalliiError {
+        TalliiError {
+            code: self,
+            message
+        }
+    }
+}
+
+/// Converts a TalliiErrorCode into a TalliiError
+impl From<TalliiErrorCode> for TalliiError {
+    fn from(error: TalliiErrorCode) -> TalliiError {
+        error.default()
     }
 }
 
 /// Converts a jsonwebtoken error into a TalliiError
 impl From<jsonwebtoken::errors::Error> for TalliiError {
     fn from(_error: jsonwebtoken::errors::Error) -> TalliiError {
-        TalliiError::Unauthorized
+        TalliiError::INTERNAL_SERVER_ERROR.default()
+    }
+}
+
+/// Converts a sqlx error into a TalliiError
+impl From<sqlx::error::Error> for TalliiError {
+    fn from(_error: sqlx::error::Error) -> TalliiError {
+        TalliiError::INTERNAL_SERVER_ERROR.default()
     }
 }
 
 /// ResponseError trait for the TalliiError
-impl ResponseError for Test {
+impl ResponseError for TalliiError {
     fn status_code(&self) -> StatusCode {
-        StatusCode::INTERNAL_SERVER_ERROR
+        match self.code {
+            TalliiError::INTERNAL_SERVER_ERROR => StatusCode::INTERNAL_SERVER_ERROR,
+            _ => StatusCode::INTERNAL_SERVER_ERROR,
+        }
     }
 
     fn error_response(&self) -> HttpResponse {
-        HttpResponse::BadRequest().finish()
+        HttpResponse::build(self.status_code()).json(self)
     }
 }

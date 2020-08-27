@@ -6,7 +6,7 @@ use sqlx::PgPool;
 use super::{Service, TalliiResponse};
 
 use crate::crypto::Crypto;
-use crate::errors::Test;
+use crate::errors::TalliiError;
 use crate::models::invite_code::{CreateInviteCode, InviteCode};
 use crate::models::user::NewUser;
 use crate::repositories::invite_code::InviteCodeRepository;
@@ -59,8 +59,8 @@ use crate::repositories::user::UserRepository;
 // }
 
 /// Logs the user in if the provided credentials are correct
-pub async fn login() -> TalliiResponse {
-    Err(Test)
+pub async fn login() -> Result<HttpResponse, TalliiError> {
+    Err(TalliiError::INTERNAL_SERVER_ERROR.default())
 }
 
 /// Signs a user up with the provided credentials
