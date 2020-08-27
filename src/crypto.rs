@@ -1,6 +1,6 @@
 use std::sync::Arc;
-use std::env;
 
+use actix_web::web;
 use argonautica::{Hasher, Verifier};
 use chrono::{Duration, Utc};
 use futures::compat::Future01CompatExt;
@@ -27,31 +27,40 @@ pub struct Crypto {
 impl Crypto {
 
     /// Decodes the provided token to the Token struct
-    pub fn verify_jwt(&self, token: &str) -> Result<jsonwebtoken::TokenData<Claims>, TalliiError> {
-        let token = decode::<Claims>(
-            &token,
-            &DecodingKey::from_secret(self.jwt_secret.clone().as_bytes()),
-            &Validation::default(),
-        )?;
+    pub async fn verify_jwt(&self, token: String) -> Result<jsonwebtoken::TokenData<Claims>, TalliiError> {
+        let jwt_secret = self.jwt_secret.clone();
 
-        Ok(token)
+        web::block(move || {
+            decode::<Claims>(
+                &token,
+                &DecodingKey::from_secret(jwt_secret.as_bytes()),
+                &Validation::default(),
+            )
+        })
+        .await
+        .map_err(|_err| { TalliiError::UNAUTHORIZED.default() })
     }
 
     /// Encodes the provided token struct to a string
-    pub fn generate_jwt(&self, user_id: i32, username: String) -> String {
-        let now = Utc::now() + Duration::days(1); // Expires in 1 day
-        let claims =  Claims {
-            sub: user_id,
-            username,
-            exp: now.timestamp(),
-        };
-
-        encode(
-            &Header::default(),
-            &claims,
-            &EncodingKey::from_secret(self.jwt_secret.clone().as_bytes()),
-        )
-        .unwrap()
+    pub async fn generate_jwt(&self, user_id: i32, username: String) -> Result<String, TalliiError> {
+        let jwt_secret = self.jwt_secret.clone();
+    
+        web::block(move || {
+            let now = Utc::now() + Duration::days(1); // Expires in 1 day
+            let claims =  Claims {
+                sub: user_id,
+                username,
+                exp: now.timestamp(),
+            };
+    
+            encode(
+                &Header::default(),
+                &claims,
+                &EncodingKey::from_secret(jwt_secret.as_bytes()),
+            )
+        })
+        .await
+        .map_err(|_err| { TalliiError::INTERNAL_SERVER_ERROR.message("Failed to create jwt token".to_string()) })
     }
 
     // Hashes the provided password

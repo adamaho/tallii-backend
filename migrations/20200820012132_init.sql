@@ -7,7 +7,6 @@ create table invite_codes (
 create table users (
   user_id serial primary key,
   avatar text,
-  name varchar(40) not null,
   email text not null unique,
   password text not null,
   invite_code varchar not null unique references invite_codes(id),
