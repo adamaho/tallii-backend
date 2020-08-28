@@ -5,7 +5,7 @@ use sqlx::PgPool;
 
 use super::{Service, TalliiResponse};
 
-use crate::crypto::Crypto;
+use crate::crypto::{Crypto, TokenResponse};
 use crate::errors::TalliiError;
 use crate::models::invite_code::{CreateInviteCode, InviteCode};
 use crate::models::user::{NewUser, LoginUser};
@@ -85,7 +85,7 @@ pub async fn login(
     let token = crypto.generate_jwt(user.user_id, user.username).await?;
 
     // respond with the token
-    Ok(HttpResponse::Ok().body(token))
+    Ok(HttpResponse::Ok().json(TokenResponse { token }))
 }
 
 /// Signs a user up with the provided credentials
@@ -119,7 +119,7 @@ pub async fn signup(
     let token = crypto.generate_jwt(created_user.user_id, created_user.username).await?;
 
     // respond with the newly created token
-    Ok(HttpResponse::Ok().body(token))
+    Ok(HttpResponse::Ok().json(TokenResponse { token }))
 }
 
 pub struct Auth;

@@ -24,6 +24,11 @@ pub struct Crypto {
     pub jwt_secret: Arc<String>
 }
 
+#[derive(Debug, Serialize)]
+pub struct TokenResponse {
+    pub token: String
+}
+
 impl Crypto {
 
     /// Decodes the provided token to the Token struct
