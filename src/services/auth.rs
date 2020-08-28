@@ -8,7 +8,7 @@ use super::{Service, TalliiResponse};
 use crate::crypto::Crypto;
 use crate::errors::TalliiError;
 use crate::models::invite_code::{CreateInviteCode, InviteCode};
-use crate::models::user::NewUser;
+use crate::models::user::{NewUser, LoginUser};
 use crate::repositories::invite_code::InviteCodeRepository;
 use crate::repositories::user::UserRepository;
 
@@ -59,8 +59,33 @@ pub async fn create_invite_codes(
 }
 
 /// Logs the user in if the provided credentials are correct
-pub async fn login() -> Result<HttpResponse, TalliiError> {
-    Err(TalliiError::INTERNAL_SERVER_ERROR.default())
+pub async fn login(
+    pool: web::Data<PgPool>,
+    crypto: web::Data<Crypto>,
+    web::Json(person): web::Json<LoginUser>
+) -> Result<HttpResponse, TalliiError> {
+
+    // get user repository
+    let user_repo = UserRepository::new(pool.deref().clone());
+
+    // check if there is a user with the provided email
+    let user = match user_repo.get_by_email(&person.email).await? {
+        Some(u) => u,
+        None => {
+            return Err(TalliiError::UNAUTHORIZED.default());
+        }
+    };
+
+    // verify the provided password
+    if !crypto.verify_password(&person.password, &user.password).await? {
+        return Err(TalliiError::UNAUTHORIZED.default());
+    }
+
+    // create a new jwt for the newly authorized user
+    let token = crypto.generate_jwt(user.user_id, user.username).await?;
+
+    // respond with the token
+    Ok(HttpResponse::Ok().body(token))
 }
 
 /// Signs a user up with the provided credentials

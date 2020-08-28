@@ -19,7 +19,7 @@ impl UserRepository {
     }
 
     /// Fetches a user with the provided email
-    pub async fn get_by_email(&self, email: String) -> Result<Option<User>, TalliiError> {
+    pub async fn get_by_email(&self, email: &String) -> Result<Option<User>, TalliiError> {
         let user_with_email = sqlx::query_as::<_, User>(
             "select * from users where email = $1"
         )

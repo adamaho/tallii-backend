@@ -27,10 +27,10 @@ POST {{baseUrl}}/auth/signup HTTP/1.1
 content-type: application/json
 
 {
-    "email": "adam.aho@heqy.com",
-    "invite_code": "naomU~",
+    "email": "foo@bar.com",
+    "invite_code": "gCvfNp",
     "password": "password",
-    "username": "adam.ahqo"
+    "username": "foo.bar"
 }
 
 ###
@@ -38,4 +38,7 @@ content-type: application/json
 POST {{baseUrl}}/auth/login HTTP/1.1
 content-type: application/json
 
-{}
+{
+    "email": "foo@bar.com",
+    "password": "password"
+}
