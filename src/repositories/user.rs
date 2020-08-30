@@ -30,6 +30,19 @@ impl UserRepository {
         Ok(user_with_email)
     }
 
+    /// Fetches a username that matches the provided username and user_id.
+    pub async fn get_by_username_and_id(&self, user_id: i32, username: &String) -> Result<Option<User>, TalliiError> {
+        let user_with_id_and_username = sqlx::query_as::<_, User>(
+            "select * from users where user_id = $1 and username = $2"
+        )
+        .bind(user_id)
+        .bind(username)
+        .fetch_optional(&*self.pool)
+        .await?;
+
+        Ok(user_with_id_and_username)
+    }
+
     /// Fetches a user that holds the provided invite code
     pub async fn get_by_invite_code(&self, invite_code: &str) -> Result<Option<PublicUser>, TalliiError> {
         let user_with_invite_code = sqlx::query_as::<_, PublicUser>(

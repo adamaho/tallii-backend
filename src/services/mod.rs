@@ -7,7 +7,7 @@ use futures::future::BoxFuture;
 use serde::Deserialize;
 use sqlx::PgPool;
 
-use crate::crypto::Crypto;
+use crate::crypto::{Crypto, Claims};
 use crate::errors::TalliiError;
 use crate::repositories::user::UserRepository;
 
@@ -42,12 +42,30 @@ impl FromRequest for AuthenticatedUser {
         // get the crypto service
         let crypto = web::Data::<Crypto>::from_request(req, payload).into_inner();
 
-
+        // match on a tuple of the result of the above
         match (bearer, pool, crypto) {
-            (Ok(bearer), Ok(pool), Ok(crypto)) => {
-                //
+            (Ok(b), Ok(p), Ok(c)) => {
+                let future = async move {
+                    // get the claims
+                    let claims: Claims = c.verify_jwt(b.token().to_string())
+                        .await
+                        .map(|data| data )
+                        .map_err(|_err| { TalliiError::UNAUTHORIZED.default() });
+
+                    // get an instance of the user repo
+                    let user_repo = UserRepository::new(pool.deref().clone());
+
+                    // check to make sure the provided username and user_id combo is valid
+                    user_repo.get_by_username_and_id(&claims.sub, &claims.username).await?
+                        .ok_or_else(|| {
+                            TalliiError::UNAUTHORIZED.default()
+                        });
+
+                    Ok()
+                };
+
+                Box::pin(future)
             }
         }
-
     }
 }
