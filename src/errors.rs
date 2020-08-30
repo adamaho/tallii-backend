@@ -8,7 +8,7 @@ use serde::Serialize;
 #[derive(Debug, Serialize)]
 pub struct TalliiError {
     pub code: TalliiErrorCode,
-    pub message: String
+    pub message: String,
 }
 
 /// Display trait for a TalliiError
@@ -29,21 +29,22 @@ impl TalliiError {
 pub struct TalliiErrorCode(&'static str);
 
 impl TalliiErrorCode {
-
     /// Provides the default code and message for the error
     pub fn default(self) -> TalliiError {
         // match on the message
         let message = match self {
-            TalliiError::INTERNAL_SERVER_ERROR => "Oops, something seems to have gone wrong on our end.",
+            TalliiError::INTERNAL_SERVER_ERROR => {
+                "Oops, something seems to have gone wrong on our end."
+            }
             TalliiError::INVALID_INVITE_CODE => "The provided invite code is invalid.",
             TalliiError::UNAUTHORIZED => "User does not have the permissions to fulfill request.",
-            _ => "Oops, something seems to have gone wrong on our end."
+            _ => "Oops, something seems to have gone wrong on our end.",
         };
 
         // return the error
         TalliiError {
             code: self,
-            message: message.to_string()
+            message: message.to_string(),
         }
     }
 
@@ -51,7 +52,7 @@ impl TalliiErrorCode {
     pub fn message(self, message: String) -> TalliiError {
         TalliiError {
             code: self,
-            message
+            message,
         }
     }
 }

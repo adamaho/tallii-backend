@@ -13,11 +13,10 @@ pub struct Config {
     pub port: i16,
     pub database_url: String,
     pub jwt_secret: String,
-    pub hash_secret: String
+    pub hash_secret: String,
 }
 
 impl Config {
-
     /// Generates the config from the environment
     #[instrument]
     pub fn from_env() -> Result<Self, config::ConfigError> {
@@ -51,7 +50,7 @@ impl Config {
     pub fn get_crypto(&self) -> Crypto {
         Crypto {
             jwt_secret: Arc::new(self.jwt_secret.clone()),
-            hash_secret: Arc::new(self.hash_secret.clone())
+            hash_secret: Arc::new(self.hash_secret.clone()),
         }
-    } 
+    }
 }

@@ -3,12 +3,12 @@ use std::ops::Deref;
 use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
-use super::{Service, TalliiResponse};
+use super::{Service, AuthenticatedUser, TalliiResponse};
 
 use crate::crypto::{Crypto, TokenResponse};
 use crate::errors::TalliiError;
 use crate::models::invite_code::{CreateInviteCode, InviteCode};
-use crate::models::user::{NewUser, LoginUser};
+use crate::models::user::{LoginUser, NewUser};
 use crate::repositories::invite_code::InviteCodeRepository;
 use crate::repositories::user::UserRepository;
 
@@ -33,7 +33,7 @@ pub async fn check_invite_code(
     let repository = InviteCodeRepository::new(pool.deref().clone());
 
     // execute the query
-    let is_valid  = repository.is_valid(&code.id).await?;
+    let is_valid = repository.is_valid(&code.id).await?;
 
     // if not valid return an error
     if !is_valid {
@@ -62,9 +62,8 @@ pub async fn create_invite_codes(
 pub async fn login(
     pool: web::Data<PgPool>,
     crypto: web::Data<Crypto>,
-    web::Json(person): web::Json<LoginUser>
+    web::Json(person): web::Json<LoginUser>,
 ) -> Result<HttpResponse, TalliiError> {
-
     // get user repository
     let user_repo = UserRepository::new(pool.deref().clone());
 
@@ -77,7 +76,10 @@ pub async fn login(
     };
 
     // verify the provided password
-    if !crypto.verify_password(&person.password, &user.password).await? {
+    if !crypto
+        .verify_password(&person.password, &user.password)
+        .await?
+    {
         return Err(TalliiError::UNAUTHORIZED.default());
     }
 
@@ -88,13 +90,19 @@ pub async fn login(
     Ok(HttpResponse::Ok().json(TokenResponse { token }))
 }
 
+pub async fn test_me(
+    user: AuthenticatedUser
+) -> &'static str {
+    println!("{:?}", user);
+    "hello world"
+}
+
 /// Signs a user up with the provided credentials
 pub async fn signup(
     pool: web::Data<PgPool>,
     crypto: web::Data<Crypto>,
     web::Json(new_user): web::Json<NewUser>,
 ) -> TalliiResponse {
-
     // get the user and invite_code repository
     let user_repo = UserRepository::new(pool.deref().clone());
     let invite_code_repo = InviteCodeRepository::new(pool.deref().clone());
@@ -109,14 +117,16 @@ pub async fn signup(
 
     // check to make sure the invite code is not taken by another user
     if let Some(_) = user_repo.get_by_invite_code(&new_user.invite_code).await? {
-        return Err(TalliiError::INVALID_INVITE_CODE.default()); 
+        return Err(TalliiError::INVALID_INVITE_CODE.default());
     }
 
     // create the new user in the database
     let created_user = user_repo.create(new_user, &crypto).await?;
 
     // create a new jwt token for that user
-    let token = crypto.generate_jwt(created_user.user_id, created_user.username).await?;
+    let token = crypto
+        .generate_jwt(created_user.user_id, created_user.username)
+        .await?;
 
     // respond with the newly created token
     Ok(HttpResponse::Ok().json(TokenResponse { token }))
@@ -133,6 +143,7 @@ impl Service for Auth {
         )
         .service(web::resource("/invite-codes/new").route(web::post().to(create_invite_codes)))
         .service(web::resource("/login").route(web::post().to(login)))
+        .service(web::resource("/test").route(web::get().to(test_me)))
         .service(web::resource("/signup").route(web::post().to(signup)));
     }
 }

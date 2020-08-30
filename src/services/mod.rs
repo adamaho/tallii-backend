@@ -1,13 +1,12 @@
 use std::ops::Deref;
 
-use actix_web::{web, HttpResponse, HttpRequest, FromRequest};
 use actix_web::dev::Payload;
+use actix_web::{web, FromRequest, HttpRequest, HttpResponse};
 use actix_web_httpauth::extractors::bearer::BearerAuth;
-use futures::future::BoxFuture;
-use serde::Deserialize;
+use futures::future::{BoxFuture, ready};
 use sqlx::PgPool;
 
-use crate::crypto::{Crypto, Claims};
+use crate::crypto::Crypto;
 use crate::errors::TalliiError;
 use crate::repositories::user::UserRepository;
 
@@ -21,10 +20,10 @@ pub trait Service {
     fn define_routes(cfg: &mut web::ServiceConfig);
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug)]
 pub struct AuthenticatedUser {
     user_id: i32,
-    username: String
+    username: String,
 }
 
 impl FromRequest for AuthenticatedUser {
@@ -47,24 +46,33 @@ impl FromRequest for AuthenticatedUser {
             (Ok(b), Ok(p), Ok(c)) => {
                 let future = async move {
                     // get the claims
-                    let claims: Claims = c.verify_jwt(b.token().to_string())
+                    let token = c
+                        .verify_jwt(b.token().to_string())
                         .await
-                        .map(|data| data )
-                        .map_err(|_err| { TalliiError::UNAUTHORIZED.default() });
+                        .map_err(|_err| TalliiError::UNAUTHORIZED.default())?;
 
                     // get an instance of the user repo
-                    let user_repo = UserRepository::new(pool.deref().clone());
+                    let user_repo = UserRepository::new(p.deref().clone());
 
                     // check to make sure the provided username and user_id combo is valid
-                    user_repo.get_by_username_and_id(&claims.sub, &claims.username).await?
-                        .ok_or_else(|| {
-                            TalliiError::UNAUTHORIZED.default()
-                        });
+                    user_repo
+                        .get_by_username_and_id(&token.claims.sub, &token.claims.username)
+                        .await?
+                        .ok_or_else(|| { TalliiError::UNAUTHORIZED.default() })?;
 
-                    Ok()
+                    // return the authenticated user
+                    Ok(AuthenticatedUser {
+                        user_id: token.claims.sub,
+                        username: token.claims.username,
+                    })
                 };
 
                 Box::pin(future)
+            },
+            _ => {
+                // create the error by immediately returning from the future
+                let error = ready(Err(TalliiError::UNAUTHORIZED.default()));
+                Box::pin(error)
             }
         }
     }

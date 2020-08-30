@@ -5,7 +5,7 @@ use sqlx::PgPool;
 
 use crate::crypto::Crypto;
 use crate::errors::TalliiError;
-use crate::models::user::{NewUser, User, PublicUser};
+use crate::models::user::{NewUser, PublicUser, User};
 
 #[derive(Debug)]
 pub struct UserRepository {
@@ -20,47 +20,53 @@ impl UserRepository {
 
     /// Fetches a user with the provided email
     pub async fn get_by_email(&self, email: &String) -> Result<Option<User>, TalliiError> {
-        let user_with_email = sqlx::query_as::<_, User>(
-            "select * from users where email = $1"
-        )
-        .bind(email)
-        .fetch_optional(&*self.pool)
-        .await?;
+        let user_with_email = sqlx::query_as::<_, User>("select * from users where email = $1")
+            .bind(email)
+            .fetch_optional(&*self.pool)
+            .await?;
 
         Ok(user_with_email)
     }
 
     /// Fetches a username that matches the provided username and user_id.
-    pub async fn get_by_username_and_id(&self, user_id: i32, username: &String) -> Result<Option<User>, TalliiError> {
-        let user_with_id_and_username = sqlx::query_as::<_, User>(
-            "select * from users where user_id = $1 and username = $2"
-        )
-        .bind(user_id)
-        .bind(username)
-        .fetch_optional(&*self.pool)
-        .await?;
+    pub async fn get_by_username_and_id(
+        &self,
+        user_id: &i32,
+        username: &String,
+    ) -> Result<Option<User>, TalliiError> {
+        let user_with_id_and_username =
+            sqlx::query_as::<_, User>("select * from users where user_id = $1 and username = $2")
+                .bind(user_id)
+                .bind(username)
+                .fetch_optional(&*self.pool)
+                .await?;
 
         Ok(user_with_id_and_username)
     }
 
     /// Fetches a user that holds the provided invite code
-    pub async fn get_by_invite_code(&self, invite_code: &str) -> Result<Option<PublicUser>, TalliiError> {
-        let user_with_invite_code = sqlx::query_as::<_, PublicUser>(
-            "select * from users where invite_code = $1"
-        )
-        .bind(invite_code)
-        .fetch_optional(&*self.pool)
-        .await?;
+    pub async fn get_by_invite_code(
+        &self,
+        invite_code: &str,
+    ) -> Result<Option<PublicUser>, TalliiError> {
+        let user_with_invite_code =
+            sqlx::query_as::<_, PublicUser>("select * from users where invite_code = $1")
+                .bind(invite_code)
+                .fetch_optional(&*self.pool)
+                .await?;
 
         Ok(user_with_invite_code)
     }
 
     /// Creates a user
-    pub async fn create(&self, new_user: NewUser, crypto: &Crypto) -> Result<PublicUser, TalliiError> {
-
+    pub async fn create(
+        &self,
+        new_user: NewUser,
+        crypto: &Crypto,
+    ) -> Result<PublicUser, TalliiError> {
         // hash the password
         let hashed_password = crypto.hash_password(&new_user.password).await?;
-        
+
         // create the user and return the public user
         let user = sqlx::query_as::<_, PublicUser>(
             "insert into users (email, password, invite_code, username) values ($1, $2, $3, $4) returning user_id, avatar, email, username, taunt",
