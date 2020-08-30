@@ -3,7 +3,7 @@ use std::ops::Deref;
 use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
-use super::{Service, AuthenticatedUser, TalliiResponse};
+use super::{Service, TalliiResponse};
 
 use crate::crypto::{Crypto, TokenResponse};
 use crate::errors::TalliiError;
@@ -90,13 +90,6 @@ pub async fn login(
     Ok(HttpResponse::Ok().json(TokenResponse { token }))
 }
 
-pub async fn test_me(
-    user: AuthenticatedUser
-) -> &'static str {
-    println!("{:?}", user);
-    "hello world"
-}
-
 /// Signs a user up with the provided credentials
 pub async fn signup(
     pool: web::Data<PgPool>,
@@ -123,6 +116,8 @@ pub async fn signup(
     // create the new user in the database
     let created_user = user_repo.create(new_user, &crypto).await?;
 
+    // TODO: send verification email to user
+
     // create a new jwt token for that user
     let token = crypto
         .generate_jwt(created_user.user_id, created_user.username)
@@ -143,7 +138,6 @@ impl Service for Auth {
         )
         .service(web::resource("/invite-codes/new").route(web::post().to(create_invite_codes)))
         .service(web::resource("/login").route(web::post().to(login)))
-        .service(web::resource("/test").route(web::get().to(test_me)))
         .service(web::resource("/signup").route(web::post().to(signup)));
     }
 }
