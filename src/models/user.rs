@@ -10,7 +10,7 @@ pub struct User {
     pub invite_code: String,
     pub username: String,
     pub taunt: Option<String>,
-    pub verified: bool,
+    pub verified: Option<bool>,
     pub created_at: chrono::NaiveDateTime,
 }
 
@@ -21,7 +21,7 @@ pub struct PublicUser {
     pub avatar: Option<String>,
     pub email: String,
     pub username: String,
-    pub verified: bool,
+    pub verified: Option<bool>,
     pub taunt: Option<String>,
 }
 

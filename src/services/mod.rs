@@ -11,6 +11,7 @@ use crate::errors::TalliiError;
 use crate::repositories::user::UserRepository;
 
 pub mod auth;
+pub mod group;
 
 type TalliiResponse = Result<HttpResponse, TalliiError>;
 

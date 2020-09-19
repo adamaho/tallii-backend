@@ -69,7 +69,7 @@ impl UserRepository {
 
         // create the user and return the public user
         let user = sqlx::query_as::<_, PublicUser>(
-            "insert into users (email, password, invite_code, username) values ($1, $2, $3, $4) returning user_id, avatar, email, username, taunt",
+            "insert into users (email, password, invite_code, username) values ($1, $2, $3, $4) returning user_id, avatar, email, username, taunt, verified",
         )
         .bind(new_user.email)
         .bind(hashed_password)

@@ -9,7 +9,7 @@ mod repositories;
 mod services;
 
 // bring in the service trait
-use crate::services::{auth::Auth, Service};
+use crate::services::{auth::AuthService, group::GroupService, Service};
 
 #[actix_rt::main]
 #[instrument]
@@ -36,7 +36,9 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .data(pool.clone())
             .data(crypto.clone())
-            .service(web::scope("/auth").configure(Auth::define_routes))
+            .service(web::scope("/auth").configure(AuthService::define_routes)
+            .service(web::scope("/groups").configure(GroupService::define_routes))
+        )
     })
     .bind(format!("{}:{}", config.hostname, config.port))?
     .run()

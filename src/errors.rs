@@ -73,7 +73,8 @@ impl From<jsonwebtoken::errors::Error> for TalliiError {
 
 /// Converts a sqlx error into a TalliiError
 impl From<sqlx::error::Error> for TalliiError {
-    fn from(_error: sqlx::error::Error) -> TalliiError {
+    fn from(error: sqlx::error::Error) -> TalliiError {
+        println!("{:?}", error);
         TalliiError::INTERNAL_SERVER_ERROR.default()
     }
 }

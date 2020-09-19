@@ -12,7 +12,7 @@ create table users (
   invite_code varchar not null unique references invite_codes(id),
   username varchar(40) not null unique,
   taunt text,
-  verified boolean not null default false,
+  verified boolean default false,
   created_at timestamp not null default current_timestamp
 );
 

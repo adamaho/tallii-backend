@@ -15,7 +15,7 @@ POST {{baseUrl}}/auth/invite-codes HTTP/1.1
 content-type: application/json
 
 {
-    "id": "vIw5sms"
+    "id": "IVllaj"
 }
 
 ###
@@ -33,10 +33,10 @@ POST {{baseUrl}}/auth/signup HTTP/1.1
 content-type: application/json
 
 {
-    "email": "foo@bar.com",
-    "invite_code": "gCvfNp",
+    "email": "foo1@bar.com",
+    "invite_code": "_6P2GL",
     "password": "password",
-    "username": "foo.bar"
+    "username": "foo1.bar"
 }
 
 ###

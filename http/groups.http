@@ -1,0 +1,7 @@
+@baseUrl = http://localhost:8000
+
+GET {{baseUrl}}/groups HTTP/1.1
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjMsInVzZXJuYW1lIjoiZm9vLmJhciIsImV4cCI6MTU5ODg5NTExNn0.Fpn526TbJCNAobD3en5b0vABapphla0YkEVgd5NKuFI
+content-type: application/json
+
+###

@@ -113,6 +113,8 @@ pub async fn signup(
         return Err(TalliiError::INVALID_INVITE_CODE.default());
     }
 
+    println!("hereee from error");
+
     // create the new user in the database
     let created_user = user_repo.create(new_user, &crypto).await?;
 
@@ -127,9 +129,9 @@ pub async fn signup(
     Ok(HttpResponse::Ok().json(TokenResponse { token }))
 }
 
-pub struct Auth;
+pub struct AuthService;
 
-impl Service for Auth {
+impl Service for AuthService {
     fn define_routes(cfg: &mut web::ServiceConfig) {
         cfg.service(
             web::resource("/invite-codes")
