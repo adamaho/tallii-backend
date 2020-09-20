@@ -3,7 +3,7 @@ use std::ops::Deref;
 use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
-use super::{Service, TalliiResponse};
+use super::TalliiResponse;
 
 use crate::crypto::{Crypto, TokenResponse};
 use crate::errors::TalliiError;
@@ -125,19 +125,4 @@ pub async fn signup(
 
     // respond with the newly created token
     Ok(HttpResponse::Ok().json(TokenResponse { token }))
-}
-
-pub struct AuthService;
-
-impl Service for AuthService {
-    fn define_routes(cfg: &mut web::ServiceConfig) {
-        cfg.service(
-            web::resource("/invite-codes")
-                .route(web::post().to(check_invite_code))
-                .route(web::get().to(get_all_invite_codes)),
-        )
-        .service(web::resource("/invite-codes/new").route(web::post().to(create_invite_codes)))
-        .service(web::resource("/login").route(web::post().to(login)))
-        .service(web::resource("/signup").route(web::post().to(signup)));
-    }
 }

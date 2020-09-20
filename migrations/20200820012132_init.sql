@@ -16,6 +16,23 @@ create table users (
   created_at timestamp not null default current_timestamp
 );
 
+-- Groups
+create table groups (
+  group_id serial primary key,
+  name varchar(40) not null,
+  description text,
+  avatar text,
+  created_at timestamp not null default current_timestamp
+);
+
+-- Groups Users
+create table groups_users (
+  group_id integer,
+  user_id integer,
+  type: varchar(10),
+  created_at timestamp not null default current_timestamp
+);
+
 -- Friends
 -- create table friends (
 --   user_id integer not null references users(user_id),
@@ -23,16 +40,6 @@ create table users (
 --   friend_status text not null,
 --   created_at timestamp not null default current_timestamp,
 --   primary key (user_id, friend_id)
--- );
-
-
--- Groups
--- create table groups (
---   group_id serial primary key,
---   name text not null,
---   description text,
---   avatar text,
---   created_at timestamp not null default current_timestamp
 -- );
 
 -- Group Users

@@ -15,7 +15,7 @@ pub struct Group {
 pub struct NewGroup {
     pub name: String,
     pub description: Option<String>,
-    pub avatar: Option<String>
+    pub avatar: Option<String>,
 }
 
 /// Representation of an User to Update

@@ -1,7 +1,18 @@
 @baseUrl = http://localhost:8000
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjMsInVzZXJuYW1lIjoiZm9vMi5iYXIiLCJleHAiOjE2MDA2NDg3NDN9.d-m2D-6W8QaligqXU0Rvm07PF1I75Fj-KM20DHdTVRg
 
-GET {{baseUrl}}/groups/ HTTP/1.1
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDA1NjkwNTJ9.lb4iGolQNXpHrx--YbmzXU8xq-P2bRnfEVVbeRVDd3g
+### Get Groups
+
+GET {{baseUrl}}/api/v1/groups HTTP/1.1
+Authorization: Bearer {{token}}
 content-type: application/json
 
-###
+### Create Group
+POST {{baseUrl}}/api/v1/groups HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+    "name": "Group 1",
+    "description": "This is the description of the group"
+}

@@ -3,7 +3,7 @@ use std::ops::Deref;
 use actix_web::dev::Payload;
 use actix_web::{web, FromRequest, HttpRequest, HttpResponse};
 use actix_web_httpauth::extractors::bearer::BearerAuth;
-use futures::future::{BoxFuture, ready};
+use futures::future::{ready, BoxFuture};
 use sqlx::PgPool;
 
 use crate::crypto::Crypto;
@@ -11,15 +11,9 @@ use crate::errors::TalliiError;
 use crate::repositories::user::UserRepository;
 
 pub mod auth;
-pub mod group;
+pub mod groups;
 
 type TalliiResponse = Result<HttpResponse, TalliiError>;
-
-/// Representation of a Service
-pub trait Service {
-    /// Defines the routes associated with the service
-    fn define_routes(cfg: &mut web::ServiceConfig);
-}
 
 #[derive(Debug)]
 pub struct AuthenticatedUser {
@@ -59,7 +53,7 @@ impl FromRequest for AuthenticatedUser {
                     user_repo
                         .get_by_username_and_id(&token.claims.sub, &token.claims.username)
                         .await?
-                        .ok_or_else(|| { TalliiError::UNAUTHORIZED.default() })?;
+                        .ok_or_else(|| TalliiError::UNAUTHORIZED.default())?;
 
                     // return the authenticated user
                     Ok(AuthenticatedUser {
@@ -69,7 +63,7 @@ impl FromRequest for AuthenticatedUser {
                 };
 
                 Box::pin(future)
-            },
+            }
             _ => {
                 // create the error by immediately returning from the future
                 let error = ready(Err(TalliiError::UNAUTHORIZED.default()));
