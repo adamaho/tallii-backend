@@ -14,5 +14,19 @@ content-type: application/json
 
 {
     "name": "Group 1",
-    "description": "This is the description of the group"
+    "description": "This is the description of the group",
+    "members": [
+        {
+            "user_id": 1,
+            "user_type": "owner",
+        },
+                {
+            "user_id": 2,
+            "user_type": "member",
+        },
+                {
+            "user_id": 3,
+            "user_type": "participant",
+        }
+    ]
 }

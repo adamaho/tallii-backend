@@ -29,7 +29,7 @@ create table groups (
 create table groups_users (
   group_id integer,
   user_id integer,
-  type: varchar(10),
+  user_type: varchar(10),
   created_at timestamp not null default current_timestamp
 );
 
