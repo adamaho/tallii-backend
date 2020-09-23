@@ -15,27 +15,22 @@ pub async fn create_group(
     new_group: web::Data<NewGroup>,
     user: AuthenticatedUser,
 ) -> TalliiResponse {
-
     // start the transaction
-    let tx = pool.begin().await?;
+    let mut tx = pool.begin().await?;
 
-    // group repo
-    let group_repo = GroupRepository::new(&mut tx);
+    // // group users
+    // let group_users_repo = GroupUsersRepository::new(tx.clone());
 
-    // group users
-    let group_users_repo = GroupUsersRepository::new(tx.clone());
-
-    // create new group
-    let new_created_group = group_repo.create_group(&new_group).await?;
+    // create new group in the transaction
+    let created_group = GroupRepository::create_group_in_tx(&mut tx, &new_group).await?;
 
     // create group user with owner being the current user
-    let new_group_users = group_users_repo
-        .create_group_users(&user, &new_created_group.group_id, &new_group.members)
-        .await?;
+    // let new_group_users = GroupUsersRepository::create_group_users(&mut tx, &user, &new_created_group.group_id, &new_group.members)
+    //     .await?;
 
     // combine users and group together to form final response
 
-    Ok(HttpResponse::Ok().json(new_created_group))
+    Ok(HttpResponse::Ok().finish())
 }
 
 /// Creates a new group
