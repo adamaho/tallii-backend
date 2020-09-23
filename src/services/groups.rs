@@ -22,7 +22,7 @@ pub async fn create_group(
     // let group_users_repo = GroupUsersRepository::new(tx.clone());
 
     // create new group in the transaction
-    let created_group = GroupRepository::create_group_in_tx(&mut tx, &new_group).await?;
+    let created_group = GroupRepository::create_group(&mut tx, &new_group).await?;
 
     // create group user with owner being the current user
     // let new_group_users = GroupUsersRepository::create_group_users(&mut tx, &user, &new_created_group.group_id, &new_group.members)
