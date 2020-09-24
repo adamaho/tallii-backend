@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8000
-@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjMsInVzZXJuYW1lIjoiZm9vMi5iYXIiLCJleHAiOjE2MDA2NDg3NDN9.d-m2D-6W8QaligqXU0Rvm07PF1I75Fj-KM20DHdTVRg
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vLmJhciIsImV4cCI6MTYwMTA1OTI1Nn0.Jy5S72GOKqk_dZ9gJu8Mjll9cU4HrVh7-c26iqZYJPE
 
 ### Get Groups
 
@@ -13,20 +13,12 @@ Authorization: Bearer {{token}}
 content-type: application/json
 
 {
-    "name": "Group 1",
+    "name": "Group 120",
     "description": "This is the description of the group",
     "members": [
         {
             "user_id": 1,
-            "user_type": "owner",
-        },
-                {
-            "user_id": 2,
-            "user_type": "member",
-        },
-                {
-            "user_id": 3,
-            "user_type": "participant",
+            "user_type": "owner"
         }
     ]
 }
