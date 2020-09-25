@@ -17,8 +17,8 @@ type TalliiResponse = Result<HttpResponse, TalliiError>;
 
 #[derive(Debug)]
 pub struct AuthenticatedUser {
-    user_id: i32,
-    username: String,
+    pub user_id: i32,
+    pub username: String,
 }
 
 impl FromRequest for AuthenticatedUser {

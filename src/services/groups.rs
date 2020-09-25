@@ -17,10 +17,10 @@ pub async fn create_group(
     let mut tx = pool.begin().await?;
 
     // create new group in the transaction
-    let created_group = GroupRepository::create_group(&mut tx, &new_group).await?;
+    let created_group = GroupRepository::create(&mut tx, &new_group).await?;
 
     // create a new group with the owner being the current user
-    let created_group_users = GroupUsersRepository::create_group_users(
+    let created_group_users = GroupUsersRepository::create(
         &mut tx,
         created_group.group_id,
         &new_group.members,
@@ -42,10 +42,10 @@ pub async fn create_group(
     Ok(HttpResponse::Ok().json(response))
 }
 
-/// Creates a new group
+/// Gets all groups that are associated with the requesting user
 pub async fn get_groups(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
-    println!("made it past");
-    Ok(HttpResponse::Ok().finish())
+    let groups = GroupRepository::get_by_user_id(&pool, &user).await?;
+    Ok(HttpResponse::Ok().json(groups))
 }
 
 /// Creates a new group

@@ -9,7 +9,7 @@ pub struct GroupUsersRepository;
 
 impl GroupUsersRepository {
     /// Creates a new group in the database
-    pub async fn create_group_users(
+    pub async fn create(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
         group_id: i32,
         group_users: &Vec<NewGroupUser>,

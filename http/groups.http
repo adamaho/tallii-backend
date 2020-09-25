@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8000
-@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vLmJhciIsImV4cCI6MTYwMTA1OTI1Nn0.Jy5S72GOKqk_dZ9gJu8Mjll9cU4HrVh7-c26iqZYJPE
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vLmJhciIsImV4cCI6MTYwMTE1Mjk2OH0.lP_zzmhlcG3R7k8hYprg98hza_6EK5glM7GUk1nS1ug
 
 ### Get Groups
 
