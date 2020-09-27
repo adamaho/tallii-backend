@@ -29,10 +29,10 @@ POST {{baseUrl}}/api/v1/signup HTTP/1.1
 content-type: application/json
 
 {
-    "email": "foo@bar.com",
-    "invite_code": "hQu_qf",
+    "email": "foo1@bar.com",
+    "invite_code": "cWVDxO",
     "password": "password",
-    "username": "foo.bar"
+    "username": "foo1.bar"
 }
 
 ### Log user in

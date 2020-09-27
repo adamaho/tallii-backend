@@ -4,7 +4,7 @@ use sqlx::postgres::{PgConnection, PgQueryAs};
 use sqlx::Transaction;
 
 use crate::errors::TalliiError;
-use crate::models::group::{Group, NewGroup};
+use crate::models::group::{Group, NewGroup, EditGroup};
 use crate::services::AuthenticatedUser;
 
 pub struct GroupRepository;
@@ -46,5 +46,21 @@ impl GroupRepository {
         .await?;
 
         Ok(groups)
+    }
+
+    pub async fn update(
+        pool: &PgPool,
+        group_id: i32,
+        group: &EditGroup,
+    ) -> Result<Group, TalliiError> {
+        let updated_group = sqlx::query_as::<_, Group>("update groups set name = $1, description = $2, avatar = $3 where group_id = $4 returning *")
+            .bind(&group.name)
+            .bind(&group.description)
+            .bind(&group.avatar)
+            .bind(group_id)
+            .fetch_one(pool)
+            .await?;
+        
+        Ok(updated_group)
     }
 }

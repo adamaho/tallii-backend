@@ -21,14 +21,17 @@ pub struct NewGroup {
     pub members: Vec<NewGroupUser>,
 }
 
-/// Representation of an Group to Update
+/// Representation of an Group to update
 #[derive(Debug, Deserialize)]
 pub struct EditGroup {
-    pub avatar: String,
-    pub taunt: String,
+    pub group_id: i32,
+    pub avatar: Option<String>,
+    pub name: Option<String>,
+    pub description: Option<String>,
+    pub created_at: Option<chrono::NaiveDateTime>
 }
 
-/// Representation of a GroupResponsePayload
+/// Representation of a GroupResponsePayload and is returned when a group is created
 #[derive(Debug, Serialize)]
 pub struct GroupResponsePayload {
     pub group_id: i32,

@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8000
-@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vLmJhciIsImV4cCI6MTYwMTE1Mjk2OH0.lP_zzmhlcG3R7k8hYprg98hza_6EK5glM7GUk1nS1ug
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vLmJhciIsImV4cCI6MTYwMTMwOTUwNX0.qIOGHrMjxIQ9Sy7nnkefIcy6PNVmPtzg3ArMpOIQ268
 
 ### Get Groups
 
@@ -13,12 +13,28 @@ Authorization: Bearer {{token}}
 content-type: application/json
 
 {
-    "name": "Group 120",
+    "name": "Group 121",
     "description": "This is the description of the group",
     "members": [
         {
             "user_id": 1,
             "user_type": "owner"
+        },
+        {
+            "user_id": 2,
+            "user_type": "member"
         }
     ]
+}
+
+
+### Update an existing Group
+PUT {{baseUrl}}/api/v1/groups/1 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+    "group_id": 1,
+    "name": "Aho Group Update",
+    "description": "What a description"
 }

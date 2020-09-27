@@ -3,9 +3,10 @@ use sqlx::PgPool;
 
 use super::{AuthenticatedUser, TalliiResponse};
 
-use crate::models::group::{NewGroup, GroupResponsePayload};
+use crate::errors::TalliiError;
+use crate::models::group::{NewGroup, EditGroup, GroupResponsePayload};
 use crate::repositories::group::GroupRepository;
-use crate::repositories::group_users::GroupUsersRepository;
+use crate::repositories::group_user::GroupUsersRepository;
 
 /// Creates a new group
 pub async fn create_group(
@@ -48,9 +49,20 @@ pub async fn get_groups(pool: web::Data<PgPool>, user: AuthenticatedUser) -> Tal
     Ok(HttpResponse::Ok().json(groups))
 }
 
-/// Creates a new group
-pub async fn update_group(pool: web::Data<PgPool>) -> TalliiResponse {
-    Ok(HttpResponse::Ok().finish())
+/// Updates a new group
+pub async fn update_group(user: AuthenticatedUser, pool: web::Data<PgPool>, group_id: web::Path<i32>, group: web::Json<EditGroup>) -> TalliiResponse {
+    // assign the inner i32 to a new spot in memory
+    let id = group_id.into_inner();
+
+    // check to make sure the user is an owner of the group before updating it
+    if GroupUsersRepository::check_ownership(&pool, &user, id).await? == false {
+        return Err(TalliiError::UNAUTHORIZED.default());
+    }
+
+    // update the group
+    let updated_group = GroupRepository::update(&pool, id, &group).await?;
+    
+    Ok(HttpResponse::Ok().json(updated_group))
 }
 
 /// Creates a new group

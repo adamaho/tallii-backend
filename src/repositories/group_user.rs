@@ -1,14 +1,16 @@
+use sqlx::PgPool;
 use sqlx::pool::PoolConnection;
 use sqlx::postgres::{PgConnection, PgQueryAs};
 use sqlx::Transaction;
 
 use crate::errors::TalliiError;
 use crate::models::group_user::{GroupUser, NewGroupUser};
+use crate::services::AuthenticatedUser;
 
 pub struct GroupUsersRepository;
 
 impl GroupUsersRepository {
-    /// Creates a new group in the database
+    /// Creates a group_users in the database
     pub async fn create(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
         group_id: i32,
@@ -37,5 +39,24 @@ impl GroupUsersRepository {
             .await?;
 
         Ok(created_group_users)
+    }
+
+    ///  Checks if the requesting user has the permission to modify the group
+    pub async fn check_ownership(pool: &PgPool, user: &AuthenticatedUser, group_id: i32) -> Result<bool, TalliiError> {
+
+        // query
+        let member = sqlx::query_as::<_, GroupUser>("select * from groups_users where group_id = $1 and user_id = $2 and user_type = 'owner'")
+            .bind(group_id)
+            .bind(user.user_id)
+            .fetch_optional(pool)
+            .await?;
+
+        // if a row isn't returned then user isnt a part of the group or is not an owner
+        if let None = member {
+            return Ok(false);
+        }
+
+        // user is owner
+        Ok(true)
     }
 }
