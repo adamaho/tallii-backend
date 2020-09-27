@@ -13,12 +13,16 @@ impl GroupUsersRepository {
     /// Creates a group_users in the database
     pub async fn create(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
+        user: &AuthenticatedUser,
         group_id: i32,
         group_users: &Vec<NewGroupUser>,
     ) -> Result<Vec<GroupUser>, TalliiError> {
         // create a string with the query
         let mut query =
             String::from("insert into groups_users (group_id, user_id, user_type) values ");
+
+        // add the user that is creating the group as the owner
+        query.push_str(&format!("({}, {}, 'owner'), ", group_id, user.user_id));
 
         // create the queries for each of the new members and add them to the vector
         for (i, user) in group_users.iter().enumerate() {

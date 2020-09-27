@@ -38,6 +38,6 @@ pub struct GroupResponsePayload {
     pub name: String,
     pub description: Option<String>,
     pub avatar: Option<String>,
-    pub members: Vec<GroupUser>,
     pub created_at: chrono::NaiveDateTime,
+    pub members: Vec<GroupUser>,
 }

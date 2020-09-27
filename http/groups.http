@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8000
-@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vLmJhciIsImV4cCI6MTYwMTMxMjE5MX0.r8opd6OJ8dwfIOjkurVQztmtFKQVZ4B3PiQKjDwPmiM
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vLmJhciIsImV4cCI6MTYwMTMxOTU5MH0.Y57rtQ78iMIOQD8oGe6PJEDV2cpq2_iSi9QZa5MrBgo
 
 ### Get Groups
 
@@ -16,10 +16,6 @@ content-type: application/json
     "name": "Group 121",
     "description": "This is the description of the group",
     "members": [
-        {
-            "user_id": 1,
-            "user_type": "owner"
-        },
         {
             "user_id": 2,
             "user_type": "member"

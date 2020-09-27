@@ -12,7 +12,7 @@ use crate::repositories::group_user::GroupUsersRepository;
 pub async fn create_group(
     pool: web::Data<PgPool>,
     new_group: web::Json<NewGroup>,
-    _user: AuthenticatedUser,
+    user: AuthenticatedUser,
 ) -> TalliiResponse {
     // start the transaction
     let mut tx = pool.begin().await?;
@@ -22,7 +22,8 @@ pub async fn create_group(
 
     // create a new group with the owner being the current user
     let created_group_users =
-        GroupUsersRepository::create(&mut tx, created_group.group_id, &new_group.members).await?;
+        GroupUsersRepository::create(&mut tx, &user, created_group.group_id, &new_group.members)
+            .await?;
 
     tx.commit().await?;
 
