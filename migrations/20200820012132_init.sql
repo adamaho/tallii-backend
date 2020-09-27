@@ -27,7 +27,7 @@ create table groups (
 
 -- Groups Users
 create table groups_users (
-  group_id integer not null references groups(group_id),
+  group_id integer not null references groups(group_id) on delete cascade,
   user_id integer not null references users(user_id),
   user_type varchar(40),
   created_at timestamp not null default current_timestamp

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models::group_user::{NewGroupUser, GroupUser};
+use crate::models::group_user::{GroupUser, NewGroupUser};
 
 /// Database representation of a Group
 #[derive(sqlx::FromRow, Debug, Serialize)]
@@ -28,7 +28,7 @@ pub struct EditGroup {
     pub avatar: Option<String>,
     pub name: Option<String>,
     pub description: Option<String>,
-    pub created_at: Option<chrono::NaiveDateTime>
+    pub created_at: Option<chrono::NaiveDateTime>,
 }
 
 /// Representation of a GroupResponsePayload and is returned when a group is created

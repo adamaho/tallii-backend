@@ -1,6 +1,6 @@
-use sqlx::PgPool;
 use sqlx::pool::PoolConnection;
 use sqlx::postgres::{PgConnection, PgQueryAs};
+use sqlx::PgPool;
 use sqlx::Transaction;
 
 use crate::errors::TalliiError;
@@ -42,8 +42,11 @@ impl GroupUsersRepository {
     }
 
     ///  Checks if the requesting user has the permission to modify the group
-    pub async fn check_ownership(pool: &PgPool, user: &AuthenticatedUser, group_id: i32) -> Result<bool, TalliiError> {
-
+    pub async fn check_ownership(
+        pool: &PgPool,
+        user: &AuthenticatedUser,
+        group_id: i32,
+    ) -> Result<bool, TalliiError> {
         // query
         let member = sqlx::query_as::<_, GroupUser>("select * from groups_users where group_id = $1 and user_id = $2 and user_type = 'owner'")
             .bind(group_id)

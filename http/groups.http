@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8000
-@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vLmJhciIsImV4cCI6MTYwMTMwOTUwNX0.qIOGHrMjxIQ9Sy7nnkefIcy6PNVmPtzg3ArMpOIQ268
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vLmJhciIsImV4cCI6MTYwMTMxMjE5MX0.r8opd6OJ8dwfIOjkurVQztmtFKQVZ4B3PiQKjDwPmiM
 
 ### Get Groups
 
@@ -38,3 +38,8 @@ content-type: application/json
     "name": "Aho Group Update",
     "description": "What a description"
 }
+
+### Delete a group
+DELETE {{baseUrl}}/api/v1/groups/1 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json

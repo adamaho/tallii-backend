@@ -4,7 +4,7 @@ use sqlx::PgPool;
 use super::{AuthenticatedUser, TalliiResponse};
 
 use crate::errors::TalliiError;
-use crate::models::group::{NewGroup, EditGroup, GroupResponsePayload};
+use crate::models::group::{EditGroup, GroupResponsePayload, NewGroup};
 use crate::repositories::group::GroupRepository;
 use crate::repositories::group_user::GroupUsersRepository;
 
@@ -21,12 +21,8 @@ pub async fn create_group(
     let created_group = GroupRepository::create(&mut tx, &new_group).await?;
 
     // create a new group with the owner being the current user
-    let created_group_users = GroupUsersRepository::create(
-        &mut tx,
-        created_group.group_id,
-        &new_group.members,
-    )
-    .await?;
+    let created_group_users =
+        GroupUsersRepository::create(&mut tx, created_group.group_id, &new_group.members).await?;
 
     tx.commit().await?;
 
@@ -37,7 +33,7 @@ pub async fn create_group(
         description: created_group.description,
         avatar: created_group.avatar,
         members: created_group_users,
-        created_at: created_group.created_at
+        created_at: created_group.created_at,
     };
 
     Ok(HttpResponse::Ok().json(response))
@@ -50,7 +46,12 @@ pub async fn get_groups(pool: web::Data<PgPool>, user: AuthenticatedUser) -> Tal
 }
 
 /// Updates a new group
-pub async fn update_group(user: AuthenticatedUser, pool: web::Data<PgPool>, group_id: web::Path<i32>, group: web::Json<EditGroup>) -> TalliiResponse {
+pub async fn update_group(
+    user: AuthenticatedUser,
+    pool: web::Data<PgPool>,
+    group_id: web::Path<i32>,
+    group: web::Json<EditGroup>,
+) -> TalliiResponse {
     // assign the inner i32 to a new spot in memory
     let id = group_id.into_inner();
 
@@ -61,11 +62,27 @@ pub async fn update_group(user: AuthenticatedUser, pool: web::Data<PgPool>, grou
 
     // update the group
     let updated_group = GroupRepository::update(&pool, id, &group).await?;
-    
+
     Ok(HttpResponse::Ok().json(updated_group))
 }
 
 /// Creates a new group
-pub async fn delete_group(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
+pub async fn delete_group(
+    user: AuthenticatedUser,
+    pool: web::Data<PgPool>,
+    group_id: web::Path<i32>
+) -> TalliiResponse {
+
+    // assign the inner i32 to a new spot in memory
+    let id = group_id.into_inner();
+
+    // check to make sure the user is an owner of the group before updating it
+    if GroupUsersRepository::check_ownership(&pool, &user, id).await? == false {
+        return Err(TalliiError::UNAUTHORIZED.default());
+    }
+
+    // delete the group
+    GroupRepository::delete(&pool, id).await?;
+
     Ok(HttpResponse::Ok().finish())
 }

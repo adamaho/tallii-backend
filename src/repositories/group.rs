@@ -1,10 +1,10 @@
-use sqlx::PgPool;
 use sqlx::pool::PoolConnection;
 use sqlx::postgres::{PgConnection, PgQueryAs};
+use sqlx::PgPool;
 use sqlx::Transaction;
 
 use crate::errors::TalliiError;
-use crate::models::group::{Group, NewGroup, EditGroup};
+use crate::models::group::{EditGroup, Group, NewGroup};
 use crate::services::AuthenticatedUser;
 
 pub struct GroupRepository;
@@ -39,7 +39,7 @@ impl GroupRepository {
                 from groups
                 left join groups_users on groups.group_id = groups_users.group_id
                 where user_id = $1;
-            "#
+            "#,
         )
         .bind(user.user_id)
         .fetch_all(pool)
@@ -48,6 +48,7 @@ impl GroupRepository {
         Ok(groups)
     }
 
+    /// Updates a group
     pub async fn update(
         pool: &PgPool,
         group_id: i32,
@@ -60,7 +61,21 @@ impl GroupRepository {
             .bind(group_id)
             .fetch_one(pool)
             .await?;
-        
+
         Ok(updated_group)
+    }
+
+
+    /// Deletes a group
+    pub async fn delete(
+        pool: &PgPool,
+        group_id: i32
+    ) -> Result<(), TalliiError> {
+        sqlx::query_as::<_, Group>("delete from groups where group_id = $1")
+            .bind(group_id)
+            .fetch_one(pool)
+            .await?;
+
+        Ok(())
     }
 }
