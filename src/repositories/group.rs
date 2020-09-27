@@ -65,15 +65,11 @@ impl GroupRepository {
         Ok(updated_group)
     }
 
-
     /// Deletes a group
-    pub async fn delete(
-        pool: &PgPool,
-        group_id: i32
-    ) -> Result<(), TalliiError> {
-        sqlx::query_as::<_, Group>("delete from groups where group_id = $1")
+    pub async fn delete(pool: &PgPool, group_id: i32) -> Result<(), TalliiError> {
+        sqlx::query("delete from groups where group_id = $1")
             .bind(group_id)
-            .fetch_one(pool)
+            .execute(pool)
             .await?;
 
         Ok(())

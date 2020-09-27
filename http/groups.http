@@ -40,6 +40,6 @@ content-type: application/json
 }
 
 ### Delete a group
-DELETE {{baseUrl}}/api/v1/groups/1 HTTP/1.1
+DELETE {{baseUrl}}/api/v1/groups/3 HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json

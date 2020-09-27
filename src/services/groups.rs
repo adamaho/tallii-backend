@@ -70,9 +70,8 @@ pub async fn update_group(
 pub async fn delete_group(
     user: AuthenticatedUser,
     pool: web::Data<PgPool>,
-    group_id: web::Path<i32>
+    group_id: web::Path<i32>,
 ) -> TalliiResponse {
-
     // assign the inner i32 to a new spot in memory
     let id = group_id.into_inner();
 
