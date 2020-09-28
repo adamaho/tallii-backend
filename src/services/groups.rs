@@ -5,6 +5,7 @@ use super::{AuthenticatedUser, TalliiResponse};
 
 use crate::errors::TalliiError;
 use crate::models::group::{EditGroup, GroupResponsePayload, NewGroup};
+use crate::models::group_member::NewGroupMember;
 use crate::repositories::group::GroupRepository;
 use crate::repositories::group_member::GroupMembersRepository;
 
@@ -22,7 +23,7 @@ pub async fn create_group(
 
     // create a new group with the owner being the current user
     let created_group_users =
-        GroupMembersRepository::create(&mut tx, &user, created_group.group_id, &new_group.members)
+        GroupMembersRepository::create_many(&mut tx, &user, created_group.group_id, &new_group.members)
             .await?;
 
     tx.commit().await?;
@@ -37,7 +38,7 @@ pub async fn create_group(
         created_at: created_group.created_at,
     };
 
-    Ok(HttpResponse::Ok().json(response))
+    Ok(HttpResponse::Created().json(response))
 }
 
 /// Gets all groups that are associated with the requesting user
@@ -67,7 +68,7 @@ pub async fn update_group(
     Ok(HttpResponse::Ok().json(updated_group))
 }
 
-/// Creates a new group
+/// Deletes a group
 pub async fn delete_group(
     user: AuthenticatedUser,
     pool: web::Data<PgPool>,
@@ -85,4 +86,24 @@ pub async fn delete_group(
     GroupRepository::delete(&pool, id).await?;
 
     Ok(HttpResponse::Ok().finish())
+}
+
+/// Creates a new group member
+pub async fn create_group_member(
+    user: AuthenticatedUser,
+    pool: web::Data<PgPool>,
+    group_id: web::Path<i32>,
+    member: web::Json<NewGroupMember>
+) -> TalliiResponse {
+    // assign the inner i32 to a new spot in memory
+    let id = group_id.into_inner();
+
+    // check to make sure the user is an owner of the group before updating it
+    if GroupMembersRepository::check_ownership(&pool, &user, id).await? == false {
+        return Err(TalliiError::UNAUTHORIZED.default());
+    }
+
+    GroupMembersRepository::create_one(&pool, id, &member).await?;
+
+    Ok(HttpResponse::Created().finish())
 }

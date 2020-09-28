@@ -11,7 +11,7 @@ pub struct GroupMembersRepository;
 
 impl GroupMembersRepository {
     /// Creates a group_users in the database
-    pub async fn create(
+    pub async fn create_many(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
         user: &AuthenticatedUser,
         group_id: i32,
@@ -19,7 +19,7 @@ impl GroupMembersRepository {
     ) -> Result<Vec<GroupMember>, TalliiError> {
         // create a string with the query
         let mut query =
-            String::from("insert into groups_users (group_id, user_id, user_type) values ");
+            String::from("insert into groups_members (group_id, user_id, user_type) values ");
 
         // add the user that is creating the group as the owner
         query.push_str(&format!("({}, {}, 'owner'), ", group_id, user.user_id));
@@ -45,6 +45,24 @@ impl GroupMembersRepository {
         Ok(created_group_users)
     }
 
+    /// Creates a group_users in the database
+    pub async fn create_one(
+        pool: &PgPool,
+        group_id: i32,
+        group_member: &NewGroupMember
+    ) -> Result<(), TalliiError> {
+
+        // create a new member
+        let new_member = sqlx::query("insert into groups_members (group_id, user_id, user_type) values $1, $2, $3")
+            .bind(group_id)
+            .bind(&group_member.user_id)
+            .bind(&group_member.user_type)
+            .execute(pool)
+            .await?;
+
+        Ok(())
+    }
+
     ///  Checks if the requesting user has the permission to modify the group
     pub async fn check_ownership(
         pool: &PgPool,
@@ -52,7 +70,7 @@ impl GroupMembersRepository {
         group_id: i32,
     ) -> Result<bool, TalliiError> {
         // query
-        let member = sqlx::query_as::<_, GroupMember>("select * from groups_users where group_id = $1 and user_id = $2 and user_type = 'owner'")
+        let member = sqlx::query_as::<_, GroupMember>("select * from groups_members where group_id = $1 and user_id = $2 and user_type = 'owner'")
             .bind(group_id)
             .bind(user.user_id)
             .fetch_optional(pool)
