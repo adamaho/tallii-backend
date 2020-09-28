@@ -6,7 +6,7 @@ use super::{AuthenticatedUser, TalliiResponse};
 use crate::errors::TalliiError;
 use crate::models::group::{EditGroup, GroupResponsePayload, NewGroup};
 use crate::repositories::group::GroupRepository;
-use crate::repositories::group_user::GroupUsersRepository;
+use crate::repositories::group_member::GroupMembersRepository;
 
 /// Creates a new group
 pub async fn create_group(
@@ -22,7 +22,7 @@ pub async fn create_group(
 
     // create a new group with the owner being the current user
     let created_group_users =
-        GroupUsersRepository::create(&mut tx, &user, created_group.group_id, &new_group.members)
+        GroupMembersRepository::create(&mut tx, &user, created_group.group_id, &new_group.members)
             .await?;
 
     tx.commit().await?;
@@ -57,7 +57,7 @@ pub async fn update_group(
     let id = group_id.into_inner();
 
     // check to make sure the user is an owner of the group before updating it
-    if GroupUsersRepository::check_ownership(&pool, &user, id).await? == false {
+    if GroupMembersRepository::check_ownership(&pool, &user, id).await? == false {
         return Err(TalliiError::UNAUTHORIZED.default());
     }
 
@@ -77,7 +77,7 @@ pub async fn delete_group(
     let id = group_id.into_inner();
 
     // check to make sure the user is an owner of the group before updating it
-    if GroupUsersRepository::check_ownership(&pool, &user, id).await? == false {
+    if GroupMembersRepository::check_ownership(&pool, &user, id).await? == false {
         return Err(TalliiError::UNAUTHORIZED.default());
     }
 

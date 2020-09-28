@@ -20,5 +20,11 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
         web::resource("/groups/{group_id}")
             .route(web::put().to(groups::update_group))
             .route(web::delete().to(groups::delete_group)),
+    )
+    .service(
+        web::resource("/groups/{group_id}/members")
+            // .route(web::get().to(groups_users::get_groups_users))
+            // .route(web::post().to(groups_users::add_groups_user))
+            // .route(web::put().to(groups_users::update_groups_user))
     );
 }

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models::group_user::{GroupUser, NewGroupUser};
+use crate::models::group_member::{GroupMember, NewGroupMember};
 
 /// Database representation of a Group
 #[derive(sqlx::FromRow, Debug, Serialize)]
@@ -18,7 +18,7 @@ pub struct NewGroup {
     pub name: String,
     pub description: Option<String>,
     pub avatar: Option<String>,
-    pub members: Vec<NewGroupUser>,
+    pub members: Vec<NewGroupMember>,
 }
 
 /// Representation of an Group to update
@@ -39,5 +39,5 @@ pub struct GroupResponsePayload {
     pub description: Option<String>,
     pub avatar: Option<String>,
     pub created_at: chrono::NaiveDateTime,
-    pub members: Vec<GroupUser>,
+    pub members: Vec<GroupMember>,
 }

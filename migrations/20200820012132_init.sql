@@ -26,7 +26,7 @@ create table groups (
 );
 
 -- Groups Users
-create table groups_users (
+create table groups_members (
   group_id integer not null references groups(group_id) on delete cascade,
   user_id integer not null references users(user_id),
   user_type varchar(40),
