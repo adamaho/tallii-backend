@@ -5,12 +5,13 @@ use super::{AuthenticatedUser, TalliiResponse};
 
 use crate::errors::TalliiError;
 use crate::models::group::{EditGroup, GroupResponsePayload, NewGroup};
-use crate::models::group_member::NewGroupMember;
 use crate::repositories::group::GroupRepository;
 use crate::repositories::group_member::GroupMembersRepository;
 
+pub mod members;
+
 /// Creates a new group
-pub async fn create_group(
+pub async fn create(
     pool: web::Data<PgPool>,
     new_group: web::Json<NewGroup>,
     user: AuthenticatedUser,
@@ -42,13 +43,13 @@ pub async fn create_group(
 }
 
 /// Gets all groups that are associated with the requesting user
-pub async fn get_groups(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
+pub async fn get(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
     let groups = GroupRepository::get_by_user_id(&pool, &user).await?;
     Ok(HttpResponse::Ok().json(groups))
 }
 
 /// Updates a new group
-pub async fn update_group(
+pub async fn update(
     user: AuthenticatedUser,
     pool: web::Data<PgPool>,
     group_id: web::Path<i32>,
@@ -69,7 +70,7 @@ pub async fn update_group(
 }
 
 /// Deletes a group
-pub async fn delete_group(
+pub async fn delete(
     user: AuthenticatedUser,
     pool: web::Data<PgPool>,
     group_id: web::Path<i32>,
@@ -86,24 +87,4 @@ pub async fn delete_group(
     GroupRepository::delete(&pool, id).await?;
 
     Ok(HttpResponse::Ok().finish())
-}
-
-/// Creates a new group member
-pub async fn create_group_member(
-    user: AuthenticatedUser,
-    pool: web::Data<PgPool>,
-    group_id: web::Path<i32>,
-    member: web::Json<NewGroupMember>
-) -> TalliiResponse {
-    // assign the inner i32 to a new spot in memory
-    let id = group_id.into_inner();
-
-    // check to make sure the user is an owner of the group before updating it
-    if GroupMembersRepository::check_ownership(&pool, &user, id).await? == false {
-        return Err(TalliiError::UNAUTHORIZED.default());
-    }
-
-    GroupMembersRepository::create_one(&pool, id, &member).await?;
-
-    Ok(HttpResponse::Created().finish())
 }

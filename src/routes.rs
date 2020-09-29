@@ -13,18 +13,18 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
     .service(web::resource("/signup").route(web::post().to(auth::signup)))
     .service(
         web::resource("/groups")
-            .route(web::post().to(groups::create_group))
-            .route(web::get().to(groups::get_groups)),
+            .route(web::post().to(groups::create))
+            .route(web::get().to(groups::get)),
     )
     .service(
         web::resource("/groups/{group_id}")
-            .route(web::put().to(groups::update_group))
-            .route(web::delete().to(groups::delete_group)),
+            .route(web::put().to(groups::update))
+            .route(web::delete().to(groups::delete)),
     )
     .service(
         web::resource("/groups/{group_id}/members")
-            // .route(web::get().to(groups_users::get_groups_users))
-            .route(web::post().to(groups::create_group_member))
-            // .route(web::put().to(groups_users::update_groups_user))
+            // .route(web::get().to(groups_users::get))
+            .route(web::post().to(groups::members::create))
+            // .route(web::put().to(groups_users::update))
     );
 }
