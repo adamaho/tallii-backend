@@ -1,5 +1,3 @@
-@baseUrl = http://localhost:8000
-
 ### Get All Invite Codes
 
 GET {{baseUrl}}/api/v1/invite-codes HTTP/1.1
