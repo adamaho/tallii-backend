@@ -29,7 +29,7 @@ create table groups (
 create table groups_members (
   group_id integer not null references groups(group_id) on delete cascade,
   user_id integer not null references users(user_id),
-  user_type varchar(40),
+  role varchar(40),
   created_at timestamp not null default current_timestamp
 );
 

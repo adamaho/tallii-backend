@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 pub struct GroupMember {
     pub group_id: i32,
     pub user_id: i32,
-    pub user_type: String,
+    pub role: String,
     pub created_at: chrono::NaiveDateTime,
 }
 
@@ -13,12 +13,12 @@ pub struct GroupMember {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct NewGroupMember {
     pub user_id: i32,
-    pub user_type: String,
+    pub role: String,
 }
 
 /// Representation of an Group Member
 #[derive(Debug, Deserialize)]
 pub struct EditGroupMember {
     pub user_id: i32,
-    pub user_type: String,
+    pub role: String,
 }

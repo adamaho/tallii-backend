@@ -12,7 +12,7 @@ pub async fn create(
     user: AuthenticatedUser,
     pool: web::Data<PgPool>,
     group_id: web::Path<i32>,
-    member: web::Json<NewGroupMember>
+    member: web::Json<NewGroupMember>,
 ) -> TalliiResponse {
     // assign the inner i32 to a new spot in memory
     let id = group_id.into_inner();
@@ -27,7 +27,6 @@ pub async fn create(
     Ok(HttpResponse::Created().finish())
 }
 
-
 /// Gets all the members in a group
 pub async fn get(
     user: AuthenticatedUser,
@@ -38,15 +37,11 @@ pub async fn get(
     let id = group_id.into_inner();
 
     // check if user is a part of the group before fetching all of the members
+    if GroupMembersRepository::check_membership(&pool, &user, id).await? == false {
+        return Err(TalliiError::UNAUTHORIZED.default());
+    }
+    // get all of the group users
+    let all_members = GroupMembersRepository::get_many(&pool, id).await?;
 
-    
-
-    // // check to make sure the user is an owner of the group before updating it
-    // if GroupMembersRepository::check_ownership(&pool, &user, id).await? == false {
-    //     return Err(TalliiError::UNAUTHORIZED.default());
-    // }
-
-    // GroupMembersRepository::create_one(&pool, id, &member).await?;
-
-    // Ok(HttpResponse::Created().finish())
+    Ok(HttpResponse::Ok().json(all_members))
 }
