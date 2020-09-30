@@ -66,7 +66,7 @@ impl GroupMembersRepository {
     /// Gets all members of the provided group
     pub async fn get_many(pool: &PgPool, group_id: i32) -> Result<Vec<GroupMember>, TalliiError> {
         let all_members =
-            sqlx::query_as::<_, GroupMember>("select * from group_members where group_id = $1")
+            sqlx::query_as::<_, GroupMember>("select * from groups_members where group_id = $1")
                 .bind(group_id)
                 .fetch_all(pool)
                 .await?;
@@ -104,21 +104,24 @@ impl GroupMembersRepository {
         user: &AuthenticatedUser,
         group_id: i32,
     ) -> Result<bool, TalliiError> {
+        println!("{:?}", user);
+        println!("{:?}", group_id);
         // query
         let member = sqlx::query_as::<_, GroupMember>(
-            "select role from groups_members where group_id = $1 and user_id = $2",
+            "select * from groups_members where group_id = $1 and user_id = $2",
         )
         .bind(group_id)
         .bind(user.user_id)
         .fetch_optional(pool)
         .await?;
 
-        // if a row isn't returned then user isnt a part of the group or is not an owner
+        println!("{:?}", member);
+
+        // if a row isn't returned then user isnt a part of the group
         if let None = member {
             return Ok(false);
         }
 
-        // user is owner
         Ok(true)
     }
 }

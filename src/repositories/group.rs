@@ -37,7 +37,7 @@ impl GroupRepository {
                 select
                 groups.group_id, groups.name, groups.description, groups.avatar, groups.created_at
                 from groups
-                left join groups_users on groups.group_id = groups_users.group_id
+                left join groups_members on groups.group_id = groups_members.group_id
                 where user_id = $1;
             "#,
         )

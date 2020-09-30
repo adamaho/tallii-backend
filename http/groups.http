@@ -1,8 +1,6 @@
-@baseUrl = http://localhost:8000
-@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vLmJhciIsImV4cCI6MTYwMTMxOTU5MH0.Y57rtQ78iMIOQD8oGe6PJEDV2cpq2_iSi9QZa5MrBgo
+
 
 ### Get Groups
-
 GET {{baseUrl}}/api/v1/groups HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
@@ -13,16 +11,15 @@ Authorization: Bearer {{token}}
 content-type: application/json
 
 {
-    "name": "Group 121",
+    "name": "Group 122",
     "description": "This is the description of the group",
     "members": [
         {
-            "user_id": 2,
-            "user_type": "member"
+            "user_id": 1,
+            "role": "member"
         }
     ]
 }
-
 
 ### Update an existing Group
 PUT {{baseUrl}}/api/v1/groups/1 HTTP/1.1
@@ -37,5 +34,10 @@ content-type: application/json
 
 ### Delete a group
 DELETE {{baseUrl}}/api/v1/groups/3 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### Get Group Members
+GET {{baseUrl}}/api/v1/groups/1/members HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
