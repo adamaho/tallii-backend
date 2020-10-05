@@ -4,7 +4,7 @@ Authorization: Bearer {{token}}
 content-type: application/json
 
 {
-  "friend_id": 2
+  "friend_id": 1
 }
 
 ### Accept Friend Request

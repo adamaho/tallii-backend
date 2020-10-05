@@ -28,9 +28,9 @@ content-type: application/json
 
 {
     "email": "foo@bar.com",
-    "invite_code": "4lsg03",
+    "invite_code": "Vur0CB",
     "password": "password",
-    "username": "foo.bar"
+    "username": "foo1.bar"
 }
 
 ### Log user in

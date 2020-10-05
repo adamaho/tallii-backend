@@ -14,7 +14,7 @@ impl FriendRepository {
         user: &AuthenticatedUser,
     ) -> Result<(), TalliiError> {
         sqlx::query(
-            "insert into groups (user_id, friend_id, friend_status) values ($1, $2, 'invited')",
+            "insert into friends (user_id, friend_id, friend_status) values ($1, $2, 'invited')",
         )
         .bind(&user.user_id)
         .bind(&new_friend.friend_id)
@@ -32,7 +32,7 @@ impl FriendRepository {
     ) -> Result<(), TalliiError> {
         // create row for the friend acceptance
         sqlx::query(
-            "insert into groups (user_id, friend_id, friend_status) values ($1, $2, 'friend')",
+            "insert into friends (user_id, friend_id, friend_status) values ($1, $2, 'friend')",
         )
         .bind(&user.user_id)
         .bind(&new_friend.user_id)
@@ -40,7 +40,7 @@ impl FriendRepository {
         .await?;
 
         // modify the existing row to change friend_status
-        sqlx::query("update friend set friend_status = 'friend' where user_id = $1)")
+        sqlx::query("update friends set friend_status = 'friend' where user_id = $1")
             .bind(&new_friend.user_id)
             .execute(pool)
             .await?;
