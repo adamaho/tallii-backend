@@ -10,9 +10,9 @@ use crate::crypto::Crypto;
 use crate::errors::TalliiError;
 use crate::services::users::db::UserRepository;
 
-pub mod users;
 pub mod friends;
 pub mod groups;
+pub mod users;
 
 type TalliiResponse = Result<HttpResponse, TalliiError>;
 

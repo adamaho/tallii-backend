@@ -5,10 +5,10 @@ use nanoid::generate;
 use sqlx::postgres::PgQueryAs;
 use sqlx::PgPool;
 
-use crate::errors::TalliiError;
 use crate::crypto::Crypto;
+use crate::errors::TalliiError;
 
-use super::models::{NewUser, User, PublicUser, InviteCode};
+use super::models::{InviteCode, NewUser, PublicUser, User};
 
 pub struct InviteCodeRepository {
     pool: Arc<PgPool>,
@@ -145,4 +145,3 @@ impl UserRepository {
         Ok(user)
     }
 }
-

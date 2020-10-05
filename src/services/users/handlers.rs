@@ -7,8 +7,8 @@ use crate::crypto::{Crypto, TokenResponse};
 use crate::errors::TalliiError;
 use crate::services::TalliiResponse;
 
-use super::models::{InviteCode, CreateInviteCode, LoginUser, NewUser};
-use super::db::{UserRepository, InviteCodeRepository};
+use super::db::{InviteCodeRepository, UserRepository};
+use super::models::{CreateInviteCode, InviteCode, LoginUser, NewUser};
 
 /// Gets all invite codes
 pub async fn get_all_invite_codes(pool: web::Data<PgPool>) -> TalliiResponse {

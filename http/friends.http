@@ -1,0 +1,17 @@
+### Send Friend Request
+POST {{baseUrl}}/api/v1/friends/requests HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "friend_id": 2
+}
+
+### Accept Friend Request
+POST {{baseUrl}}/api/v1/friends/requests/accept HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "user_id": 2
+}

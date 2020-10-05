@@ -4,8 +4,8 @@ use sqlx::PgPool;
 use sqlx::Transaction;
 
 use crate::errors::TalliiError;
+use crate::services::groups::models::{EditGroup, Group, GroupMember, NewGroup, NewGroupMember};
 use crate::services::AuthenticatedUser;
-use crate::services::groups::models::{NewGroup, Group, EditGroup, NewGroupMember, GroupMember};
 
 pub struct GroupRepository;
 
@@ -41,9 +41,9 @@ impl GroupRepository {
                 where user_id = $1;
             "#,
         )
-            .bind(user.user_id)
-            .fetch_all(pool)
-            .await?;
+        .bind(user.user_id)
+        .fetch_all(pool)
+        .await?;
 
         Ok(groups)
     }
@@ -153,10 +153,10 @@ impl GroupMembersRepository {
         let member = sqlx::query_as::<_, GroupMember>(
             "select * from groups_members where group_id = $1 and user_id = $2 and role = 'owner'",
         )
-            .bind(group_id)
-            .bind(user.user_id)
-            .fetch_optional(pool)
-            .await?;
+        .bind(group_id)
+        .bind(user.user_id)
+        .fetch_optional(pool)
+        .await?;
 
         // if a row isn't returned then user isnt a part of the group or is not an owner
         if let None = member {
@@ -179,10 +179,10 @@ impl GroupMembersRepository {
         let member = sqlx::query_as::<_, GroupMember>(
             "select * from groups_members where group_id = $1 and user_id = $2",
         )
-            .bind(group_id)
-            .bind(user.user_id)
-            .fetch_optional(pool)
-            .await?;
+        .bind(group_id)
+        .bind(user.user_id)
+        .fetch_optional(pool)
+        .await?;
 
         println!("{:?}", member);
 
@@ -194,4 +194,3 @@ impl GroupMembersRepository {
         Ok(true)
     }
 }
-

@@ -62,4 +62,3 @@ pub struct EditGroupMember {
     pub user_id: i32,
     pub role: String,
 }
-

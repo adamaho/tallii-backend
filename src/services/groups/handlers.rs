@@ -2,9 +2,9 @@ use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
 use crate::errors::TalliiError;
-use crate::services::groups::models::{NewGroup, GroupResponsePayload, EditGroup, NewGroupMember};
+use crate::services::groups::db::{GroupMembersRepository, GroupRepository};
+use crate::services::groups::models::{EditGroup, GroupResponsePayload, NewGroup, NewGroupMember};
 use crate::services::{AuthenticatedUser, TalliiResponse};
-use crate::services::groups::db::{GroupRepository, GroupMembersRepository};
 
 /// Creates a new group
 pub async fn create(
@@ -25,7 +25,7 @@ pub async fn create(
         created_group.group_id,
         &new_group.members,
     )
-        .await?;
+    .await?;
 
     tx.commit().await?;
 
@@ -127,4 +127,3 @@ pub async fn get_members(
 
     Ok(HttpResponse::Ok().json(all_members))
 }
-

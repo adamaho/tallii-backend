@@ -11,15 +11,18 @@ pub struct Friend {
 
 /// Representation of a New Friend
 #[derive(Debug, Deserialize)]
-pub struct NewFriend {
-    pub user_id: i32,
+pub struct FriendRequest {
     pub friend_id: i32,
-    pub friend_status: String,
+}
+/// Representation of a New Friend
+#[derive(Debug, Deserialize)]
+pub struct FriendRequestAcceptance {
+    pub user_id: i32,
 }
 
 /// Representation of an Friend to update
 #[derive(Debug, Deserialize)]
-pub struct EditFriend{
+pub struct EditFriend {
     pub user_id: i32,
     pub friend_id: i32,
     pub friend_status: String,
