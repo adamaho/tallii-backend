@@ -28,7 +28,7 @@ content-type: application/json
 
 {
     "email": "foo1@bar.com",
-    "invite_code": "yvniez",
+    "invite_code": "yvniez ",
     "password": "password",
     "username": "foo1.bar"
 }
@@ -39,6 +39,6 @@ POST {{baseUrl}}/api/v1/login HTTP/1.1
 content-type: application/json
 
 {
-    "email": "foo@bar.com",
+    "email": "foo1@bar.com",
     "password": "password"
 }

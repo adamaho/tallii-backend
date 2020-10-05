@@ -1,30 +1,30 @@
 use actix_web::web;
 
-use crate::services::{auth, groups};
+use crate::services::{users, groups};
 
 pub fn define_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::resource("/invite-codes")
-            .route(web::post().to(auth::check_invite_code))
-            .route(web::get().to(auth::get_all_invite_codes)),
+            .route(web::post().to(users::handlers::check_invite_code))
+            .route(web::get().to(users::handlers::get_all_invite_codes)),
     )
-    .service(web::resource("/invite-codes/new").route(web::post().to(auth::create_invite_codes)))
-    .service(web::resource("/login").route(web::post().to(auth::login)))
-    .service(web::resource("/signup").route(web::post().to(auth::signup)))
+    .service(web::resource("/invite-codes/new").route(web::post().to(users::handlers::create_invite_codes)))
+    .service(web::resource("/login").route(web::post().to(users::handlers::login)))
+    .service(web::resource("/signup").route(web::post().to(users::handlers::signup)))
     .service(
         web::resource("/groups")
-            .route(web::post().to(groups::create))
-            .route(web::get().to(groups::get)),
+            .route(web::post().to(groups::handlers::create))
+            .route(web::get().to(groups::handlers::get)),
     )
     .service(
         web::resource("/groups/{group_id}")
-            .route(web::put().to(groups::update))
-            .route(web::delete().to(groups::delete)),
+            .route(web::put().to(groups::handlers::update))
+            .route(web::delete().to(groups::handlers::delete)),
     )
     .service(
         web::resource("/groups/{group_id}/members")
-            .route(web::get().to(groups::members::get))
-            .route(web::post().to(groups::members::create))
+            .route(web::get().to(groups::handlers::get_members))
+            .route(web::post().to(groups::handlers::create_member))
             // .route(web::put().to(groups_users::update)),
     );
 }

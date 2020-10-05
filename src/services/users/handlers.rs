@@ -3,14 +3,12 @@ use std::ops::Deref;
 use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
-use super::TalliiResponse;
-
 use crate::crypto::{Crypto, TokenResponse};
 use crate::errors::TalliiError;
-use crate::models::invite_code::{CreateInviteCode, InviteCode};
-use crate::models::user::{LoginUser, NewUser};
-use crate::repositories::invite_code::InviteCodeRepository;
-use crate::repositories::user::UserRepository;
+use crate::services::TalliiResponse;
+
+use super::models::{InviteCode, CreateInviteCode, LoginUser, NewUser};
+use super::db::{UserRepository, InviteCodeRepository};
 
 /// Gets all invite codes
 pub async fn get_all_invite_codes(pool: web::Data<PgPool>) -> TalliiResponse {

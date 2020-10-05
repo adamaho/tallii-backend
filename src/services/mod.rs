@@ -8,9 +8,10 @@ use sqlx::PgPool;
 
 use crate::crypto::Crypto;
 use crate::errors::TalliiError;
-use crate::repositories::user::UserRepository;
+use crate::services::users::db::UserRepository;
 
-pub mod auth;
+pub mod users;
+pub mod friends;
 pub mod groups;
 
 type TalliiResponse = Result<HttpResponse, TalliiError>;
@@ -27,7 +28,7 @@ impl FromRequest for AuthenticatedUser {
     type Config = ();
 
     fn from_request(req: &HttpRequest, payload: &mut Payload) -> Self::Future {
-        // get the auth bearer header from the bearer extractor
+        // get the users bearer header from the bearer extractor
         let bearer = BearerAuth::from_request(req, payload).into_inner();
 
         // get the pool
