@@ -5,7 +5,7 @@ use sqlx::Transaction;
 
 use crate::errors::TalliiError;
 use crate::services::groups::models::{EditGroup, Group, GroupMember, NewGroup, NewGroupMember};
-use crate::services::AuthenticatedUser;
+use crate::services::auth::AuthenticatedUser;
 
 pub struct GroupRepository;
 

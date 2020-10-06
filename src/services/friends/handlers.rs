@@ -3,7 +3,8 @@ use sqlx::PgPool;
 
 use crate::services::friends::db::FriendRepository;
 use crate::services::friends::models::{FriendRequest, FriendRequestAcceptance};
-use crate::services::{AuthenticatedUser, TalliiResponse};
+use crate::services::TalliiResponse;
+use crate::services::auth::AuthenticatedUser;
 
 /// Creates a new friend invite for the requesting user
 pub async fn send_friend_request(
