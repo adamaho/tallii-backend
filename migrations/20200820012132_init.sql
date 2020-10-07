@@ -43,17 +43,29 @@ create table friends (
     primary key (user_id, friend_id)
 );
 
+-- Tags
+create table tags (
+    tag_id serial primary key,
+    group_id integer not null references groups(group_id),
+    name text not null,
+    created_at timestamp not null default current_timestamp
+);
+
 -- Events
 create table events (
-     event_id serial primary key,
-     group_id integer not null references groups(group_id),
-     name text not null,
-     description text,
-     home_team integer not null references events_teams(event_team_id),
-     away_team integer not null references events_teams(event_team_id),
-     winning_team integer not null references events_teams(event_team_id),
-     creator_user_id integer not null references users(user_id),
-     created_at timestamp not null default current_timestamp
+    event_id serial primary key,
+    group_id integer not null references groups(group_id),
+    name text not null,
+    description text,
+    creator_user_id integer not null references users(user_id),
+    created_at timestamp not null default current_timestamp
+);
+
+-- Events Tags
+create table events_tags (
+    event_tag_id serial primary key,
+    event_id integer not null references events(event_id),
+    tag_id integer not null references tags(tag_id)
 );
 
 -- Events Teams
@@ -62,13 +74,17 @@ create table events_teams (
     event_id integer not null references events(event_id),
     name text not null,
     score integer not null default 0,
+    winner bool not null default false,
     created_at timestamp not null default current_timestamp
 );
 
--- Events Tags
-create table events_tags (
-    tag_id serial primary key,
-    event_id integer not null references events(event_id),
-    name text not null,
+-- Event Team Members
+create table events_teams_members (
+    event_team_member_id serial primary key,
+    event_team_id integer not null references events(event_id),
+    user_id integer not null references users(user_id),
     created_at timestamp not null default current_timestamp
-)
+);
+
+
+

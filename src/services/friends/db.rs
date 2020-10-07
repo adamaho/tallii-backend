@@ -7,6 +7,15 @@ use crate::services::auth::AuthenticatedUser;
 pub struct FriendRepository;
 
 impl FriendRepository {
+
+    // Gets a list of friends
+    // pub async fn get_many(
+    //     pool: &PgPool,
+    //     user: &AuthenticatedUser
+    // ) -> Result<FriendResponse, TalliiError> {
+    //
+    // }
+
     /// Creates a friend invite in the database
     pub async fn create_friend_request(
         pool: &PgPool,
