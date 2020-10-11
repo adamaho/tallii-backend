@@ -39,6 +39,6 @@ POST {{baseUrl}}/api/v1/login HTTP/1.1
 content-type: application/json
 
 {
-    "email": "foo@bar.com",
+    "email": "foo2@bar.com",
     "password": "password"
 }

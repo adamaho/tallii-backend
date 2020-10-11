@@ -35,5 +35,23 @@ pub async fn get_friends(pool: web::Data<PgPool>, user: AuthenticatedUser) -> Ta
     Ok(HttpResponse::Ok().json(friends))
 }
 
-// TODO: Add ability to get list of friends
-// TODO: Add ability to get friends invites
+// Gets a list of all current friends for the requesting user
+pub async fn get_friend_requests(
+    pool: web::Data<PgPool>,
+    user: AuthenticatedUser,
+) -> TalliiResponse {
+    let requests = FriendRepository::get_many_requests(&pool, &user).await?;
+
+    Ok(HttpResponse::Ok().json(requests))
+}
+
+
+// Gets a list of all current friends for the requesting user
+pub async fn get_friend_invitations(
+    pool: web::Data<PgPool>,
+    user: AuthenticatedUser,
+) -> TalliiResponse {
+    let invitations = FriendRepository::get_many_invitations(&pool, &user).await?;
+
+    Ok(HttpResponse::Ok().json(invitations))
+}

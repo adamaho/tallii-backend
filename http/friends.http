@@ -4,8 +4,19 @@ Authorization: Bearer {{token}}
 content-type: application/json
 
 {
-  "friend_id": 2
+  "friend_id": 3
 }
+
+### Get All of My Friend Requests that I have sent
+GET {{baseUrl}}/api/v1/friends/requests HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### Get All of My Friend Requests that I have recieved
+GET {{baseUrl}}/api/v1/friends/invitations HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
 
 ### Accept Friend Request
 POST {{baseUrl}}/api/v1/friends/requests/accept HTTP/1.1
@@ -13,7 +24,7 @@ Authorization: Bearer {{token}}
 content-type: application/json
 
 {
-  "user_id": 1
+  "user_id": 2
 }
 
 ### Get All of My Friends
