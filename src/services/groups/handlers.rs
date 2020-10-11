@@ -2,10 +2,10 @@ use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
 use crate::errors::TalliiError;
+use crate::services::auth::AuthenticatedUser;
 use crate::services::groups::db::{GroupMembersRepository, GroupRepository};
 use crate::services::groups::models::{EditGroup, GroupResponsePayload, NewGroup, NewGroupMember};
 use crate::services::TalliiResponse;
-use crate::services::auth::AuthenticatedUser;
 
 /// Creates a new group
 pub async fn create(

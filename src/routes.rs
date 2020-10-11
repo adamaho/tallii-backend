@@ -14,17 +14,14 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
     )
     .service(web::resource("/login").route(web::post().to(users::handlers::login)))
     .service(web::resource("/signup").route(web::post().to(users::handlers::signup)))
-    .service(
-        web::resource("/friends")
-            .route(web::get().to(friends::handlers::get_friends))
-    )
+    .service(web::resource("/friends").route(web::get().to(friends::handlers::get_friends)))
     .service(
         web::resource("/friends/requests")
-            .route(web::post().to(friends::handlers::send_friend_request))
+            .route(web::post().to(friends::handlers::send_friend_request)),
     )
     .service(
         web::resource("/friends/requests/accept")
-            .route(web::post().to(friends::handlers::accept_friend_request))
+            .route(web::post().to(friends::handlers::accept_friend_request)),
     )
     .service(
         web::resource("/groups")

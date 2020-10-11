@@ -4,8 +4,8 @@ use sqlx::PgPool;
 use sqlx::Transaction;
 
 use crate::errors::TalliiError;
-use crate::services::groups::models::{EditGroup, Group, GroupMember, NewGroup, NewGroupMember};
 use crate::services::auth::AuthenticatedUser;
+use crate::services::groups::models::{EditGroup, Group, GroupMember, NewGroup, NewGroupMember};
 
 pub struct GroupRepository;
 

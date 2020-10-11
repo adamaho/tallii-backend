@@ -1,5 +1,5 @@
-use actix_web::HttpResponse;
 use crate::errors::TalliiError;
+use actix_web::HttpResponse;
 
 pub mod auth;
 pub mod friends;
