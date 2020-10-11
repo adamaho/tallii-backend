@@ -9,6 +9,15 @@ pub struct Friend {
     pub created_at: chrono::NaiveDateTime,
 }
 
+/// Database representation of a Friend
+#[derive(sqlx::FromRow, Debug, Serialize)]
+pub struct FriendResponse {
+    pub user_id: i32,
+    pub username: String,
+    pub avatar: Option<String>,
+    pub taunt: Option<String>,
+}
+
 /// Representation of a New Friend
 #[derive(Debug, Deserialize)]
 pub struct FriendRequest {

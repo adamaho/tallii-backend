@@ -1,7 +1,8 @@
 use sqlx::PgPool;
+use sqlx::postgres::PgQueryAs;
 
 use crate::errors::TalliiError;
-use crate::services::friends::models::{FriendRequest, FriendRequestAcceptance};
+use crate::services::friends::models::{FriendRequest, FriendRequestAcceptance, Friend, FriendResponse};
 use crate::services::auth::AuthenticatedUser;
 
 pub struct FriendRepository;
@@ -9,12 +10,14 @@ pub struct FriendRepository;
 impl FriendRepository {
 
     // Gets a list of friends
-    // pub async fn get_many(
-    //     pool: &PgPool,
-    //     user: &AuthenticatedUser
-    // ) -> Result<FriendResponse, TalliiError> {
-    //
-    // }
+    pub async fn get_many(
+        pool: &PgPool,
+        user: &AuthenticatedUser
+    ) -> Result<Vec<FriendResponse>, TalliiError> {
+        let friends = sqlx::query_as::<_, FriendResponse>("select users.user_id, users.username, users.avatar, users.taunt from friends inner join users on users.user_id = friends.friend_id where friends.user_id = $1").bind(user.user_id).fetch_all(pool).await?;
+
+        Ok(friends)
+    }
 
     /// Creates a friend invite in the database
     pub async fn create_friend_request(
