@@ -93,7 +93,7 @@ impl GroupMembersRepository {
         // add the user that is creating the group as the owner
         query.push_str(&format!("({}, {}, 'owner'), ", group_id, user.user_id));
 
-        // create the queries for each of the new members and add them to the vector
+        // create the queries for each of the new members and add them to the query string
         for (i, user) in group_users.iter().enumerate() {
             query.push_str(&format!(
                 "({}, {}, '{}')",

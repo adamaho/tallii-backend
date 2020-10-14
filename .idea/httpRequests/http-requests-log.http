@@ -1,3 +1,111 @@
+POST http://localhost:8000/api/v1/groups
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMi5iYXIiLCJleHAiOjE2MDI3MjgzMTh9.0KnOF8VmjsMLVNi6sIXLr8Qt3ivC3uCQGIVJ-CAM9rg
+content-type: application/json
+
+{
+    "name": "Group 122",
+    "description": "This is the description of the group",
+    "members": [
+        {
+            "user_id": 2,
+            "role": "member"
+        }
+    ]
+}
+
+<> 2020-10-13T102003.201.json
+
+###
+
+POST http://localhost:8000/api/v1/groups
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMi5iYXIiLCJleHAiOjE2MDI3MjgzMTh9.0KnOF8VmjsMLVNi6sIXLr8Qt3ivC3uCQGIVJ-CAM9rg
+content-type: application/json
+
+{
+    "name": "Group 122",
+    "description": "This is the description of the group",
+    "members": [
+        {
+            "user_id": 2,
+            "role": "member"
+        }
+    ]
+}
+
+<> 2020-10-13T101952.500.json
+
+###
+
+POST http://localhost:8000/api/v1/groups
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMi5iYXIiLCJleHAiOjE2MDI3MjgzMTh9.0KnOF8VmjsMLVNi6sIXLr8Qt3ivC3uCQGIVJ-CAM9rg
+content-type: application/json
+
+{
+    "name": "Group 122",
+    "description": "This is the description of the group",
+    "members": [
+        {
+            "user_id": 2,
+            "role": "member"
+        }
+    ]
+}
+
+<> 2020-10-13T101926.500.json
+
+###
+
+POST http://localhost:8000/api/v1/signup
+content-type: application/json
+
+{
+    "email": "foo3@bar.com",
+    "invite_code": "qS_esP",
+    "password": "password",
+    "username": "foo3.bar"
+}
+
+<> 2020-10-13T101916.200.json
+
+###
+
+GET http://localhost:8000/api/v1/invite-codes
+content-type: application/json
+
+<> 2020-10-13T101903.200.json
+
+###
+
+POST http://localhost:8000/api/v1/signup
+content-type: application/json
+
+{
+    "email": "foo2@bar.com",
+    "invite_code": "ffGLTI",
+    "password": "password",
+    "username": "foo2.bar"
+}
+
+<> 2020-10-13T101838.200.json
+
+###
+
+GET http://localhost:8000/api/v1/invite-codes
+content-type: application/json
+
+<> 2020-10-13T101832.200.json
+
+###
+
+POST http://localhost:8000/api/v1/invite-codes/new
+content-type: application/json
+
+{
+    "amount": 20
+}
+
+###
+
 GET http://localhost:8000/api/v1/friends/invitations
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjMsInVzZXJuYW1lIjoiZm9vMi5iYXIiLCJleHAiOjE2MDI1MTkyODR9.i3AuPF1qj0ixM1016i41BS1VUA0MbXLT8CdAtSfrdOI
 content-type: application/json
@@ -408,81 +516,6 @@ content-type: application/json
 }
 
 <> 2020-10-05T034411.401.json
-
-###
-
-GET http://localhost:8000/api/v1/groups
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDE1OTI3NTZ9.ygl3O2T0N1D8jyzIgEsUMkrdkDzN0HqG5ajXM8TrYRg
-content-type: application/json
-
-<> 2020-10-05T034406.401.json
-
-###
-
-GET http://localhost:8000/api/v1/groups/1/members
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDE1OTI3NTZ9.ygl3O2T0N1D8jyzIgEsUMkrdkDzN0HqG5ajXM8TrYRg
-content-type: application/json
-
-<> 2020-09-30T065512.200.json
-
-###
-
-GET http://localhost:8000/api/v1/groups/1/members
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDE1OTI3NTZ9.ygl3O2T0N1D8jyzIgEsUMkrdkDzN0HqG5ajXM8TrYRg
-content-type: application/json
-
-<> 2020-09-30T065511-1.200.json
-
-###
-
-GET http://localhost:8000/api/v1/groups/1/members
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDE1OTI3NTZ9.ygl3O2T0N1D8jyzIgEsUMkrdkDzN0HqG5ajXM8TrYRg
-content-type: application/json
-
-<> 2020-09-30T065511.200.json
-
-###
-
-GET http://localhost:8000/api/v1/groups/1/members
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDE1OTI3NTZ9.ygl3O2T0N1D8jyzIgEsUMkrdkDzN0HqG5ajXM8TrYRg
-content-type: application/json
-
-<> 2020-09-30T065505.200.json
-
-###
-
-POST http://localhost:8000/api/v1/groups
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDE1OTI3NTZ9.ygl3O2T0N1D8jyzIgEsUMkrdkDzN0HqG5ajXM8TrYRg
-content-type: application/json
-
-{
-    "name": "Group 122",
-    "description": "This is the description of the group",
-    "members": [
-        {
-            "user_id": 1,
-            "role": "member"
-        }
-    ]
-}
-
-<> 2020-09-30T065502.201.json
-
-###
-
-GET http://localhost:8000/api/v1/groups/1/members
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDE1OTI3NTZ9.ygl3O2T0N1D8jyzIgEsUMkrdkDzN0HqG5ajXM8TrYRg
-content-type: application/json
-
-<> 2020-09-30T065451.200.json
-
-###
-
-GET http://localhost:8000/api/v1/groups
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDE1OTI3NTZ9.ygl3O2T0N1D8jyzIgEsUMkrdkDzN0HqG5ajXM8TrYRg
-content-type: application/json
-
-<> 2020-09-30T065401.200.json
 
 ###
 

@@ -79,8 +79,7 @@ create table events_teams (
     event_id integer not null references events(event_id),
     name text not null,
     score integer not null default 0,
-    winner integer not null references events_teams(event_team_id),
-    event_type text not null,
+    winner integer references events_teams(event_team_id),
     created_at timestamp not null default current_timestamp
 );
 
