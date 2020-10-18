@@ -1,6 +1,6 @@
 use actix_web::web;
 
-use crate::services::{friends, groups, users};
+use crate::services::{events, friends, groups, users};
 
 pub fn define_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(
@@ -42,5 +42,9 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
         web::resource("/groups/{group_id}/members")
             .route(web::get().to(groups::handlers::get_members))
             .route(web::post().to(groups::handlers::create_member)), // .route(web::put().to(groups_users::update)),
+    )
+    .service(
+        web::resource("/events")
+            .route(web::post().to(events::handlers::create))
     );
 }

@@ -1,25 +1,25 @@
 use sqlx::pool::PoolConnection;
 use sqlx::postgres::{PgConnection, PgQueryAs};
-use sqlx::PgPool;
 use sqlx::Transaction;
 
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
-use crate::services::events::models::{Event, NewEvent, NewEventTeamRequest};
+use crate::services::events::models::{Event, NewEvent, NewEventTeam, EventTeam, NewEventTeamMember};
 
-pub struct EventRespository;
+pub struct EventRepository;
 
-impl EventRespository {
+impl EventRepository {
     /// Creates an event in the database
     pub async fn create(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
         new_event: &NewEvent,
         user: &AuthenticatedUser
-    ) -> Result<(), TalliiError> {
-        sqlx::query(
+    ) -> Result<Event, TalliiError> {
+        let event =sqlx::query_as::<_, Event>(
             r#"
                 insert into events (group_id, name, description, event_type, creator_user_id)
                 values ($1, $2, $3, $4, $5)
+                returning *
             "#
         )
             .bind(&new_event.group_id)
@@ -27,10 +27,10 @@ impl EventRespository {
             .bind(&new_event.description)
             .bind(&new_event.event_type)
             .bind(&user.user_id)
-            .execute(tx)
+            .fetch_one(tx)
             .await?;
 
-        Ok(())
+        Ok(event)
     }
 }
 
@@ -38,22 +38,46 @@ impl EventRespository {
 pub struct EventTeamRepository;
 
 impl EventTeamRepository {
-    /// Creates an event_team in the database
+    /// Creates an events_teams in the database
     pub async fn create(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
-        new_event_teams: &Vec<NewEventTeamRequest>
-    ) -> Result<(), TalliiError> {
-        let mut query = String::from("insert into event_teams (event_id, name) values");
+        event_id: &i32,
+        team: &NewEventTeam
+    ) -> Result<EventTeam, TalliiError> {
 
-        // create the queries for each of the new teams and add them to the query string
-        for (i, event_team) in new_event_teams.iter().enumerate() {
+        let created_team = sqlx::query_as::<_, EventTeam>(
+            "insert into events_teams (event_id, name) values ($1, $2) returning *"
+        )
+            .bind(&event_id)
+            .bind(&team.name)
+            .fetch_one(tx)
+            .await?;
+
+        Ok(created_team)
+    }
+}
+
+
+pub struct EventTeamMemberRepository;
+
+impl EventTeamMemberRepository {
+    /// Creates an events_teams_members in the database
+    pub async fn create_many(
+        tx: &mut Transaction<PoolConnection<PgConnection>>,
+        event_team_id: &i32,
+        new_members: &Vec<NewEventTeamMember>
+    ) -> Result<(), TalliiError> {
+        let mut query = String::from("insert into events_teams_members (event_team_id, user_id) values");
+
+        // create the queries for each of the new members and add them to the query string
+        for (i, member) in new_members.iter().enumerate() {
             query.push_str(&format!(
                 "({}, {})",
-                event_team.team.event_id, event_team.team.name
+                event_team_id, member.user_id
             ));
 
             // if we are appending values onto the query we need to separate them with commas
-            if i < new_event_teams.len() - 1 {
+            if i < new_members.len() - 1 {
                 query.push_str(",")
             }
         }
