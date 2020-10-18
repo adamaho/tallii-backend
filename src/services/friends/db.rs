@@ -3,9 +3,7 @@ use sqlx::PgPool;
 
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
-use crate::services::friends::models::{
-    FriendRequest, FriendRequestAcceptance, FriendResponse,
-};
+use crate::services::friends::models::{FriendRequest, FriendRequestAcceptance, FriendResponse};
 
 pub struct FriendRepository;
 
@@ -20,10 +18,11 @@ impl FriendRepository {
                 select users.user_id, users.username, users.avatar, users.taunt
                 from friends inner join users on users.user_id = friends.friend_id
                 where friends.user_id = $1 and friend_status = 'friend'
-            "#
+            "#,
         )
-            .bind(user.user_id)
-            .fetch_all(pool).await?;
+        .bind(user.user_id)
+        .fetch_all(pool)
+        .await?;
         Ok(friends)
     }
 
@@ -37,14 +36,14 @@ impl FriendRepository {
                 select users.user_id, users.username, users.avatar, users.taunt
                 from friends inner join users on users.user_id = friends.friend_id
                 where friends.user_id = $1 and friend_status = 'requested'
-            "#
+            "#,
         )
         .bind(user.user_id)
-        .fetch_all(pool).await?;
+        .fetch_all(pool)
+        .await?;
 
         Ok(requests)
     }
-
 
     /// Gets a list of friend invitations where the current user is the invitee
     pub async fn get_many_invitations(
@@ -56,10 +55,11 @@ impl FriendRepository {
                 select users.user_id, users.username, users.avatar, users.taunt
                 from friends inner join users on users.user_id = friends.user_id
                 where friends.friend_id = $1 and friend_status = 'requested'
-            "#
+            "#,
         )
-            .bind(user.user_id)
-            .fetch_all(pool).await?;
+        .bind(user.user_id)
+        .fetch_all(pool)
+        .await?;
 
         Ok(requests)
     }

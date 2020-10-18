@@ -1,0 +1,39 @@
+### Get Groups
+GET {{baseUrl}}/api/v1/groups/2/events HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### Create Event
+POST {{baseUrl}}/api/v1/groups/2/events HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "event": {
+    "name": "My New Event",
+    "description": "the best event ever",
+    "event_type": "individual"
+  },
+  "teams": [
+    {
+      "team": {
+        "name": "Team 1"
+      },
+      "members": [
+        {
+          "user_id": 1
+        }
+      ]
+    },
+    {
+      "team": {
+        "name": "Team 2"
+      },
+      "members": [
+        {
+          "user_id": 2
+        }
+      ]
+    }
+  ]
+}

@@ -45,7 +45,6 @@ pub async fn get_friend_requests(
     Ok(HttpResponse::Ok().json(requests))
 }
 
-
 // Gets a list of all current friends for the requesting user
 pub async fn get_friend_invitations(
     pool: web::Data<PgPool>,
