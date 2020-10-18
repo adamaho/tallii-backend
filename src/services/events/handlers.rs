@@ -1,5 +1,6 @@
 use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
+use serde::Deserialize;
 
 use crate::services::auth::AuthenticatedUser;
 use crate::services::events::db::{
@@ -42,15 +43,46 @@ pub async fn create(
     Ok(HttpResponse::Created().finish())
 }
 
+#[derive(Deserialize, Debug)]
+pub struct MyQuery {
+    pub group_id: i32,
+}
+
 /// Gets all Events in Group
 pub async fn get_events(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
-    group_id: web::Path<i32>
+    params: web::Query<MyQuery>
 ) -> TalliiResponse {
     // TODO: validate user is apart of the group
 
-    let events = EventRepository::get_many_by_group_id(&pool, &group_id).await?;
+    let events = EventRepository::get_many_by_group_id(&pool, &params.group_id).await?;
 
     Ok(HttpResponse::Ok().json(events))
+}
+
+/// Gets all Teams and Members for an Event
+pub async fn get_event_teams(
+    pool: web::Data<PgPool>,
+    _user: AuthenticatedUser,
+    event_id: web::Path<i32>
+) -> TalliiResponse {
+    // TODO: validate user is apart of the group
+
+    let teams = EventTeamRepository::get_many_by_event_id(&pool, &event_id).await?;
+
+    Ok(HttpResponse::Ok().json(teams))
+}
+
+/// Gets all Teams and Members for an Event
+pub async fn get_event_members(
+    pool: web::Data<PgPool>,
+    _user: AuthenticatedUser,
+    event_id: web::Path<i32>
+) -> TalliiResponse {
+    // TODO: validate user is apart of the group
+
+    let members = EventTeamMemberRepository::get_many_by_event_id(&pool, &event_id).await?;
+
+    Ok(HttpResponse::Ok().json(members))
 }

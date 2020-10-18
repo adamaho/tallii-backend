@@ -4,9 +4,7 @@ use sqlx::{Transaction, PgPool};
 
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
-use crate::services::events::models::{
-    Event, EventTeam, NewEvent, NewEventTeam, NewEventTeamMember,
-};
+use crate::services::events::models::{Event, EventTeam, EventTeamMember, NewEvent, NewEventTeam, NewEventTeamMember};
 
 pub struct EventRepository;
 
@@ -74,6 +72,21 @@ impl EventTeamRepository {
 
         Ok(created_team)
     }
+
+    /// Gets all Event Teams by event_id
+    pub async fn get_many_by_event_id(
+        pool: &PgPool,
+        event_id: &i32
+    ) -> Result<Vec<EventTeam>, TalliiError> {
+        let teams = sqlx::query_as::<_, EventTeam>(
+            "select * from events_teams where event_id = $1"
+        )
+            .bind(event_id)
+            .fetch_all(pool)
+            .await?;
+
+        Ok(teams)
+    }
 }
 
 pub struct EventTeamMemberRepository;
@@ -102,5 +115,36 @@ impl EventTeamMemberRepository {
         sqlx::query(&query).execute(tx).await?;
 
         Ok(())
+    }
+
+    /// Gets all Event Team Members by event_id
+    pub async fn get_many_by_event_id(
+        pool: &PgPool,
+        event_id: &i32
+    ) -> Result<Vec<EventTeamMember>, TalliiError> {
+
+        let members = sqlx::query_as::<_, EventTeamMember>(
+            r#"
+            select
+                event_team_member_id, members.event_team_id, users.user_id, username, avatar, taunt, members.created_at
+            from
+                events_teams as teams
+            inner join
+                events_teams_members as members
+            on
+                teams.event_team_id = members.event_team_id
+            inner join
+                users
+            on
+                members.user_id = users.user_id
+            where
+                event_id = $1
+            "#
+        )
+            .bind(event_id)
+            .fetch_all(pool)
+            .await?;
+
+        Ok(members)
     }
 }

@@ -39,13 +39,21 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
             .route(web::delete().to(groups::handlers::delete)),
     )
     .service(
-        web::resource("/groups/{group_id}/events")
-            .route(web::post().to(events::handlers::create))
-            .route(web::get().to(events::handlers::get_events)),
-    )
-    .service(
         web::resource("/groups/{group_id}/members")
             .route(web::get().to(groups::handlers::get_members))
             .route(web::post().to(groups::handlers::create_member)), // .route(web::put().to(groups_users::update)),
+    )
+    .service(
+        web::resource("/events")
+            .route(web::get().to(events::handlers::get_events))
+            .route(web::post().to(events::handlers::create))
+    )
+    .service(
+        web::resource("/events/{event_id}/teams")
+            .route(web::get().to(events::handlers::get_event_teams))
+    )
+    .service(
+        web::resource("/events/{event_id}/members")
+            .route(web::get().to(events::handlers::get_event_members))
     );
 }

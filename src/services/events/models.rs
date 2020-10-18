@@ -28,7 +28,7 @@ pub struct EventTeam {
     pub name: String,
     pub score: i32,
     pub winner: bool,
-    pub created_at: chrono::NaiveDateTime,
+    pub created_at: chrono::NaiveDateTime
 }
 
 /// Representation of a new EventTeam
@@ -43,6 +43,9 @@ pub struct EventTeamMember {
     pub event_team_member_id: i32,
     pub event_team_id: i32,
     pub user_id: i32,
+    pub username: String,
+    pub avatar: Option<String>,
+    pub taunt: Option<String>,
     pub created_at: chrono::NaiveDateTime,
 }
 
