@@ -14,12 +14,13 @@ Authorization: Bearer {{token}}
 content-type: application/json
 
 ### Create Event
-POST {{baseUrl}}/api/v1/groups/2/events HTTP/1.1
+POST {{baseUrl}}/api/v1/events HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 
 {
   "event": {
+    "group_id": 2,
     "name": "My New Event",
     "description": "the best event ever",
     "event_type": "individual"

@@ -15,6 +15,7 @@ pub struct Event {
 /// Representation of an New Event
 #[derive(Deserialize, Debug)]
 pub struct NewEvent {
+    pub group_id: i32,
     pub name: String,
     pub description: Option<String>,
     pub event_type: String,

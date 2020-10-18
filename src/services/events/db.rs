@@ -13,7 +13,6 @@ impl EventRepository {
     pub async fn create(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
         new_event: &NewEvent,
-        group_id: &i32,
         user: &AuthenticatedUser,
     ) -> Result<Event, TalliiError> {
         let event = sqlx::query_as::<_, Event>(
@@ -23,7 +22,7 @@ impl EventRepository {
                 returning *
             "#,
         )
-        .bind(group_id)
+        .bind(&new_event.group_id)
         .bind(&new_event.name)
         .bind(&new_event.description)
         .bind(&new_event.event_type)
