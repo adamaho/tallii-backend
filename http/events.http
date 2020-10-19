@@ -54,3 +54,15 @@ content-type: application/json
     }
   ]
 }
+
+### Update an existing Team
+PUT {{baseUrl}}/api/v1/events/teams/1 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "event_team_id": 1,
+  "name": "Aho Team",
+  "score": 100,
+  "winner": false
+}

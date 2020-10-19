@@ -21,12 +21,11 @@ pub struct NewEvent {
     pub event_type: String,
 }
 
-
 /// Query Params for an Event
 #[derive(Deserialize, Debug)]
 pub struct EventParams {
     pub group_id: i32,
-    pub event_id: Option<i32>
+    pub event_id: Option<i32>,
 }
 
 /// Database representation of an EventTeam
@@ -37,7 +36,7 @@ pub struct EventTeam {
     pub name: String,
     pub score: i32,
     pub winner: bool,
-    pub created_at: chrono::NaiveDateTime
+    pub created_at: chrono::NaiveDateTime,
 }
 
 /// Representation of a new EventTeam
@@ -46,12 +45,22 @@ pub struct NewEventTeam {
     pub name: String,
 }
 
+/// Representation of a team to edit
+#[derive(sqlx::FromRow, Deserialize, Debug)]
+pub struct EditEventTeam {
+    pub event_team_id: i32,
+    pub event_id: Option<i32>,
+    pub name: Option<String>,
+    pub score: Option<i32>,
+    pub winner: Option<bool>,
+    pub created_at: Option<chrono::NaiveDateTime>,
+}
+
 /// Query Params for the EventTeam's
 #[derive(Deserialize, Debug)]
 pub struct EventTeamParams {
-    pub event_id: Option<i32>
+    pub event_id: Option<i32>,
 }
-
 
 /// Database representation of an EventTeamMember
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
@@ -74,7 +83,7 @@ pub struct NewEventTeamMember {
 /// Query Params for the EventTeamMember
 #[derive(Deserialize, Debug)]
 pub struct EventTeamMemberParams {
-    pub event_id: Option<i32>
+    pub event_id: Option<i32>,
 }
 
 /// Database representation of an EventTag

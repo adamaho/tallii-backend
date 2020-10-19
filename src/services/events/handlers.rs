@@ -5,7 +5,9 @@ use crate::services::auth::AuthenticatedUser;
 use crate::services::events::db::{
     EventRepository, EventTeamMemberRepository, EventTeamRepository,
 };
-use crate::services::events::models::{NewEventRequest, EventTeamParams, EventParams, EventTeamMemberParams};
+use crate::services::events::models::{
+    EditEventTeam, EventParams, EventTeamMemberParams, EventTeamParams, NewEventRequest,
+};
 use crate::services::TalliiResponse;
 
 /// Creates a new Event
@@ -25,15 +27,17 @@ pub async fn create(
     // loop through the teams
     for team_request in new_event.teams.iter() {
         // create new event teams
-        let created_team = EventTeamRepository::create(
-            &mut tx,
-            &created_event.event_id,
-            &team_request.team,
-        )
-        .await?;
+        let created_team =
+            EventTeamRepository::create(&mut tx, &created_event.event_id, &team_request.team)
+                .await?;
 
         // create the associated members of the team
-        EventTeamMemberRepository::create_many(&mut tx, &created_team.event_team_id, &team_request.members).await?;
+        EventTeamMemberRepository::create_many(
+            &mut tx,
+            &created_team.event_team_id,
+            &team_request.members,
+        )
+        .await?;
     }
 
     tx.commit().await?;
@@ -45,7 +49,7 @@ pub async fn create(
 pub async fn get_events(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
-    params: web::Query<EventParams>
+    params: web::Query<EventParams>,
 ) -> TalliiResponse {
     // TODO: validate user is apart of the group
 
@@ -58,7 +62,7 @@ pub async fn get_events(
 pub async fn get_event_teams(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
-    params: web::Query<EventTeamParams>
+    params: web::Query<EventTeamParams>,
 ) -> TalliiResponse {
     // TODO: validate user is apart of the group
 
@@ -68,14 +72,28 @@ pub async fn get_event_teams(
 }
 
 /// Gets all Teams and Members for an Event
-pub async fn get_event_members(
+pub async fn get_event_team_members(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
-    params: web::Query<EventTeamMemberParams>
+    params: web::Query<EventTeamMemberParams>,
 ) -> TalliiResponse {
     // TODO: validate user is apart of the group
 
     let members = EventTeamMemberRepository::get_many_by_event_id(&pool, &params).await?;
 
     Ok(HttpResponse::Ok().json(members))
+}
+
+/// Updates a team
+pub async fn update_team(
+    pool: web::Data<PgPool>,
+    _user: AuthenticatedUser,
+    event_team_id: web::Path<i32>,
+    team: web::Json<EditEventTeam>,
+) -> TalliiResponse {
+    // TODO: validate user is apart of the group
+
+    EventTeamRepository::update(&pool, &event_team_id, &team).await?;
+
+    Ok(HttpResponse::Ok().finish())
 }
