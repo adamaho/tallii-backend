@@ -1,12 +1,11 @@
 use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
-use serde::Deserialize;
 
 use crate::services::auth::AuthenticatedUser;
 use crate::services::events::db::{
     EventRepository, EventTeamMemberRepository, EventTeamRepository,
 };
-use crate::services::events::models::NewEventRequest;
+use crate::services::events::models::{NewEventRequest, EventTeamParams, EventParams, EventTeamMemberParams};
 use crate::services::TalliiResponse;
 
 /// Creates a new Event
@@ -42,20 +41,15 @@ pub async fn create(
     Ok(HttpResponse::Created().finish())
 }
 
-#[derive(Deserialize, Debug)]
-pub struct MyQuery {
-    pub group_id: i32,
-}
-
 /// Gets all Events in Group
 pub async fn get_events(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
-    params: web::Query<MyQuery>
+    params: web::Query<EventParams>
 ) -> TalliiResponse {
     // TODO: validate user is apart of the group
 
-    let events = EventRepository::get_many_by_group_id(&pool, &params.group_id).await?;
+    let events = EventRepository::get_many_by_group_id(&pool, &params).await?;
 
     Ok(HttpResponse::Ok().json(events))
 }
@@ -64,11 +58,11 @@ pub async fn get_events(
 pub async fn get_event_teams(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
-    event_id: web::Path<i32>
+    params: web::Query<EventTeamParams>
 ) -> TalliiResponse {
     // TODO: validate user is apart of the group
 
-    let teams = EventTeamRepository::get_many_by_event_id(&pool, &event_id).await?;
+    let teams = EventTeamRepository::get_many_by_event_id(&pool, &params).await?;
 
     Ok(HttpResponse::Ok().json(teams))
 }
@@ -77,11 +71,11 @@ pub async fn get_event_teams(
 pub async fn get_event_members(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
-    event_id: web::Path<i32>
+    params: web::Query<EventTeamMemberParams>
 ) -> TalliiResponse {
     // TODO: validate user is apart of the group
 
-    let members = EventTeamMemberRepository::get_many_by_event_id(&pool, &event_id).await?;
+    let members = EventTeamMemberRepository::get_many_by_event_id(&pool, &params).await?;
 
     Ok(HttpResponse::Ok().json(members))
 }

@@ -21,6 +21,14 @@ pub struct NewEvent {
     pub event_type: String,
 }
 
+
+/// Query Params for an Event
+#[derive(Deserialize, Debug)]
+pub struct EventParams {
+    pub group_id: i32,
+    pub event_id: Option<i32>
+}
+
 /// Database representation of an EventTeam
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct EventTeam {
@@ -38,6 +46,13 @@ pub struct NewEventTeam {
     pub name: String,
 }
 
+/// Query Params for the EventTeam's
+#[derive(Deserialize, Debug)]
+pub struct EventTeamParams {
+    pub event_id: Option<i32>
+}
+
+
 /// Database representation of an EventTeamMember
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct EventTeamMember {
@@ -54,6 +69,12 @@ pub struct EventTeamMember {
 #[derive(Deserialize, Debug)]
 pub struct NewEventTeamMember {
     pub user_id: i32,
+}
+
+/// Query Params for the EventTeamMember
+#[derive(Deserialize, Debug)]
+pub struct EventTeamMemberParams {
+    pub event_id: Option<i32>
 }
 
 /// Database representation of an EventTag

@@ -49,11 +49,11 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
             .route(web::post().to(events::handlers::create))
     )
     .service(
-        web::resource("/events/{event_id}/teams")
+        web::resource("/events/teams")
             .route(web::get().to(events::handlers::get_event_teams))
     )
     .service(
-        web::resource("/events/{event_id}/members")
+        web::resource("/events/teams/members")
             .route(web::get().to(events::handlers::get_event_members))
     );
 }
