@@ -29,17 +29,6 @@ pub struct EditGroup {
     pub created_at: Option<chrono::NaiveDateTime>,
 }
 
-/// Representation of a GroupResponsePayload and is returned when a group is created
-#[derive(Debug, Serialize)]
-pub struct GroupResponsePayload {
-    pub group_id: i32,
-    pub name: String,
-    pub description: Option<String>,
-    pub avatar: Option<String>,
-    pub created_at: chrono::NaiveDateTime,
-    pub members: Vec<GroupMember>,
-}
-
 /// Database representation of a Group Member
 #[derive(sqlx::FromRow, Debug, Serialize)]
 pub struct GroupMember {

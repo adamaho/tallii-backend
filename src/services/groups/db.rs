@@ -15,7 +15,7 @@ impl GroupRepository {
         tx: &mut Transaction<PoolConnection<PgConnection>>,
         new_group: &NewGroup,
     ) -> Result<Group, TalliiError> {
-        let created_group = sqlx::query_as::<_, Group>(
+        let group = sqlx::query_as::<_, Group>(
             "insert into groups (name, description, avatar) values ($1, $2, $3) returning group_id, name, description, avatar, created_at"
         )
             .bind(&new_group.name)
@@ -24,7 +24,7 @@ impl GroupRepository {
             .fetch_one(tx)
             .await?;
 
-        Ok(created_group)
+        Ok(group)
     }
 
     /// Gets a group based on the user_id of the requesting user
@@ -53,8 +53,8 @@ impl GroupRepository {
         pool: &PgPool,
         group_id: i32,
         group: &EditGroup,
-    ) -> Result<Group, TalliiError> {
-        let updated_group = sqlx::query_as::<_, Group>("update groups set name = $1, description = $2, avatar = $3 where group_id = $4 returning *")
+    ) -> Result<(), TalliiError> {
+        sqlx::query_as::<_, Group>("update groups set name = $1, description = $2, avatar = $3 where group_id = $4")
             .bind(&group.name)
             .bind(&group.description)
             .bind(&group.avatar)
@@ -62,7 +62,7 @@ impl GroupRepository {
             .fetch_one(pool)
             .await?;
 
-        Ok(updated_group)
+        Ok(())
     }
 
     /// Deletes a group
@@ -85,7 +85,7 @@ impl GroupMembersRepository {
         user: &AuthenticatedUser,
         group_id: i32,
         group_users: &Vec<NewGroupMember>,
-    ) -> Result<Vec<GroupMember>, TalliiError> {
+    ) -> Result<(), TalliiError> {
         // create a string with the query
         let mut query =
             String::from("insert into groups_members (group_id, user_id, role) values ");
@@ -107,12 +107,11 @@ impl GroupMembersRepository {
         }
 
         // create all of the new members
-        let created_group_users =
             sqlx::query_as::<_, GroupMember>(&format!("{} returning *", query))
                 .fetch_all(tx)
                 .await?;
 
-        Ok(created_group_users)
+        Ok(())
     }
 
     /// Creates a group_users in the database
@@ -167,14 +166,12 @@ impl GroupMembersRepository {
         Ok(true)
     }
 
-    ///  Checks if the requesting user is a part of the group
+    ///Checks if the requesting user is a part of the group
     pub async fn check_membership(
         pool: &PgPool,
         user: &AuthenticatedUser,
         group_id: i32,
     ) -> Result<bool, TalliiError> {
-        println!("{:?}", user);
-        println!("{:?}", group_id);
         // query
         let member = sqlx::query_as::<_, GroupMember>(
             "select * from groups_members where group_id = $1 and user_id = $2",
@@ -183,8 +180,6 @@ impl GroupMembersRepository {
         .bind(user.user_id)
         .fetch_optional(pool)
         .await?;
-
-        println!("{:?}", member);
 
         // if a row isn't returned then user isnt a part of the group
         if let None = member {

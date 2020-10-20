@@ -4,7 +4,7 @@ use sqlx::PgPool;
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::groups::db::{GroupMembersRepository, GroupRepository};
-use crate::services::groups::models::{EditGroup, GroupResponsePayload, NewGroup, NewGroupMember};
+use crate::services::groups::models::{EditGroup, NewGroup, NewGroupMember};
 use crate::services::TalliiResponse;
 
 /// Creates a new group
@@ -20,7 +20,7 @@ pub async fn create(
     let created_group = GroupRepository::create(&mut tx, &new_group).await?;
 
     // create a new group with the owner being the current user
-    let created_group_users = GroupMembersRepository::create_many(
+    GroupMembersRepository::create_many(
         &mut tx,
         &user,
         created_group.group_id,
@@ -30,17 +30,8 @@ pub async fn create(
 
     tx.commit().await?;
 
-    // combine users and group together to form final response
-    let response = GroupResponsePayload {
-        group_id: created_group.group_id,
-        name: created_group.name,
-        description: created_group.description,
-        avatar: created_group.avatar,
-        members: created_group_users,
-        created_at: created_group.created_at,
-    };
 
-    Ok(HttpResponse::Created().json(response))
+    Ok(HttpResponse::Created().finish())
 }
 
 /// Gets all groups that are associated with the requesting user
@@ -65,9 +56,9 @@ pub async fn update(
     }
 
     // update the group
-    let updated_group = GroupRepository::update(&pool, id, &group).await?;
+    GroupRepository::update(&pool, id, &group).await?;
 
-    Ok(HttpResponse::Ok().json(updated_group))
+    Ok(HttpResponse::Ok().finish())
 }
 
 /// Deletes a group
