@@ -1,10 +1,19 @@
 FROM clux/muslrust:latest as builder
-WORKDIR /app
-ADD . .
+WORKDIR /usr/src
+RUN rustup target add x86_64-unknown-linux-musl
+RUN USER=root cargo new backend
+
+RUN apt-get update && apt-get install -y openssl libssl-dev clang llvm-dev libclang-dev
+
+WORKDIR /usr/src/backend
+COPY Cargo.toml Cargo.lock ./
 RUN cargo build --release
 
+COPY src ./src
+RUN cargo install --target x86_64-unknown-linux-musl --path .
 
 FROM scratch
-COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/backend /app/backend
+WORKDIR /root
+COPY --from=builder /usr/src/backend/target/x86_64-unknown-linux-musl/release/backend .
 EXPOSE 8000
-ENTRYPOINT ["/app/backend"]
+ENTRYPOINT ["./backend"]
