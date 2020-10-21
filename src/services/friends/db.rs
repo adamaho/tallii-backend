@@ -1,3 +1,4 @@
+use sqlx::postgres::PgQueryAs;
 use sqlx::PgPool;
 
 use crate::errors::TalliiError;

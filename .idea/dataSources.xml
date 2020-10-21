@@ -7,11 +7,5 @@
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://localhost:7777/tallii</jdbc-url>
     </data-source>
-    <data-source source="LOCAL" name="postgres@talliidb.cglraqt0mncp.us-east-1.rds.amazonaws.com" uuid="48257b28-22b7-4b5f-a308-ebecc643c4b0">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://talliidb.cglraqt0mncp.us-east-1.rds.amazonaws.com:5432/postgres</jdbc-url>
-    </data-source>
   </component>
 </project>

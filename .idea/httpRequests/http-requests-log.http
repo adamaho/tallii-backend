@@ -1,33 +1,3 @@
-GET http://localhost:8000/api/v1/invite-codes
-content-type: application/json
-
-<> 2020-10-21T015350.200.json
-
-###
-
-GET https://api.tallii.io/api/v1/invite-codes
-content-type: application/json
-
-<> 2020-10-20T110634.200.json
-
-###
-
-POST https://api.tallii.io/api/v1/invite-codes/new
-content-type: application/json
-
-{
-    "amount": 20
-}
-
-###
-
-GET https://api.tallii.io/api/v1/invite-codes
-content-type: application/json
-
-<> 2020-10-20T110627.200.json
-
-###
-
 GET http://localhost:8000/api/v1/events/teams
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDMyMzQzMTh9.PA-rZftCsue6baJvwt24e-V4eR_AlXyaRKCl3xEbKGY
 content-type: application/json
@@ -738,6 +708,62 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuY
 content-type: application/json
 
 <> 2020-10-18T021929.404.txt
+
+###
+
+GET http://localhost:8000/api/v1/groups/2/events/1/members
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDMxMjg0OTh9.8YAqb12b_iVRVNeQ-YcSx0wcetsuKvS7EBSH60peL3g
+content-type: application/json
+
+###
+
+GET http://localhost:8000/api/v1/groups/2/events/1/members
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDMxMjg0OTh9.8YAqb12b_iVRVNeQ-YcSx0wcetsuKvS7EBSH60peL3g
+content-type: application/json
+
+###
+
+GET http://localhost:8000/api/v1/groups/2/events
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDMxMjg0OTh9.8YAqb12b_iVRVNeQ-YcSx0wcetsuKvS7EBSH60peL3g
+content-type: application/json
+
+<> 2020-10-18T015551.200.json
+
+###
+
+POST http://localhost:8000/api/v1/groups/2/events
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiZm9vMS5iYXIiLCJleHAiOjE2MDMxMjg0OTh9.8YAqb12b_iVRVNeQ-YcSx0wcetsuKvS7EBSH60peL3g
+content-type: application/json
+
+{
+  "event": {
+    "name": "My New Event",
+    "description": "the best event ever",
+    "event_type": "individual"
+  },
+  "teams": [
+    {
+      "team": {
+        "name": "Team 1"
+      },
+      "members": [
+        {
+          "user_id": 1
+        }
+      ]
+    },
+    {
+      "team": {
+        "name": "Team 2"
+      },
+      "members": [
+        {
+          "user_id": 2
+        }
+      ]
+    }
+  ]
+}
 
 ###
 
