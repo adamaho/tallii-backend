@@ -1,6 +1,4 @@
-use sqlx::pool::PoolConnection;
-use sqlx::postgres::{PgConnection, PgQueryAs};
-use sqlx::PgPool;
+use sqlx::{PgPool, Postgres};
 use sqlx::Transaction;
 
 use crate::errors::TalliiError;
@@ -12,7 +10,7 @@ pub struct GroupRepository;
 impl GroupRepository {
     /// Creates a group in the database
     pub async fn create(
-        tx: &mut Transaction<PoolConnection<PgConnection>>,
+        tx: &mut Transaction<'_, Postgres>,
         new_group: &NewGroup,
     ) -> Result<Group, TalliiError> {
         let group = sqlx::query_as::<_, Group>(
@@ -83,7 +81,7 @@ pub struct GroupMembersRepository;
 impl GroupMembersRepository {
     /// Creates a group_users in the database
     pub async fn create_many(
-        tx: &mut Transaction<PoolConnection<PgConnection>>,
+        tx: &mut Transaction<'_, Postgres>,
         user: &AuthenticatedUser,
         group_id: i32,
         group_users: &Vec<NewGroupMember>,

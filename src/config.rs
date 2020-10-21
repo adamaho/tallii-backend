@@ -1,8 +1,9 @@
 use std::sync::Arc;
 
+use sqlx::Pool;
+use sqlx::postgres::Postgres;
 use dotenv::dotenv;
 use serde::Deserialize;
-use sqlx::PgPool;
 use tracing::{info, instrument};
 
 use crate::crypto::Crypto;
@@ -37,13 +38,10 @@ impl Config {
 
     /// Configures the database pool
     #[instrument(skip(self))]
-    pub async fn setup_database(&self) -> Result<sqlx::PgPool, sqlx::Error> {
+    pub async fn setup_database(&self) -> Result<Pool<Postgres>, sqlx::Error> {
         info!("setting up database connection pool");
 
-        PgPool::builder()
-            .connect_timeout(std::time::Duration::from_secs(60))
-            .build(&self.database_url)
-            .await
+        Pool::<Postgres>::connect(&self.database_url).await
     }
 
     /// Configures the Crypto struct to provide hashing methods

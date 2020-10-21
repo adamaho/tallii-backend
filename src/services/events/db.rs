@@ -1,6 +1,4 @@
-use sqlx::pool::PoolConnection;
-use sqlx::postgres::{PgConnection, PgQueryAs};
-use sqlx::{PgPool, Transaction};
+use sqlx::{PgPool, Transaction, Postgres};
 
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
@@ -14,7 +12,7 @@ pub struct EventRepository;
 impl EventRepository {
     /// Creates an event in the database
     pub async fn create(
-        tx: &mut Transaction<PoolConnection<PgConnection>>,
+        tx: &mut Transaction<'_, Postgres>,
         new_event: &NewEvent,
         user: &AuthenticatedUser,
     ) -> Result<Event, TalliiError> {
@@ -64,7 +62,7 @@ pub struct EventTeamRepository;
 impl EventTeamRepository {
     /// Creates an events_teams in the database
     pub async fn create(
-        tx: &mut Transaction<PoolConnection<PgConnection>>,
+        tx: &mut Transaction<'_, Postgres>,
         event_id: &i32,
         team: &NewEventTeam,
     ) -> Result<EventTeam, TalliiError> {
@@ -125,7 +123,7 @@ pub struct EventTeamMemberRepository;
 impl EventTeamMemberRepository {
     /// Creates an events_teams_members in the database
     pub async fn create_many(
-        tx: &mut Transaction<PoolConnection<PgConnection>>,
+        tx: &mut Transaction<'_, Postgres>,
         event_team_id: &i32,
         new_members: &Vec<NewEventTeamMember>,
     ) -> Result<(), TalliiError> {
