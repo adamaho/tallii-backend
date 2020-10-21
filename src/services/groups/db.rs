@@ -54,13 +54,15 @@ impl GroupRepository {
         group_id: i32,
         group: &EditGroup,
     ) -> Result<(), TalliiError> {
-        sqlx::query_as::<_, Group>("update groups set name = $1, description = $2, avatar = $3 where group_id = $4")
-            .bind(&group.name)
-            .bind(&group.description)
-            .bind(&group.avatar)
-            .bind(group_id)
-            .fetch_one(pool)
-            .await?;
+        sqlx::query_as::<_, Group>(
+            "update groups set name = $1, description = $2, avatar = $3 where group_id = $4",
+        )
+        .bind(&group.name)
+        .bind(&group.description)
+        .bind(&group.avatar)
+        .bind(group_id)
+        .fetch_one(pool)
+        .await?;
 
         Ok(())
     }
@@ -107,9 +109,9 @@ impl GroupMembersRepository {
         }
 
         // create all of the new members
-            sqlx::query_as::<_, GroupMember>(&format!("{} returning *", query))
-                .fetch_all(tx)
-                .await?;
+        sqlx::query_as::<_, GroupMember>(&format!("{} returning *", query))
+            .fetch_all(tx)
+            .await?;
 
         Ok(())
     }

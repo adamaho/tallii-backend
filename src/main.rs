@@ -35,6 +35,7 @@ async fn main() -> std::io::Result<()> {
             .data(pool.clone())
             .data(crypto.clone())
             .service(web::scope("/api/v1").configure(define_routes))
+            .route("/", web::get().to(|| web::HttpResponse::Ok().finish()))
     })
     .bind(format!("{}:{}", config.hostname, config.port))?
     .run()

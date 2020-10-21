@@ -20,16 +20,10 @@ pub async fn create(
     let created_group = GroupRepository::create(&mut tx, &new_group).await?;
 
     // create a new group with the owner being the current user
-    GroupMembersRepository::create_many(
-        &mut tx,
-        &user,
-        created_group.group_id,
-        &new_group.members,
-    )
-    .await?;
+    GroupMembersRepository::create_many(&mut tx, &user, created_group.group_id, &new_group.members)
+        .await?;
 
     tx.commit().await?;
-
 
     Ok(HttpResponse::Created().finish())
 }
