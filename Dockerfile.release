@@ -5,15 +5,35 @@ RUN USER=root cargo new backend
 
 RUN apt-get update && apt-get install -y openssl libssl-dev clang llvm-dev libclang-dev
 
+# cache the deps
 WORKDIR /usr/src/backend
 COPY Cargo.toml Cargo.lock ./
 RUN cargo build --release
 
+# build the binary
 COPY src ./src
 RUN cargo install --target x86_64-unknown-linux-musl --path .
 
-FROM scratch
+# build the sqlx binary
+RUN cargo install --target x86_64-unknown-linux-musl --version=0.1.0-beta.1 sqlx-cli --no-default-features --features postgres
+
+
+
+FROM alpine
 WORKDIR /root
-COPY --from=builder /usr/src/backend/target/x86_64-unknown-linux-musl/release/backend .
+
+# move the migrations into the image
+COPY migrations ./migrations
+
+# move the start script and make it executable
+COPY scripts/start.sh .
+RUN chmod +x start.sh
+
+# move the sqlx binary into the local bin
+COPY --from=builder /root/.cargo/bin/sqlx /usr/local/bin
+
+# move the backend binary into the local bin
+COPY --from=builder /usr/src/backend/target/x86_64-unknown-linux-musl/release/backend /usr/local/bin
+
 EXPOSE 8000
-ENTRYPOINT ["./backend"]
+ENTRYPOINT ["./start.sh"]

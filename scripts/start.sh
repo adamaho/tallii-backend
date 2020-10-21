@@ -1,3 +1,8 @@
-#! /bin/bash
+#! /bin/sh
+echo "Running migrations"
 
-# run the migrations than start the server
+sqlx migrate run
+
+echo "Starting server"
+
+backend
