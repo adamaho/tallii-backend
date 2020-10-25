@@ -3,6 +3,8 @@ create table invite_codes (
     id varchar(10) primary key
 );
 
+insert into invite_codes (id) values ('master');
+
 -- Users
 create table users (
     user_id serial primary key,
