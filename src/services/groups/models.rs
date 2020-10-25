@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 /// Database representation of a Group
 #[derive(sqlx::FromRow, Debug, Serialize)]
+#[serde(rename_all(serialize="camelCase"))]
 pub struct Group {
     pub group_id: i32,
     pub name: String,
@@ -12,6 +13,7 @@ pub struct Group {
 
 /// Representation of a New Group
 #[derive(Debug, Deserialize)]
+#[serde(rename_all(serialize="camelCase"))]
 pub struct NewGroup {
     pub name: String,
     pub description: Option<String>,
@@ -21,6 +23,7 @@ pub struct NewGroup {
 
 /// Representation of an Group to update
 #[derive(Debug, Deserialize)]
+#[serde(rename_all(serialize="camelCase"))]
 pub struct EditGroup {
     pub group_id: i32,
     pub avatar: Option<String>,
@@ -31,6 +34,7 @@ pub struct EditGroup {
 
 /// Database representation of a Group Member
 #[derive(sqlx::FromRow, Debug, Serialize)]
+#[serde(rename_all(serialize="camelCase"))]
 pub struct GroupMember {
     pub group_id: i32,
     pub user_id: i32,
@@ -40,6 +44,7 @@ pub struct GroupMember {
 
 /// Representation of a Group Member
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all(serialize="camelCase"))]
 pub struct NewGroupMember {
     pub user_id: i32,
     pub role: String,
@@ -47,6 +52,7 @@ pub struct NewGroupMember {
 
 /// Representation of an Group Member
 #[derive(Debug, Deserialize)]
+#[serde(rename_all(serialize="camelCase"))]
 pub struct EditGroupMember {
     pub user_id: i32,
     pub role: String,
