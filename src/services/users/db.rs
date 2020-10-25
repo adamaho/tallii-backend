@@ -125,7 +125,7 @@ impl UserRepository {
     /// Creates a user
     pub async fn create(
         &self,
-        new_user: NewUser,
+        new_user: &NewUser,
         crypto: &Crypto,
     ) -> Result<PublicUser, TalliiError> {
         // hash the password
@@ -135,10 +135,10 @@ impl UserRepository {
         let user = sqlx::query_as::<_, PublicUser>(
             "insert into users (email, password, invite_code, username) values ($1, $2, $3, $4) returning user_id, avatar, email, username, taunt, verified",
         )
-            .bind(new_user.email)
+            .bind(&new_user.email)
             .bind(hashed_password)
-            .bind(new_user.invite_code)
-            .bind(new_user.username)
+            .bind(&new_user.invite_code)
+            .bind(&new_user.username)
             .fetch_one(&*self.pool)
             .await?;
 

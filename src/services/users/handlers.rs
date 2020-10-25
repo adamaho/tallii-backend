@@ -25,7 +25,7 @@ pub async fn get_all_invite_codes(pool: web::Data<PgPool>) -> TalliiResponse {
 /// Checks the validity of the invite code
 pub async fn check_invite_code(
     pool: web::Data<PgPool>,
-    web::Json(code): web::Json<InviteCode>,
+    code: web::Json<InviteCode>,
 ) -> TalliiResponse {
     // get the invite code repository
     let repository = InviteCodeRepository::new(pool.deref().clone());
@@ -37,14 +37,14 @@ pub async fn check_invite_code(
     if !is_valid {
         Err(TalliiError::INVALID_INVITE_CODE.default())
     } else {
-        Ok(HttpResponse::Ok().finish())
+        Ok(HttpResponse::Ok().json(""))
     }
 }
 
 /// Checks the validity of the invite code
 pub async fn create_invite_codes(
     pool: web::Data<PgPool>,
-    web::Json(new_codes): web::Json<CreateInviteCode>,
+    new_codes: web::Json<CreateInviteCode>,
 ) -> TalliiResponse {
     // get the invite code repository
     let repository = InviteCodeRepository::new(pool.deref().clone());
@@ -60,7 +60,7 @@ pub async fn create_invite_codes(
 pub async fn login(
     pool: web::Data<PgPool>,
     crypto: web::Data<Crypto>,
-    web::Json(person): web::Json<LoginUser>,
+    person: web::Json<LoginUser>,
 ) -> Result<HttpResponse, TalliiError> {
     // get user repository
     let user_repo = UserRepository::new(pool.deref().clone());
@@ -92,7 +92,7 @@ pub async fn login(
 pub async fn signup(
     pool: web::Data<PgPool>,
     crypto: web::Data<Crypto>,
-    web::Json(new_user): web::Json<NewUser>,
+    new_user: web::Json<NewUser>,
 ) -> TalliiResponse {
     // get the user and invite_code repository
     let user_repo = UserRepository::new(pool.deref().clone());
@@ -111,8 +111,10 @@ pub async fn signup(
         return Err(TalliiError::INVALID_INVITE_CODE.default());
     }
 
+    // TODO: Check if email and username is already taken
+
     // create the new user in the database
-    let created_user = user_repo.create(new_user, &crypto).await?;
+    let created_user = user_repo.create(&new_user, &crypto).await?;
 
     // TODO: send verification email to user
 

@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 /// Database representation of a User
 #[derive(sqlx::FromRow, Serialize)]
-#[serde(rename_all(serialize="camelCase"))]
 pub struct User {
     pub user_id: i32,
     pub avatar: Option<String>,
@@ -17,7 +16,6 @@ pub struct User {
 
 /// Representation of a user that can be publicized
 #[derive(sqlx::FromRow, Serialize)]
-#[serde(rename_all(serialize="camelCase"))]
 pub struct PublicUser {
     pub user_id: i32,
     pub avatar: Option<String>,
@@ -29,7 +27,6 @@ pub struct PublicUser {
 
 /// Representation of a New User
 #[derive(Debug, Deserialize)]
-#[serde(rename_all(serialize="camelCase"))]
 pub struct NewUser {
     pub email: String,
     pub invite_code: String,
@@ -39,7 +36,6 @@ pub struct NewUser {
 
 /// Representation of an User to Update
 #[derive(Debug, Deserialize)]
-#[serde(rename_all(serialize="camelCase"))]
 pub struct EditUser {
     pub avatar: String,
     pub taunt: String,
@@ -47,7 +43,6 @@ pub struct EditUser {
 
 /// Representation of an User to Login
 #[derive(Debug, Deserialize)]
-#[serde(rename_all(serialize="camelCase"))]
 pub struct LoginUser {
     pub email: String,
     pub password: String,
@@ -55,14 +50,12 @@ pub struct LoginUser {
 
 /// Database representation of an InviteCode
 #[derive(Debug, sqlx::FromRow, Serialize, Deserialize)]
-#[serde(rename_all(serialize="camelCase"))]
 pub struct InviteCode {
     pub id: String,
 }
 
 /// Representation of struct for creating InviteCodes
 #[derive(Debug, Deserialize)]
-#[serde(rename_all(serialize="camelCase"))]
 pub struct CreateInviteCode {
     pub amount: i32,
 }
