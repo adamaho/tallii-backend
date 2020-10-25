@@ -31,6 +31,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
+            // TODO: Add cors to enable requests from `tallii.io`
             .wrap(Logger::default())
             .data(pool.clone())
             .data(crypto.clone())
