@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use futures::future::try_join_all;
 use nanoid::generate;
 use sqlx::postgres::PgQueryAs;
@@ -10,23 +8,17 @@ use crate::errors::TalliiError;
 
 use super::models::{InviteCode, NewUser, PublicUser, User};
 
-pub struct InviteCodeRepository {
-    pool: Arc<PgPool>,
-}
+pub struct InviteCodeRepository;
 
 impl InviteCodeRepository {
-    /// Fetches a database pool connection to use for querying
-    pub fn new(pool: Arc<PgPool>) -> Self {
-        Self { pool }
-    }
 
     /// Checks if the provided invite code is valid
-    pub async fn is_valid(&self, id: &String) -> Result<bool, TalliiError> {
+    pub async fn is_valid(pool: &PgPool, id: &String) -> Result<bool, TalliiError> {
         // get the invite code, if it exists
         let invite_code =
             sqlx::query_as::<_, InviteCode>("select * from invite_codes where id = $1")
                 .bind(id)
-                .fetch_optional(&*self.pool)
+                .fetch_optional(pool)
                 .await?;
 
         // if invite code doesnt exist return false
@@ -39,9 +31,9 @@ impl InviteCodeRepository {
 
     /// Gets all invite codes
     /// TODO: Hide this behind the citadel
-    pub async fn get_all(&self) -> Result<Vec<InviteCode>, TalliiError> {
+    pub async fn get_all(pool: &PgPool,) -> Result<Vec<InviteCode>, TalliiError> {
         let all_invite_codes = sqlx::query_as::<_, InviteCode>("select * from invite_codes")
-            .fetch_all(&*self.pool)
+            .fetch_all(pool)
             .await?;
 
         Ok(all_invite_codes)
@@ -50,8 +42,7 @@ impl InviteCodeRepository {
     /// Creates invite codes for the specified amount
     /// Note, this query may not be the most performant query
     /// because it is not a bulk insert but that is fine.
-    /// TODO: Hide this behind the citadel
-    pub async fn create_many(&self, amount: i32) -> Result<(), TalliiError> {
+    pub async fn create_many(pool: &PgPool, amount: i32) -> Result<(), TalliiError> {
         let mut new_codes_queries = Vec::new();
 
         // generate invite codes for the given amount
@@ -61,7 +52,7 @@ impl InviteCodeRepository {
             new_codes_queries.push(
                 sqlx::query("insert into invite_codes (id) values ($1)")
                     .bind(code)
-                    .execute(&*self.pool),
+                    .execute(pool),
             )
         }
 
@@ -72,29 +63,33 @@ impl InviteCodeRepository {
 }
 
 #[derive(Debug)]
-pub struct UserRepository {
-    pool: Arc<PgPool>,
-}
+pub struct UserRepository;
 
 impl UserRepository {
-    /// Fetches a database pool connection to use for querying
-    pub fn new(pool: Arc<PgPool>) -> Self {
-        Self { pool }
-    }
-
     /// Fetches a user with the provided email
-    pub async fn get_by_email(&self, email: &String) -> Result<Option<User>, TalliiError> {
+    pub async fn get_by_email(pool: &PgPool, email: &String) -> Result<Option<User>, TalliiError> {
         let user_with_email = sqlx::query_as::<_, User>("select * from users where email = $1")
             .bind(email)
-            .fetch_optional(&*self.pool)
+            .fetch_optional(pool)
             .await?;
 
         Ok(user_with_email)
     }
 
+
+    /// Fetches a user with the provided username
+    pub async fn get_by_username(pool: &PgPool, username: &String) -> Result<Option<User>, TalliiError> {
+        let user_with_username = sqlx::query_as::<_, User>("select * from users where username = $1")
+            .bind(username)
+            .fetch_optional(pool)
+            .await?;
+
+        Ok(user_with_username)
+    }
+
     /// Fetches a username that matches the provided username and user_id.
     pub async fn get_by_username_and_id(
-        &self,
+        pool: &PgPool,
         user_id: &i32,
         username: &String,
     ) -> Result<Option<User>, TalliiError> {
@@ -102,7 +97,7 @@ impl UserRepository {
             sqlx::query_as::<_, User>("select * from users where user_id = $1 and username = $2")
                 .bind(user_id)
                 .bind(username)
-                .fetch_optional(&*self.pool)
+                .fetch_optional(pool)
                 .await?;
 
         Ok(user_with_id_and_username)
@@ -110,13 +105,13 @@ impl UserRepository {
 
     /// Fetches a user that holds the provided invite code
     pub async fn get_by_invite_code(
-        &self,
+        pool: &PgPool,
         invite_code: &str,
     ) -> Result<Option<PublicUser>, TalliiError> {
         let user_with_invite_code =
             sqlx::query_as::<_, PublicUser>("select * from users where invite_code = $1")
                 .bind(invite_code)
-                .fetch_optional(&*self.pool)
+                .fetch_optional(pool)
                 .await?;
 
         Ok(user_with_invite_code)
@@ -124,7 +119,7 @@ impl UserRepository {
 
     /// Creates a user
     pub async fn create(
-        &self,
+        pool: &PgPool,
         new_user: &NewUser,
         crypto: &Crypto,
     ) -> Result<PublicUser, TalliiError> {
@@ -139,7 +134,7 @@ impl UserRepository {
             .bind(hashed_password)
             .bind(&new_user.invite_code)
             .bind(&new_user.username)
-            .fetch_one(&*self.pool)
+            .fetch_one(pool)
             .await?;
 
         Ok(user)

@@ -12,6 +12,14 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
         web::resource("/invite-codes/new")
             .route(web::post().to(users::handlers::create_invite_codes)),
     )
+    .service(
+        web::resource("/users/check-username")
+            .route(web::post().to(users::handlers::check_username)),
+    )
+    .service(
+        web::resource("/users/check-email")
+            .route(web::post().to(users::handlers::check_email)),
+    )
     .service(web::resource("/login").route(web::post().to(users::handlers::login)))
     .service(web::resource("/signup").route(web::post().to(users::handlers::signup)))
     .service(web::resource("/friends").route(web::get().to(friends::handlers::get_friends)))

@@ -1,22 +1,19 @@
-use std::ops::Deref;
-
 use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
 use crate::crypto::{Crypto, TokenResponse};
 use crate::errors::TalliiError;
 use crate::services::TalliiResponse;
+use crate::services::auth::AuthenticatedUser;
 
 use super::db::{InviteCodeRepository, UserRepository};
-use super::models::{CreateInviteCode, InviteCode, LoginUser, NewUser};
+use super::models::{CreateInviteCode, CheckEmail, CheckUsername, InviteCode, LoginUser, NewUser};
 
 /// Gets all invite codes
 pub async fn get_all_invite_codes(pool: web::Data<PgPool>) -> TalliiResponse {
-    // get the invite code repository
-    let repository = InviteCodeRepository::new(pool.deref().clone());
 
     // execute the query
-    let all_invite_codes = repository.get_all().await?;
+    let all_invite_codes = InviteCodeRepository::get_all(&pool).await?;
 
     // respond with all of the invite codes
     Ok(HttpResponse::Ok().json(all_invite_codes))
@@ -27,11 +24,9 @@ pub async fn check_invite_code(
     pool: web::Data<PgPool>,
     code: web::Json<InviteCode>,
 ) -> TalliiResponse {
-    // get the invite code repository
-    let repository = InviteCodeRepository::new(pool.deref().clone());
 
     // execute the query
-    let is_valid = repository.is_valid(&code.id).await?;
+    let is_valid = InviteCodeRepository::is_valid(&pool, &code.id).await?;
 
     // if not valid return an error
     if !is_valid {
@@ -41,19 +36,50 @@ pub async fn check_invite_code(
     }
 }
 
-/// Checks the validity of the invite code
+/// Creates new invite codes
 pub async fn create_invite_codes(
     pool: web::Data<PgPool>,
     new_codes: web::Json<CreateInviteCode>,
+    user: AuthenticatedUser
 ) -> TalliiResponse {
-    // get the invite code repository
-    let repository = InviteCodeRepository::new(pool.deref().clone());
+    // check if the user is me to make sure that no one can make invite codes
+    if user.username != String::from("aho") {
+        return Err(TalliiError::UNAUTHORIZED.default());
+    }
 
     // execute the query
-    repository.create_many(new_codes.amount).await?;
+    InviteCodeRepository::create_many(&pool, new_codes.amount).await?;
 
     // response with created
     Ok(HttpResponse::Created().finish())
+}
+
+
+/// Checks if the username is taken
+pub async fn check_username(
+    pool: web::Data<PgPool>,
+    payload: web::Json<CheckUsername>,
+) -> TalliiResponse {
+
+    // execute the query
+    match UserRepository::get_by_username(&pool, &payload.username).await? {
+        Some(_) => Err(TalliiError::USERNAME_TAKEN.default()),
+        None => Ok(HttpResponse::Ok().finish())
+    }
+}
+
+
+/// Checks if the email is taken
+pub async fn check_email(
+    pool: web::Data<PgPool>,
+    payload: web::Json<CheckEmail>,
+) -> TalliiResponse {
+
+    // execute the query
+    match UserRepository::get_by_email(&pool, &payload.email).await? {
+        Some(_) => Err(TalliiError::EMAIL_TAKEN.default()),
+        None => Ok(HttpResponse::Ok().finish())
+    }
 }
 
 /// Logs the user in if the provided credentials are correct
@@ -62,11 +88,9 @@ pub async fn login(
     crypto: web::Data<Crypto>,
     person: web::Json<LoginUser>,
 ) -> Result<HttpResponse, TalliiError> {
-    // get user repository
-    let user_repo = UserRepository::new(pool.deref().clone());
 
     // check if there is a user with the provided email
-    let user = match user_repo.get_by_email(&person.email).await? {
+    let user = match UserRepository::get_by_email(&pool, &person.email).await? {
         Some(u) => u,
         None => {
             return Err(TalliiError::UNAUTHORIZED.default());
@@ -94,12 +118,9 @@ pub async fn signup(
     crypto: web::Data<Crypto>,
     new_user: web::Json<NewUser>,
 ) -> TalliiResponse {
-    // get the user and invite_code repository
-    let user_repo = UserRepository::new(pool.deref().clone());
-    let invite_code_repo = InviteCodeRepository::new(pool.deref().clone());
 
     // check to make sure the invite code is valid
-    let is_valid_invite_code = invite_code_repo.is_valid(&new_user.invite_code).await?;
+    let is_valid_invite_code = InviteCodeRepository::is_valid(&pool, &new_user.invite_code).await?;
 
     // if not valid return an InvalidInviteCode error
     if !is_valid_invite_code {
@@ -107,14 +128,12 @@ pub async fn signup(
     }
 
     // check to make sure the invite code is not taken by another user
-    if let Some(_) = user_repo.get_by_invite_code(&new_user.invite_code).await? {
+    if let Some(_) = UserRepository::get_by_invite_code(&pool, &new_user.invite_code).await? {
         return Err(TalliiError::INVALID_INVITE_CODE.default());
     }
 
-    // TODO: Check if email and username is already taken
-
     // create the new user in the database
-    let created_user = user_repo.create(&new_user, &crypto).await?;
+    let created_user = UserRepository::create(&pool, &new_user, &crypto).await?;
 
     // TODO: send verification email to user
 

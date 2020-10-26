@@ -22,6 +22,8 @@ impl TalliiError {
     pub const INTERNAL_SERVER_ERROR: TalliiErrorCode = TalliiErrorCode("INTERNAL_SERVER_ERROR");
     pub const INVALID_INVITE_CODE: TalliiErrorCode = TalliiErrorCode("INVALID_INVITE_CODE");
     pub const UNAUTHORIZED: TalliiErrorCode = TalliiErrorCode("UNAUTHORIZED");
+    pub const USERNAME_TAKEN: TalliiErrorCode = TalliiErrorCode("USERNAME_TAKEN");
+    pub const EMAIL_TAKEN: TalliiErrorCode = TalliiErrorCode("EMAIL_TAKEN");
 }
 
 /// Representation of the TalliiErrorCodes
@@ -38,6 +40,8 @@ impl TalliiErrorCode {
             }
             TalliiError::INVALID_INVITE_CODE => "The provided invite code is invalid.",
             TalliiError::UNAUTHORIZED => "User does not have the permissions to fulfill request.",
+            TalliiError::USERNAME_TAKEN => "The provided username is not available",
+            TalliiError::EMAIL_TAKEN => "The provided email is not available",
             _ => "Oops, something seems to have gone wrong on our end.",
         };
 
@@ -86,6 +90,8 @@ impl ResponseError for TalliiError {
             TalliiError::INTERNAL_SERVER_ERROR => StatusCode::INTERNAL_SERVER_ERROR,
             TalliiError::INVALID_INVITE_CODE => StatusCode::BAD_REQUEST,
             TalliiError::UNAUTHORIZED => StatusCode::UNAUTHORIZED,
+            TalliiError::USERNAME_TAKEN => StatusCode::BAD_REQUEST,
+            TalliiError::EMAIL_TAKEN => StatusCode::BAD_REQUEST,
             _ => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }

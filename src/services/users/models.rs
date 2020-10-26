@@ -54,6 +54,18 @@ pub struct InviteCode {
     pub id: String,
 }
 
+/// Payload required to check if username is taken
+#[derive(Debug, Deserialize)]
+pub struct CheckUsername {
+    pub username: String,
+}
+
+/// Payload required to check if email is taken
+#[derive(Debug, Deserialize)]
+pub struct CheckEmail {
+    pub email: String,
+}
+
 /// Representation of struct for creating InviteCodes
 #[derive(Debug, Deserialize)]
 pub struct CreateInviteCode {

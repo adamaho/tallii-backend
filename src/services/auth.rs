@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use actix_web::dev::Payload;
 use actix_web::{web, FromRequest, HttpRequest};
 use actix_web_httpauth::extractors::bearer::BearerAuth;
@@ -41,12 +39,9 @@ impl FromRequest for AuthenticatedUser {
                         .await
                         .map_err(|_err| TalliiError::UNAUTHORIZED.default())?;
 
-                    // get an instance of the user repo
-                    let user_repo = UserRepository::new(p.deref().clone());
 
                     // check to make sure the provided username and user_id combo is valid
-                    user_repo
-                        .get_by_username_and_id(&token.claims.sub, &token.claims.username)
+                    UserRepository::get_by_username_and_id(&p.into_inner(), &token.claims.sub, &token.claims.username)
                         .await?
                         .ok_or_else(|| TalliiError::UNAUTHORIZED.default())?;
 
