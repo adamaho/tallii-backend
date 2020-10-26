@@ -34,7 +34,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(
                 Cors::new()
-                    .allowed_origin("https://tallii.io")
+                    .allowed_origin("http://localhost:1234")
                     .allowed_methods(vec!["GET", "POST", "PUT", "DELETE", "OPTIONS"])
                     .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
                     .allowed_header(header::CONTENT_TYPE)

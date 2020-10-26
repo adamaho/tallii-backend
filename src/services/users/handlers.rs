@@ -26,8 +26,10 @@ pub async fn check_invite_code(
     // execute the query
     let is_valid = InviteCodeRepository::is_valid(&pool, &code.id).await?;
 
+    let user = UserRepository::get_by_invite_code(&pool, &code.id).await?;
+
     // if not valid return an error
-    if !is_valid {
+    if !is_valid || user.is_some() {
         Err(TalliiError::INVALID_INVITE_CODE.default())
     } else {
         Ok(HttpResponse::Ok().json(""))
@@ -41,7 +43,7 @@ pub async fn create_invite_codes(
     user: AuthenticatedUser,
 ) -> TalliiResponse {
     // check if the user is me to make sure that no one can make invite codes
-    if user.username != String::from("aho") {
+    if user.username != String::from("adamaho") {
         return Err(TalliiError::UNAUTHORIZED.default());
     }
 
@@ -60,7 +62,7 @@ pub async fn check_username(
     // execute the query
     match UserRepository::get_by_username(&pool, &payload.username).await? {
         Some(_) => Err(TalliiError::USERNAME_TAKEN.default()),
-        None => Ok(HttpResponse::Ok().finish()),
+        None => Ok(HttpResponse::Ok().json("")),
     }
 }
 
@@ -72,7 +74,7 @@ pub async fn check_email(
     // execute the query
     match UserRepository::get_by_email(&pool, &payload.email).await? {
         Some(_) => Err(TalliiError::EMAIL_TAKEN.default()),
-        None => Ok(HttpResponse::Ok().finish()),
+        None => Ok(HttpResponse::Ok().json("")),
     }
 }
 
