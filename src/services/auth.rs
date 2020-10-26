@@ -39,11 +39,14 @@ impl FromRequest for AuthenticatedUser {
                         .await
                         .map_err(|_err| TalliiError::UNAUTHORIZED.default())?;
 
-
                     // check to make sure the provided username and user_id combo is valid
-                    UserRepository::get_by_username_and_id(&p.into_inner(), &token.claims.sub, &token.claims.username)
-                        .await?
-                        .ok_or_else(|| TalliiError::UNAUTHORIZED.default())?;
+                    UserRepository::get_by_username_and_id(
+                        &p.into_inner(),
+                        &token.claims.sub,
+                        &token.claims.username,
+                    )
+                    .await?
+                    .ok_or_else(|| TalliiError::UNAUTHORIZED.default())?;
 
                     // return the authenticated user
                     Ok(AuthenticatedUser {

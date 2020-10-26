@@ -1,5 +1,5 @@
-use actix_web::{middleware::Logger, web, App, HttpServer, http::header};
 use actix_cors::Cors;
+use actix_web::{http::header, middleware::Logger, web, App, HttpServer};
 use tracing::{info, instrument};
 
 mod config;
@@ -39,13 +39,16 @@ async fn main() -> std::io::Result<()> {
                     .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
                     .allowed_header(header::CONTENT_TYPE)
                     .max_age(3600)
-                    .finish()
+                    .finish(),
             )
             .wrap(Logger::default())
             .data(pool.clone())
             .data(crypto.clone())
             .service(web::scope("/api/v1").configure(define_routes))
-            .route("/", web::get().to(|| web::HttpResponse::Ok().json("Healthy")))
+            .route(
+                "/",
+                web::get().to(|| web::HttpResponse::Ok().json("Healthy")),
+            )
     })
     .bind(format!("{}:{}", config.hostname, config.port))?
     .run()

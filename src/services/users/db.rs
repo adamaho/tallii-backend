@@ -11,7 +11,6 @@ use super::models::{InviteCode, NewUser, PublicUser, User};
 pub struct InviteCodeRepository;
 
 impl InviteCodeRepository {
-
     /// Checks if the provided invite code is valid
     pub async fn is_valid(pool: &PgPool, id: &String) -> Result<bool, TalliiError> {
         // get the invite code, if it exists
@@ -31,7 +30,7 @@ impl InviteCodeRepository {
 
     /// Gets all invite codes
     /// TODO: Hide this behind the citadel
-    pub async fn get_all(pool: &PgPool,) -> Result<Vec<InviteCode>, TalliiError> {
+    pub async fn get_all(pool: &PgPool) -> Result<Vec<InviteCode>, TalliiError> {
         let all_invite_codes = sqlx::query_as::<_, InviteCode>("select * from invite_codes")
             .fetch_all(pool)
             .await?;
@@ -76,13 +75,16 @@ impl UserRepository {
         Ok(user_with_email)
     }
 
-
     /// Fetches a user with the provided username
-    pub async fn get_by_username(pool: &PgPool, username: &String) -> Result<Option<User>, TalliiError> {
-        let user_with_username = sqlx::query_as::<_, User>("select * from users where username = $1")
-            .bind(username)
-            .fetch_optional(pool)
-            .await?;
+    pub async fn get_by_username(
+        pool: &PgPool,
+        username: &String,
+    ) -> Result<Option<User>, TalliiError> {
+        let user_with_username =
+            sqlx::query_as::<_, User>("select * from users where username = $1")
+                .bind(username)
+                .fetch_optional(pool)
+                .await?;
 
         Ok(user_with_username)
     }
