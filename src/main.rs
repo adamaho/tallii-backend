@@ -1,4 +1,5 @@
-use actix_web::{middleware::Logger, web, App, HttpServer};
+use actix_web::{middleware::Logger, web, App, HttpServer, http::header};
+use actix_cors::Cors;
 use tracing::{info, instrument};
 
 mod config;
@@ -31,7 +32,15 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            // TODO: Add cors to enable requests from `tallii.io`
+            .wrap(
+                Cors::new()
+                    .allowed_origin("https://tallii.io")
+                    .allowed_methods(vec!["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+                    .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+                    .allowed_header(header::CONTENT_TYPE)
+                    .max_age(3600)
+                    .finish()
+            )
             .wrap(Logger::default())
             .data(pool.clone())
             .data(crypto.clone())
