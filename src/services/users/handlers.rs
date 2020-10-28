@@ -10,7 +10,12 @@ use super::db::{InviteCodeRepository, UserRepository};
 use super::models::{CheckEmail, CheckUsername, CreateInviteCode, InviteCode, LoginUser, NewUser};
 
 /// Gets all invite codes
-pub async fn get_all_invite_codes(pool: web::Data<PgPool>) -> TalliiResponse {
+pub async fn get_all_invite_codes(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
+    // check if the user is me to make sure that no one can make invite codes
+    if user.username != String::from("adamaho") {
+        return Err(TalliiError::UNAUTHORIZED.default());
+    }
+
     // execute the query
     let all_invite_codes = InviteCodeRepository::get_all(&pool).await?;
 
@@ -88,7 +93,7 @@ pub async fn login(
     let user = match UserRepository::get_by_email(&pool, &person.email).await? {
         Some(u) => u,
         None => {
-            return Err(TalliiError::UNAUTHORIZED.default());
+            return Err(TalliiError::INVALID_LOGIN.default());
         }
     };
 
@@ -97,7 +102,7 @@ pub async fn login(
         .verify_password(&person.password, &user.password)
         .await?
     {
-        return Err(TalliiError::UNAUTHORIZED.default());
+        return Err(TalliiError::INVALID_LOGIN.default());
     }
 
     // create a new jwt for the newly authorized user
