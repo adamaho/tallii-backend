@@ -18,7 +18,7 @@ create table users (
     created_at timestamp not null default current_timestamp
 );
 
--- Groups
+-- Group
 create table groups (
     group_id serial primary key,
     name varchar(40) not null,
@@ -27,7 +27,7 @@ create table groups (
     created_at timestamp not null default current_timestamp
 );
 
--- Groups Members
+-- Group Members
 create table groups_members (
     group_id integer not null references groups(group_id) on delete cascade,
     user_id integer not null references users(user_id),

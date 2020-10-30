@@ -1,6 +1,6 @@
 
 
-### Get Groups
+### Get Group
 GET {{baseUrl}}/api/v1/groups HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
