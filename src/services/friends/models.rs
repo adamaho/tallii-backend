@@ -21,7 +21,7 @@ pub struct FriendResponse {
 /// Representation of a New Friend
 #[derive(Debug, Deserialize)]
 pub struct FriendRequest {
-    pub friend_id: i32,
+    pub username: String,
 }
 /// Representation of a New Friend
 #[derive(Debug, Deserialize)]

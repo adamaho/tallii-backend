@@ -4,6 +4,7 @@ use sqlx::PgPool;
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::friends::models::{FriendRequest, FriendRequestAcceptance, FriendResponse};
+use crate::services::users::models::User;
 
 pub struct FriendRepository;
 
@@ -70,11 +71,25 @@ impl FriendRepository {
         new_friend: &FriendRequest,
         user: &AuthenticatedUser,
     ) -> Result<(), TalliiError> {
+
+        // fetch the friend to add by username
+        let user_to_add = sqlx::query_as::<_, User>("select * from users where username = $1")
+            .bind(&new_friend.username)
+            .fetch_optional(pool)
+            .await?;
+
+        // if there is no user with that username return an error
+        if user_to_add.is_none() {
+            // TODO: Move to invalid request or something
+            return Err(TalliiError::INTERNAL_SERVER_ERROR.default());
+        }
+
+        // create the new friend request
         sqlx::query(
             "insert into friends (user_id, friend_id, friend_status) values ($1, $2, 'requested')",
         )
         .bind(&user.user_id)
-        .bind(&new_friend.friend_id)
+        .bind(user_to_add.unwrap().user_id)
         .execute(pool)
         .await?;
 
