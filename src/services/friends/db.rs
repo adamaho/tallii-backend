@@ -71,7 +71,6 @@ impl FriendRepository {
         new_friend: &FriendRequest,
         user: &AuthenticatedUser,
     ) -> Result<(), TalliiError> {
-
         // fetch the friend to add by username
         let user_to_add = sqlx::query_as::<_, User>("select * from users where username = $1")
             .bind(&new_friend.username)
