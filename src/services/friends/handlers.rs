@@ -14,7 +14,7 @@ pub async fn send_friend_request(
 ) -> TalliiResponse {
     FriendRepository::create_friend_request(&pool, &new_friend, &user).await?;
 
-    Ok(HttpResponse::Created().finish())
+    Ok(HttpResponse::Created().json(""))
 }
 
 /// Accepts a new friend invite for the requesting user
@@ -25,7 +25,7 @@ pub async fn accept_friend_request(
 ) -> TalliiResponse {
     FriendRepository::accept_friend_request(&pool, &new_friend, &user).await?;
 
-    Ok(HttpResponse::Created().finish())
+    Ok(HttpResponse::Created().json(""))
 }
 
 // Gets a list of all current friends for the requesting user
