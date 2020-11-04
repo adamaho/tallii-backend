@@ -65,6 +65,18 @@ impl InviteCodeRepository {
 pub struct UserRepository;
 
 impl UserRepository {
+    /// Fetches a user with the provided user_id
+    pub async fn get_by_user_id(pool: &PgPool, user_id: &i32) -> Result<PublicUser, TalliiError> {
+        let user = sqlx::query_as::<_, PublicUser>(
+            "select user_id, avatar, email, username, verified, taunt from users where user_id = $1"
+        )
+            .bind(user_id)
+            .fetch_one(pool)
+            .await?;
+
+        Ok(user)
+    }
+
     /// Fetches a user with the provided email
     pub async fn get_by_email(pool: &PgPool, email: &String) -> Result<Option<User>, TalliiError> {
         let user_with_email = sqlx::query_as::<_, User>("select * from users where email = $1")

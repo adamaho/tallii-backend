@@ -147,3 +147,12 @@ pub async fn signup(
     // respond with the newly created token
     Ok(HttpResponse::Ok().json(TokenResponse { token }))
 }
+
+/// Gets the profile of the currently logged in user
+pub async fn get_me(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
+    // get me from the database
+    let me = UserRepository::get_by_user_id(&pool, &user.user_id).await?;
+
+    // response with json of me
+    Ok(HttpResponse::Ok().json(me))
+}
