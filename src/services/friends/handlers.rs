@@ -3,7 +3,7 @@ use sqlx::PgPool;
 
 use crate::services::auth::AuthenticatedUser;
 use crate::services::friends::db::FriendRepository;
-use crate::services::friends::models::{FriendRequest, FriendRequestAcceptance};
+use crate::services::friends::models::{FriendRequest, FriendRequestAcceptance, FriendRequestDeny};
 use crate::services::TalliiResponse;
 
 /// Creates a new friend invite for the requesting user
@@ -15,6 +15,28 @@ pub async fn send_friend_request(
     FriendRepository::create_friend_request(&pool, &new_friend, &user).await?;
 
     Ok(HttpResponse::Created().json(""))
+}
+
+/// Denies a new friend request that was received
+pub async fn deny_friend_request(
+    pool: web::Data<PgPool>,
+    requested_friend: web::Json<FriendRequestDeny>,
+    user: AuthenticatedUser,
+) -> TalliiResponse {
+    FriendRepository::deny_friend_request(&pool, &requested_friend, &user).await?;
+
+    Ok(HttpResponse::Ok().json(""))
+}
+
+/// Cancels a friend request that was sent
+pub async fn cancel_friend_request(
+    pool: web::Data<PgPool>,
+    sent_friend: web::Json<FriendRequestDeny>,
+    user: AuthenticatedUser,
+) -> TalliiResponse {
+    FriendRepository::cancel_friend_request(&pool, &sent_friend, &user).await?;
+
+    Ok(HttpResponse::Ok().json(""))
 }
 
 /// Accepts a new friend invite for the requesting user

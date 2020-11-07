@@ -3,7 +3,7 @@ use sqlx::PgPool;
 
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
-use crate::services::friends::models::{FriendRequest, FriendRequestAcceptance, FriendResponse};
+use crate::services::friends::models::{FriendRequest, FriendRequestAcceptance, FriendResponse, FriendRequestDeny};
 use crate::services::users::models::User;
 
 pub struct FriendRepository;
@@ -118,6 +118,42 @@ impl FriendRepository {
         .bind(&user.user_id)
         .execute(pool)
         .await?;
+
+        Ok(())
+    }
+
+    /// Denies a friend request that was received
+    pub async fn deny_friend_request(
+        pool: &PgPool,
+        requested_user: &FriendRequestDeny,
+        user: &AuthenticatedUser
+    ) -> Result<(), TalliiError> {
+        // delete row for the friend request
+        sqlx::query(
+            "delete from friends where user_id = $1 and friend_id = $2",
+        )
+            .bind(&requested_user.user_id)
+            .bind(&user.user_id)
+            .execute(pool)
+            .await?;
+
+        Ok(())
+    }
+
+    /// Cancels a friend request that was sent
+    pub async fn cancel_friend_request(
+        pool: &PgPool,
+        sent_friend: &FriendRequestDeny,
+        user: &AuthenticatedUser
+    ) -> Result<(), TalliiError> {
+        // delete row for the friend request
+        sqlx::query(
+            "delete from friends where friend_id = $1 and user_id = $2",
+        )
+            .bind(&sent_friend.user_id)
+            .bind(&user.user_id)
+            .execute(pool)
+            .await?;
 
         Ok(())
     }

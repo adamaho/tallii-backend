@@ -36,6 +36,14 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
             .route(web::post().to(friends::handlers::send_friend_request)),
     )
     .service(
+        web::resource("/friends/requests/cancel")
+            .route(web::post().to(friends::handlers::cancel_friend_request)),
+    )
+    .service(
+        web::resource("/friends/requests/deny")
+            .route(web::post().to(friends::handlers::deny_friend_request)),
+    )
+    .service(
         web::resource("/friends/requests/accept")
             .route(web::post().to(friends::handlers::accept_friend_request)),
     )
