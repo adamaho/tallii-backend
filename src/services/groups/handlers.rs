@@ -30,7 +30,7 @@ pub async fn create(
 
     tx.commit().await?;
 
-    Ok(HttpResponse::Created().json(""))
+    Ok(HttpResponse::Created().json(created_group))
 }
 
 /// Gets all groups that are associated with the requesting user
