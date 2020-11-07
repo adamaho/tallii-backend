@@ -19,13 +19,18 @@ pub async fn create(
     // create new group in the transaction
     let created_group = GroupRepository::create(&mut tx, &new_group).await?;
 
+    let admin_member = NewGroupMember {
+        user_id: user.user_id,
+        role: String::from("admin")
+    };
+
     // create a new group with the owner being the current user
-    GroupMembersRepository::create_many(&mut tx, &user, created_group.group_id, &new_group.members)
+    GroupMembersRepository::create_one_tx(&mut tx, created_group.group_id, &admin_member)
         .await?;
 
     tx.commit().await?;
 
-    Ok(HttpResponse::Created().finish())
+    Ok(HttpResponse::Created().json(""))
 }
 
 /// Gets all groups that are associated with the requesting user
@@ -52,7 +57,7 @@ pub async fn update(
     // update the group
     GroupRepository::update(&pool, id, &group).await?;
 
-    Ok(HttpResponse::Ok().finish())
+    Ok(HttpResponse::Ok().json(""))
 }
 
 /// Deletes a group
@@ -72,7 +77,7 @@ pub async fn delete(
     // delete the group
     GroupRepository::delete(&pool, id).await?;
 
-    Ok(HttpResponse::Ok().finish())
+    Ok(HttpResponse::Ok().json(""))
 }
 
 /// Creates a new group member
@@ -92,7 +97,7 @@ pub async fn create_member(
 
     GroupMembersRepository::create_one(&pool, id, &member).await?;
 
-    Ok(HttpResponse::Created().finish())
+    Ok(HttpResponse::Created().json(""))
 }
 
 /// Gets all the members in a group

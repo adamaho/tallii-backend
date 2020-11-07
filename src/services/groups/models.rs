@@ -16,7 +16,6 @@ pub struct NewGroup {
     pub name: String,
     pub description: Option<String>,
     pub avatar: Option<String>,
-    pub members: Vec<NewGroupMember>,
 }
 
 /// Representation of an Group to update

@@ -116,18 +116,35 @@ impl GroupMembersRepository {
         Ok(())
     }
 
-    /// Creates a group_users in the database
+    /// Creates a group_user in the database
     pub async fn create_one(
         pool: &PgPool,
         group_id: i32,
         group_member: &NewGroupMember,
     ) -> Result<(), TalliiError> {
         // create a new member
-        sqlx::query("insert into groups_members (group_id, user_id, role) values $1, $2, $3")
+        sqlx::query("insert into groups_members (group_id, user_id, role) values ($1, $2, $3)")
             .bind(group_id)
             .bind(&group_member.user_id)
             .bind(&group_member.role)
             .execute(pool)
+            .await?;
+
+        Ok(())
+    }
+
+    /// Creates a group_user in the database in a transaction
+    pub async fn create_one_tx(
+        tx: &mut Transaction<PoolConnection<PgConnection>>,
+        group_id: i32,
+        group_member: &NewGroupMember,
+    ) -> Result<(), TalliiError> {
+        // create a new member
+        sqlx::query("insert into groups_members (group_id, user_id, role) values ($1, $2, $3)")
+            .bind(group_id)
+            .bind(&group_member.user_id)
+            .bind(&group_member.role)
+            .execute(tx)
             .await?;
 
         Ok(())

@@ -12,13 +12,7 @@ content-type: application/json
 
 {
     "name": "Group 122",
-    "description": "This is the description of the group",
-    "members": [
-        {
-            "user_id": 2,
-            "role": "member"
-        }
-    ]
+    "description": "This is the description of the group"
 }
 
 ### Update an existing Group
