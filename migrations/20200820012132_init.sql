@@ -18,25 +18,6 @@ create table users (
     created_at timestamp not null default current_timestamp
 );
 
--- Group
-create table groups (
-    group_id serial primary key,
-    name varchar(40) not null,
-    description text,
-    avatar text,
-    created_at timestamp not null default current_timestamp
-);
-
--- Group Members
-create table groups_members (
-    group_id integer not null references groups(group_id) on delete cascade,
-    user_id integer not null references users(user_id),
-    role varchar(40),
-    created_at timestamp not null default current_timestamp,
-    primary key (group_id, user_id)
-);
-
-
 -- Friends
 create table friends (
     user_id integer not null references users(user_id),
@@ -57,7 +38,6 @@ create table tags (
 -- Events
 create table events (
     event_id serial primary key,
-    group_id integer not null references groups(group_id),
     name text not null,
     description text,
     event_type text not null, -- individual or team
