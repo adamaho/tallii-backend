@@ -11,7 +11,7 @@ pub struct Friend {
 
 #[derive(sqlx::FromRow, Debug, Serialize)]
 pub struct FriendCount {
-    pub count: i64
+    pub count: i64,
 }
 
 /// Database representation of a Friend

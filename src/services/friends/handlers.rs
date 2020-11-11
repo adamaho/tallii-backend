@@ -56,10 +56,7 @@ pub async fn get_friends(pool: web::Data<PgPool>, user: AuthenticatedUser) -> Ta
     let (data, count) = FriendRepository::get_many(&pool, &user).await?;
 
     // create the paginated response
-    let response = PaginatedResponse {
-        count,
-        data
-    };
+    let response = PaginatedResponse { count, data };
 
     Ok(HttpResponse::Ok().json(response))
 }

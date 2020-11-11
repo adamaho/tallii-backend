@@ -3,7 +3,9 @@ use sqlx::PgPool;
 
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
-use crate::services::friends::models::{FriendRequest, FriendRequestAcceptance, FriendRequestDeny, FriendResponse, FriendCount};
+use crate::services::friends::models::{
+    FriendCount, FriendRequest, FriendRequestAcceptance, FriendRequestDeny, FriendResponse,
+};
 use crate::services::users::models::User;
 
 pub struct FriendRepository;

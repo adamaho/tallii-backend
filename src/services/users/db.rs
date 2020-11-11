@@ -91,9 +91,9 @@ impl UserRepository {
     pub async fn get_by_username(
         pool: &PgPool,
         username: &String,
-    ) -> Result<Option<User>, TalliiError> {
+    ) -> Result<Option<PublicUser>, TalliiError> {
         let user_with_username =
-            sqlx::query_as::<_, User>("select * from users where username = $1")
+            sqlx::query_as::<_, PublicUser>("select user_id, avatar, email, username, verified, taunt from users where username = $1")
                 .bind(username)
                 .fetch_optional(pool)
                 .await?;
