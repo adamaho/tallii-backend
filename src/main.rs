@@ -5,6 +5,7 @@ use tracing::{info, instrument};
 mod config;
 mod crypto;
 mod errors;
+mod generics;
 mod routes;
 mod services;
 

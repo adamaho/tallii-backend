@@ -1,6 +1,7 @@
 use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
+use crate::generics::PaginatedResponse;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::friends::db::FriendRepository;
 use crate::services::friends::models::{FriendRequest, FriendRequestAcceptance, FriendRequestDeny};
@@ -52,9 +53,15 @@ pub async fn accept_friend_request(
 
 // Gets a list of all current friends for the requesting user
 pub async fn get_friends(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
-    let friends = FriendRepository::get_many(&pool, &user).await?;
+    let (data, count) = FriendRepository::get_many(&pool, &user).await?;
 
-    Ok(HttpResponse::Ok().json(friends))
+    // create the paginated response
+    let response = PaginatedResponse {
+        count,
+        data
+    };
+
+    Ok(HttpResponse::Ok().json(response))
 }
 
 // Gets a list of all current friends for the requesting user
