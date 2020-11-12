@@ -7,7 +7,7 @@ use crate::services::auth::AuthenticatedUser;
 use crate::services::TalliiResponse;
 
 use super::db::{InviteCodeRepository, UserRepository};
-use super::models::{CheckEmail, CheckUsername, CreateInviteCode, InviteCode, LoginUser, NewUser};
+use super::models::{CheckEmail, CheckUsername, CreateInviteCode, InviteCode, LoginUser, NewUser, UserQuery};
 
 /// Gets all invite codes
 pub async fn get_all_invite_codes(
@@ -148,7 +148,7 @@ pub async fn signup(
     Ok(HttpResponse::Ok().json(TokenResponse { token }))
 }
 
-/// Gets the profile of the currently logged in user
+/// Gets the profile of a specific user
 pub async fn get_user(
     pool: web::Data<PgPool>,
     username: web::Path<String>,
@@ -159,4 +159,17 @@ pub async fn get_user(
 
     // response with json of me
     Ok(HttpResponse::Ok().json(user))
+}
+
+/// Gets maximum 10 users that match the provided username
+pub async fn search_users(
+    pool: web::Data<PgPool>,
+    _user: AuthenticatedUser,
+    params: web::Query<UserQuery>
+) -> TalliiResponse {
+    // get me from the database
+    let users = UserRepository::search_by_username(&pool, &params).await?;
+
+    // response with json of me
+    Ok(HttpResponse::Ok().json(users))
 }

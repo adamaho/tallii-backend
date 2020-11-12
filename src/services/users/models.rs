@@ -71,3 +71,9 @@ pub struct CheckEmail {
 pub struct CreateInviteCode {
     pub amount: i32,
 }
+
+/// Representation of the search query
+#[derive(Debug, Deserialize)]
+pub struct UserQuery {
+    pub username: String
+}

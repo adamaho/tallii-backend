@@ -6,7 +6,7 @@ use sqlx::PgPool;
 use crate::crypto::Crypto;
 use crate::errors::TalliiError;
 
-use super::models::{InviteCode, NewUser, PublicUser, User};
+use super::models::{InviteCode, NewUser, PublicUser, User, UserQuery};
 
 pub struct InviteCodeRepository;
 
@@ -129,6 +129,22 @@ impl UserRepository {
                 .await?;
 
         Ok(user_with_invite_code)
+    }
+
+    /// Fetches a user with the provided username
+    pub async fn search_by_username(
+        pool: &PgPool,
+        params: &UserQuery,
+    ) -> Result<Vec<PublicUser>, TalliiError> {
+
+
+        let matching_users =
+            sqlx::query_as::<_, PublicUser>("select user_id, avatar, email, username, verified, taunt from users where username like $1 limit 10")
+                .bind(format!("%{}%", &params.username))
+                .fetch_all(pool)
+                .await?;
+
+        Ok(matching_users)
     }
 
     /// Creates a user

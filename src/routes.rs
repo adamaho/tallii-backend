@@ -23,6 +23,7 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
         web::resource("/users/check-email").route(web::post().to(users::handlers::check_email)),
     )
     .service(web::resource("/users/{user_id}").route(web::get().to(users::handlers::get_user)))
+    .service(web::resource("/users").route(web::get().to(users::handlers::search_users)))
     .service(web::resource("/login").route(web::post().to(users::handlers::login)))
     .service(web::resource("/signup").route(web::post().to(users::handlers::signup)))
     .service(web::resource("/friends").route(web::get().to(friends::handlers::get_friends)))
