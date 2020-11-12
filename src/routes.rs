@@ -26,7 +26,7 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
     .service(web::resource("/users").route(web::get().to(users::handlers::search_users)))
     .service(web::resource("/login").route(web::post().to(users::handlers::login)))
     .service(web::resource("/signup").route(web::post().to(users::handlers::signup)))
-    .service(web::resource("/friends").route(web::get().to(friends::handlers::get_friends)))
+    .service(web::resource("/friends/{user_id}").route(web::get().to(friends::handlers::get_friends)))
     .service(
         web::resource("/friends/invitations")
             .route(web::get().to(friends::handlers::get_friend_invitations)),

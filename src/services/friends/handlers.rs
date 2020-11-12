@@ -52,8 +52,8 @@ pub async fn accept_friend_request(
 }
 
 // Gets a list of all current friends for the requesting user
-pub async fn get_friends(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
-    let (data, count) = FriendRepository::get_many(&pool, &user).await?;
+pub async fn get_friends(pool: web::Data<PgPool>, user_id: web::Path<i32>, _user: AuthenticatedUser) -> TalliiResponse {
+    let (data, count) = FriendRepository::get_many(&pool, user_id.into_inner()).await?;
 
     // create the paginated response
     let response = PaginatedResponse { count, data };

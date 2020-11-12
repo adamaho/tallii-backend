@@ -14,13 +14,13 @@ impl FriendRepository {
     /// Gets a list of friends
     pub async fn get_many(
         pool: &PgPool,
-        user: &AuthenticatedUser,
+        user_id: i32,
     ) -> Result<(Vec<FriendResponse>, i64), TalliiError> {
         // get the friend count
         let count = sqlx::query_as::<_, FriendCount>(
             "select count(user_id) from friends where user_id = $1 and friend_status = 'friend'",
         )
-        .bind(user.user_id)
+        .bind(user_id)
         .fetch_one(pool)
         .await?;
 
@@ -32,7 +32,7 @@ impl FriendRepository {
                 where friends.user_id = $1 and friend_status = 'friend'
             "#,
         )
-        .bind(user.user_id)
+        .bind(user_id)
         .fetch_all(pool)
         .await?;
 
