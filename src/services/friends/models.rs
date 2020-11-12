@@ -49,3 +49,9 @@ pub struct EditFriend {
     pub friend_status: String,
     pub created_at: Option<chrono::NaiveDateTime>,
 }
+
+/// Query Params for FriendQueryParams
+#[derive(Debug, Deserialize)]
+pub struct FriendQueryParams {
+    pub user_id: i32
+}
