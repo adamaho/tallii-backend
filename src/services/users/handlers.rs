@@ -16,6 +16,7 @@ pub async fn get_all_invite_codes(
     pool: web::Data<PgPool>,
     user: AuthenticatedUser,
 ) -> TalliiResponse {
+    println!("{:?}", user.username);
     // check if the user is me to make sure that no one can make invite codes
     if user.username != String::from("adamaho") {
         return Err(TalliiError::UNAUTHORIZED.default());

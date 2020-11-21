@@ -53,5 +53,5 @@ pub struct EditFriend {
 /// Query Params for FriendQueryParams
 #[derive(Debug, Deserialize)]
 pub struct FriendQueryParams {
-    pub user_id: i32
+    pub user_id: i32,
 }

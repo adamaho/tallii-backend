@@ -1,6 +1,7 @@
 ### Get All Invite Codes
 
 GET {{baseUrl}}/api/v1/invite-codes HTTP/1.1
+Authorization: Bearer {{token}}
 content-type: application/json
 
 ### Check Invite Codes
@@ -15,6 +16,7 @@ content-type: application/json
 ### Create new Invite Codes
 
 POST {{baseUrl}}/api/v1/invite-codes/new HTTP/1.1
+Authorization: Bearer {{token}}
 content-type: application/json
 
 {
@@ -39,6 +41,6 @@ POST {{baseUrl}}/api/v1/login HTTP/1.1
 content-type: application/json
 
 {
-    "email": "foo1@bar.com",
+    "email": "adam.aho@hey.com",
     "password": "password"
 }

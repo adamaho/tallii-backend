@@ -3,7 +3,10 @@ use sqlx::PgPool;
 
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
-use crate::services::friends::models::{FriendCount, FriendRequest, FriendRequestAcceptance, FriendRequestDeny, FriendResponse, FriendQueryParams};
+use crate::services::friends::models::{
+    FriendCount, FriendQueryParams, FriendRequest, FriendRequestAcceptance, FriendRequestDeny,
+    FriendResponse,
+};
 use crate::services::users::models::User;
 
 pub struct FriendRepository;
@@ -14,13 +17,17 @@ impl FriendRepository {
         pool: &PgPool,
         params: &FriendQueryParams,
     ) -> Result<Vec<FriendResponse>, TalliiError> {
-
         // select the friends
         let friends = sqlx::query_as::<_, FriendResponse>(
             r#"
-                select users.user_id, users.username, users.avatar, users.taunt
-                from friends inner join users on users.user_id = friends.friend_id
-                where friends.user_id = $1 and friend_status = 'friend'
+                select
+                    users.user_id, users.username, users.avatar, users.taunt
+                from
+                    friends
+                inner join
+                    users on users.user_id = friends.friend_id
+                where
+                    friends.user_id = $1 and friend_status = 'friend'
             "#,
         )
         .bind(params.user_id)
@@ -37,9 +44,14 @@ impl FriendRepository {
     ) -> Result<Vec<FriendResponse>, TalliiError> {
         let requests = sqlx::query_as::<_, FriendResponse>(
             r#"
-                select users.user_id, users.username, users.avatar, users.taunt
-                from friends inner join users on users.user_id = friends.friend_id
-                where friends.user_id = $1 and friend_status = 'requested'
+                select
+                    users.user_id, users.username, users.avatar, users.taunt
+                from
+                    friends
+                inner join
+                    users on users.user_id = friends.friend_id
+                where
+                    friends.user_id = $1 and friend_status = 'requested'
             "#,
         )
         .bind(user.user_id)
@@ -56,9 +68,14 @@ impl FriendRepository {
     ) -> Result<Vec<FriendResponse>, TalliiError> {
         let requests = sqlx::query_as::<_, FriendResponse>(
             r#"
-                select users.user_id, users.username, users.avatar, users.taunt
-                from friends inner join users on users.user_id = friends.user_id
-                where friends.friend_id = $1 and friend_status = 'requested'
+                select
+                    users.user_id, users.username, users.avatar, users.taunt
+                from
+                    friends
+                inner join
+                    users on users.user_id = friends.user_id
+                where
+                    friends.friend_id = $1 and friend_status = 'requested'
             "#,
         )
         .bind(user.user_id)
