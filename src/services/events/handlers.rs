@@ -2,7 +2,7 @@ use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
 use crate::services::auth::AuthenticatedUser;
-use crate::services::events::db::{EventRepository, EventParticipantRepository};
+use crate::services::events::db::{EventParticipantRepository, EventRepository};
 use crate::services::events::models::{Event, EventQueryParams, NewEvent};
 use crate::services::TalliiResponse;
 

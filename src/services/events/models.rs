@@ -1,3 +1,4 @@
+use crate::services::users::models::PublicUser;
 use serde::{Deserialize, Serialize};
 
 /// Database representation of an Event
@@ -8,6 +9,37 @@ pub struct Event {
     pub description: Option<String>,
     pub creator_user_id: i32,
     pub created_at: chrono::NaiveDateTime,
+}
+
+/// Database representation of an Event query
+#[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
+pub struct EventRow {
+    pub event_id: i32,
+    pub name: String,
+    pub description: Option<String>,
+    pub creator_user_id: i32,
+    pub created_at: chrono::NaiveDateTime,
+    pub user_id: i32,
+    pub avatar: Option<String>,
+    pub username: String,
+}
+
+/// Response payload for Event query
+#[derive(Serialize, Debug)]
+pub struct EventResponsePayload {
+    pub event_id: i32,
+    pub name: String,
+    pub description: Option<String>,
+    pub creator: EventCreator,
+    pub created_at: chrono::NaiveDateTime,
+}
+
+/// Represents a subset of user info for the creator of the event
+#[derive(Serialize, Debug)]
+pub struct EventCreator {
+    pub user_id: i32,
+    pub avatar: Option<String>,
+    pub username: String,
 }
 
 /// Representation of an New Event

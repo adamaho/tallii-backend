@@ -4,7 +4,10 @@ use sqlx::{PgPool, Transaction};
 
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
-use crate::services::events::models::{Event, EventTeam, NewEvent, NewEventTeam, EventQueryParams};
+use crate::services::events::models::{
+    Event, EventCreator, EventQueryParams, EventResponsePayload, EventRow, EventTeam, NewEvent,
+    NewEventTeam,
+};
 
 pub struct EventRepository;
 
@@ -36,20 +39,23 @@ impl EventRepository {
         pool: &PgPool,
         user: &AuthenticatedUser,
         params: &EventQueryParams,
-    ) -> Result<Vec<Event>, TalliiError> {
-
+    ) -> Result<Vec<EventResponsePayload>, TalliiError> {
         // start the query
         let mut query = String::from(
             r#"
                 select
-                    events.event_id, events.name, events.description, events.creator_user_id, events.created_at
+                    events.event_id, events.name, events.description, events.creator_user_id, events.created_at, u.user_id, u.username, u.avatar
                 from
                     events
                 left join
                     events_participants ep
                 on
                     events.event_id = ep.event_id
-            "#
+                left join
+                    users u
+                on
+                    events.creator_user_id = u.user_id
+            "#,
         );
 
         // filter by the user
@@ -57,11 +63,28 @@ impl EventRepository {
 
         // add the optional clause for participant status
         if let Some(participant_status) = &params.participant_status {
-            query.push_str(&format!(" and event_id = {}", participant_status));
+            query.push_str(&format!(" and ep.status = '{}'", participant_status));
         }
 
-        // execute the query
-        let events = sqlx::query_as::<_, Event>(&query).fetch_all(pool).await?;
+        // execute the query and format the response
+        let events = sqlx::query_as::<_, EventRow>(&query)
+            .fetch_all(pool)
+            .await?
+            .into_iter()
+            .map(|e| {
+                return EventResponsePayload {
+                    event_id: e.event_id,
+                    name: e.name,
+                    description: e.description,
+                    creator: EventCreator {
+                        user_id: e.user_id.clone(),
+                        username: e.username.clone(),
+                        avatar: e.avatar.clone(),
+                    },
+                    created_at: e.created_at,
+                };
+            })
+            .collect();
 
         Ok(events)
     }
@@ -70,7 +93,6 @@ impl EventRepository {
 pub struct EventParticipantRepository;
 
 impl EventParticipantRepository {
-
     /// Creates many event participants in the database
     pub async fn create_many(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
@@ -79,7 +101,8 @@ impl EventParticipantRepository {
         participants: &Vec<i32>,
     ) -> Result<(), TalliiError> {
         // init the query
-        let mut query = String::from("insert into events_participants (event_id, user_id, status) values");
+        let mut query =
+            String::from("insert into events_participants (event_id, user_id, status) values");
 
         // add the current user to the participants
         query.push_str(&format!("({}, {}, 'accepted'),", event_id, user_id));
