@@ -1,5 +1,5 @@
 ### Get Events
-GET {{baseUrl}}/api/v1/events?group_id=2 HTTP/1.1
+GET {{baseUrl}}/api/v1/events HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 

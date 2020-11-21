@@ -4,7 +4,7 @@ use sqlx::{PgPool, Transaction};
 
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
-use crate::services::events::models::{Event, EventTeam, NewEvent, NewEventTeam};
+use crate::services::events::models::{Event, EventTeam, NewEvent, NewEventTeam, EventQueryParams};
 
 pub struct EventRepository;
 
@@ -31,27 +31,40 @@ impl EventRepository {
         Ok(event)
     }
 
-    //Gets all Events by group_id
-    // pub async fn get_many_by_group_id(
-    //     pool: &PgPool,
-    //     params: &EventParams,
-    // ) -> Result<Vec<Event>, TalliiError> {
-    //     // start the query
-    //     let mut query = String::from("select * from events");
-    //
-    //     // mandatory group_id
-    //     query.push_str(&format!(" where group_id = {}", &params.group_id));
-    //
-    //     // add the optional clause for event_id
-    //     if let Some(event_id) = params.event_id {
-    //         query.push_str(&format!(" and event_id = {}", event_id));
-    //     }
-    //
-    //     // execute the query
-    //     let events = sqlx::query_as::<_, Event>(&query).fetch_all(pool).await?;
-    //
-    //     Ok(events)
-    // }
+    /// Gets all Events for user
+    pub async fn get_many(
+        pool: &PgPool,
+        user: &AuthenticatedUser,
+        params: &EventQueryParams,
+    ) -> Result<Vec<Event>, TalliiError> {
+
+        // start the query
+        let mut query = String::from(
+            r#"
+                select
+                    events.event_id, events.name, events.description, events.creator_user_id, events.created_at
+                from
+                    events
+                left join
+                    events_participants ep
+                on
+                    events.event_id = ep.event_id
+            "#
+        );
+
+        // filter by the user
+        query.push_str(&format!("where ep.user_id = {}", user.user_id));
+
+        // add the optional clause for participant status
+        if let Some(participant_status) = &params.participant_status {
+            query.push_str(&format!(" and event_id = {}", participant_status));
+        }
+
+        // execute the query
+        let events = sqlx::query_as::<_, Event>(&query).fetch_all(pool).await?;
+
+        Ok(events)
+    }
 }
 
 pub struct EventParticipantRepository;

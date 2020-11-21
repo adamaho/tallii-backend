@@ -18,6 +18,12 @@ pub struct NewEvent {
     pub participants: Vec<i32>,
 }
 
+/// Represents Query Params for querying an event
+#[derive(Deserialize, Debug)]
+pub struct EventQueryParams {
+    pub participant_status: Option<String>,
+}
+
 /// Database representation of an EventTeam
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct EventTeam {

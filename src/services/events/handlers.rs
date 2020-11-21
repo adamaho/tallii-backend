@@ -2,8 +2,8 @@ use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
 use crate::services::auth::AuthenticatedUser;
-use crate::services::events::db::{EventParticipantRepository, EventRepository};
-use crate::services::events::models::NewEvent;
+use crate::services::events::db::{EventRepository, EventParticipantRepository};
+use crate::services::events::models::{Event, EventQueryParams, NewEvent};
 use crate::services::TalliiResponse;
 
 /// Creates a new Event
@@ -34,18 +34,16 @@ pub async fn create(
     Ok(HttpResponse::Created().json("event created"))
 }
 
-// Gets all Events in Group
-// pub async fn get_events(
-//     pool: web::Data<PgPool>,
-//     _user: AuthenticatedUser,
-//     params: web::Query<EventParams>,
-// ) -> TalliiResponse {
-//     // TODO: validate user is apart of the group
-//
-//     let events = EventRepository::get_many_by_group_id(&pool, &params).await?;
-//
-//     Ok(HttpResponse::Ok().json(events))
-// }
+// Gets all Events for the user
+pub async fn get_events(
+    pool: web::Data<PgPool>,
+    user: AuthenticatedUser,
+    params: web::Query<EventQueryParams>,
+) -> TalliiResponse {
+    let events = EventRepository::get_many(&pool, &user, &params).await?;
+
+    Ok(HttpResponse::Ok().json(events))
+}
 //
 // // Gets all Teams and Members for an Event
 // pub async fn get_event_teams(
