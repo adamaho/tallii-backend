@@ -6,8 +6,8 @@ use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::events::models::{
     Event, EventCreator, EventParticipant, EventParticipantRequest, EventParticipantRow,
-    EventQueryParams, EventResponsePayload, EventRow, EventTeam, EventTeamRow, NewEvent,
-    NewEventTeam, EventTeamResponse
+    EventQueryParams, EventResponsePayload, EventRow, EventTeam, EventTeamResponse, EventTeamRow,
+    NewEvent, NewEventTeam,
 };
 
 pub struct EventRepository;
@@ -276,7 +276,8 @@ impl EventTeamRepository {
         .bind(event_id)
         .fetch_all(pool)
         .await?
-        .into_iter().for_each(|row| {
+        .into_iter()
+        .for_each(|row| {
             println!("{:?}", row);
         });
 
