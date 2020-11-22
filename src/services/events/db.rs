@@ -6,7 +6,8 @@ use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::events::models::{
     Event, EventCreator, EventParticipant, EventParticipantRequest, EventParticipantRow,
-    EventQueryParams, EventResponsePayload, EventRow, EventTeam, NewEvent, NewEventTeam,
+    EventQueryParams, EventResponsePayload, EventRow, EventTeam, EventTeamRow, NewEvent,
+    NewEventTeam, EventTeamResponse
 };
 
 pub struct EventRepository;
@@ -222,128 +223,98 @@ impl EventParticipantRepository {
     }
 }
 
-// pub struct EventTeamRepository;
-//
-// impl EventTeamRepository {
-//     /// Creates an events_teams in the database
-//     pub async fn create(
-//         tx: &mut Transaction<PoolConnection<PgConnection>>,
-//         event_id: &i32,
-//         team: &NewEventTeam,
-//     ) -> Result<EventTeam, TalliiError> {
-//         // execute the query
-//         let created_team = sqlx::query_as::<_, EventTeam>(
-//             "insert into events_teams (event_id, name) values ($1, $2) returning *",
-//         )
-//         .bind(&event_id)
-//         .bind(&team.name)
-//         .fetch_one(tx)
-//         .await?;
-//
-//         Ok(created_team)
-//     }
-//
-//     // Gets all Event Teams by event_id
-//     pub async fn get_many_by_event_id(
-//         pool: &PgPool,
-//         params: &EventTeamParams,
-//     ) -> Result<Vec<EventTeam>, TalliiError> {
-//         // start the query
-//         let mut query = String::from("select * from events_teams");
-//
-//         // filter by event_id if available
-//         if let Some(event_id) = params.event_id {
-//             query.push_str(&format!(" where event_id = {}", event_id));
-//         }
-//
-//         let teams = sqlx::query_as::<_, EventTeam>(&query)
-//             .fetch_all(pool)
-//             .await?;
-//
-//         Ok(teams)
-//     }
-//
-//     // Updates a team
-//     pub async fn update(
-//         pool: &PgPool,
-//         event_team_id: &i32,
-//         team: &EditEventTeam,
-//     ) -> Result<(), TalliiError> {
-//         sqlx::query_as::<_, EventTeam>(
-//             "update events_teams set name = $1, score = $2, winner = $3 where event_team_id = $4 returning *"
-//         )
-//             .bind(&team.name)
-//             .bind(&team.score)
-//             .bind(&team.winner)
-//             .bind(event_team_id)
-//             .fetch_one(pool)
-//             .await?;
-//
-//         Ok(())
-//     }
-// }
-//
-// pub struct EventTeamMemberRepository;
-//
-// impl EventTeamMemberRepository {
-//     // Creates an events_teams_members in the database
-//     pub async fn create_many(
-//         tx: &mut Transaction<PoolConnection<PgConnection>>,
-//         event_team_id: &i32,
-//         new_members: &Vec<NewEventTeamMember>,
-//     ) -> Result<(), TalliiError> {
-//         let mut query =
-//             String::from("insert into events_teams_members (event_team_id, user_id) values");
-//
-//         // create the queries for each of the new members and add them to the query string
-//         for (i, member) in new_members.iter().enumerate() {
-//             query.push_str(&format!("({}, {})", event_team_id, member.user_id));
-//
-//             // if we are appending values onto the query we need to separate them with commas
-//             if i < new_members.len() - 1 {
-//                 query.push_str(",")
-//             }
-//         }
-//
-//         // execute the query
-//         sqlx::query(&query).execute(tx).await?;
-//
-//         Ok(())
-//     }
-//
-//     // Gets all Event Team Members by event_id
-//     pub async fn get_many_by_event_id(
-//         pool: &PgPool,
-//         params: &EventTeamMemberParams,
-//     ) -> Result<Vec<EventTeamMember>, TalliiError> {
-//         // start the query
-//         let mut query = String::from(
-//             r#"
-//             select
-//                 event_team_member_id, members.event_team_id, users.user_id, username, avatar, taunt, members.created_at
-//             from
-//                 events_teams as teams
-//             inner join
-//                 events_teams_members as members
-//             on
-//                 teams.event_team_id = members.event_team_id
-//             inner join
-//                 users
-//             on
-//                 members.user_id = users.user_id
-//         "#,
-//         );
-//
-//         // filter by event_id if available
-//         if let Some(event_id) = &params.event_id {
-//             query.push_str(&format!("where event_id = {}", event_id))
-//         }
-//
-//         // execute the query
-//         let members = sqlx::query_as::<_, EventTeamMember>(&query)
-//             .fetch_all(pool)
-//             .await?;
-//
-//         Ok(members)
-//     }
-// }
+pub struct EventTeamRepository;
+
+impl EventTeamRepository {
+    /// Creates an event team in the database
+    pub async fn create(
+        tx: &mut Transaction<PoolConnection<PgConnection>>,
+        event_id: &i32,
+        team: &NewEventTeam,
+    ) -> Result<EventTeam, TalliiError> {
+        // execute the query
+        let created_team = sqlx::query_as::<_, EventTeam>(
+            r#"
+                insert
+                    into events_teams (event_id, name)
+                values
+                    ($1, $2)
+                returning *
+            "#,
+        )
+        .bind(&event_id)
+        .bind(&team.name)
+        .fetch_one(tx)
+        .await?;
+
+        Ok(created_team)
+    }
+
+    // Gets all teams for a single event
+    pub async fn get_many(pool: &PgPool, event_id: &i32) -> Result<(), TalliiError> {
+        let mut teams: Vec<EventTeamResponse> = Vec::new();
+        sqlx::query_as::<_, EventTeamRow>(
+            r#"
+                select
+                    events_teams.event_team_id,
+                    events_teams.event_id,
+                    events_teams.name,
+                    events_teams.score,
+                    events_teams.winner,
+                    events_teams.created_at,
+                    etp.event_participant_id
+                from
+                    events_teams
+                left join
+                    events_teams_participants etp
+                on
+                    events_teams.event_team_id = etp.event_team_id
+                where
+                    event_id = $1;
+            "#,
+        )
+        .bind(event_id)
+        .fetch_all(pool)
+        .await?
+        .into_iter().for_each(|row| {
+            println!("{:?}", row);
+        });
+
+        Ok(())
+    }
+}
+
+pub struct EventTeamParticipantsRepository;
+
+impl EventTeamParticipantsRepository {
+    /// Creates many event team participants in the database
+    pub async fn create_many(
+        tx: &mut Transaction<PoolConnection<PgConnection>>,
+        event_team_id: &i32,
+        participants: &Vec<i32>,
+    ) -> Result<(), TalliiError> {
+        // init the query
+        let mut query = String::from(
+            r#"
+                    insert
+                        into events_teams_participants (event_team_id, event_participant_id)
+                    values
+                "#,
+        );
+
+        // create the queries for each of the new participants
+        for (i, event_participant_id) in participants.into_iter().enumerate() {
+            query.push_str(&format!("({}, {})", event_team_id, event_participant_id));
+
+            // if we are appending values onto the query we need to separate them with commas
+            if i < participants.len() - 1 {
+                query.push_str(",")
+            }
+        }
+
+        // execute the query
+        sqlx::query(&query).execute(tx).await?;
+
+        Ok(())
+    }
+}

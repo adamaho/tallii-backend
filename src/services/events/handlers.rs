@@ -2,8 +2,13 @@ use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
 use crate::services::auth::AuthenticatedUser;
-use crate::services::events::db::{EventParticipantRepository, EventRepository};
-use crate::services::events::models::{Event, EventParticipantRequest, EventQueryParams, NewEvent};
+use crate::services::events::db::{
+    EventParticipantRepository, EventRepository, EventTeamParticipantsRepository,
+    EventTeamRepository,
+};
+use crate::services::events::models::{
+    Event, EventParticipantRequest, EventQueryParams, NewEvent, NewEventTeam,
+};
 use crate::services::TalliiResponse;
 
 /// Creates a new Event
@@ -83,19 +88,45 @@ pub async fn update_event_participant(
     Ok(HttpResponse::Ok().json("participant updated"))
 }
 
-//
-// // Gets all Teams and Members for an Event
-// pub async fn get_event_teams(
-//     pool: web::Data<PgPool>,
-//     _user: AuthenticatedUser,
-//     params: web::Query<EventTeamParams>,
-// ) -> TalliiResponse {
-//     // TODO: validate user is apart of the group
-//
-//     let teams = EventTeamRepository::get_many_by_event_id(&pool, &params).await?;
-//
-//     Ok(HttpResponse::Ok().json(teams))
-// }
+/// Gets all Teams and Members for an Event
+pub async fn get_event_teams(
+    pool: web::Data<PgPool>,
+    _user: AuthenticatedUser,
+    event_id: web::Path<i32>,
+) -> TalliiResponse {
+    let teams = EventTeamRepository::get_many(&pool, &event_id).await?;
+
+    Ok(HttpResponse::Ok().json("teams"))
+}
+
+/// Creates an event team
+pub async fn create_event_team(
+    pool: web::Data<PgPool>,
+    _user: AuthenticatedUser,
+    event_id: web::Path<i32>,
+    team: web::Json<NewEventTeam>,
+) -> TalliiResponse {
+    // start the transaction
+    let mut tx = pool.begin().await?;
+
+    // create the team
+    let new_team = EventTeamRepository::create(&mut tx, &event_id, &team).await?;
+
+    // create the team participants
+    EventTeamParticipantsRepository::create_many(
+        &mut tx,
+        &new_team.event_team_id,
+        &team.participants,
+    )
+    .await?;
+
+    // commit the transaction
+    tx.commit().await?;
+
+    // respond with created
+    Ok(HttpResponse::Created().json("Team Created."))
+}
+
 //
 // // Gets all Teams and Members for an Event
 // pub async fn get_event_team_members(

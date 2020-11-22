@@ -100,10 +100,35 @@ pub struct EventTeam {
     pub created_at: chrono::NaiveDateTime,
 }
 
+/// Database representation of an EventTeam row
+#[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
+pub struct EventTeamRow {
+    pub event_team_id: i32,
+    pub event_id: i32,
+    pub name: String,
+    pub score: i32,
+    pub winner: bool,
+    pub created_at: chrono::NaiveDateTime,
+    pub event_participant_id: i32,
+}
+
+/// Database representation of an EventTeam response
+#[derive(Serialize, Debug)]
+pub struct EventTeamResponse {
+    pub event_team_id: i32,
+    pub event_id: i32,
+    pub name: String,
+    pub score: i32,
+    pub winner: bool,
+    pub participants: Vec<EventTeamParticipantResponse>,
+    pub created_at: chrono::NaiveDateTime,
+}
+
 /// Representation of a new EventTeam
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct NewEventTeam {
     pub name: String,
+    pub participants: Vec<i32>,
 }
 
 /// Representation of a new EventTeamParticipant
@@ -112,4 +137,10 @@ pub struct EventTeamParticipant {
     pub event_team_id: i32,
     pub event_participant_id: i32,
     pub created_at: chrono::NaiveDateTime,
+}
+
+/// Representation of a new EventTeamParticipant response
+#[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
+pub struct EventTeamParticipantResponse {
+    pub event_participant_id: i32,
 }
