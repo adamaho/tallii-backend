@@ -44,6 +44,29 @@ pub async fn get_events(
 
     Ok(HttpResponse::Ok().json(events))
 }
+
+// Gets a single event for the user
+pub async fn get_event(
+    pool: web::Data<PgPool>,
+    _user: AuthenticatedUser,
+    event_id: web::Path<i32>,
+) -> TalliiResponse {
+    let event = EventRepository::get_one(&pool, &event_id).await?;
+
+    Ok(HttpResponse::Ok().json(event))
+}
+
+// Gets all participants in a single event
+pub async fn get_event_participants(
+    pool: web::Data<PgPool>,
+    _user: AuthenticatedUser,
+    event_id: web::Path<i32>,
+) -> TalliiResponse {
+    let participants = EventParticipantRepository::get_many(&pool, &event_id).await?;
+
+    Ok(HttpResponse::Ok().json(participants))
+}
+
 //
 // // Gets all Teams and Members for an Event
 // pub async fn get_event_teams(

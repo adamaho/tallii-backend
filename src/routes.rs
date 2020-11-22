@@ -52,7 +52,9 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
         web::resource("/events")
             .route(web::get().to(events::handlers::get_events))
             .route(web::post().to(events::handlers::create)),
-    );
+    )
+    .service(web::resource("/events/{event_id}").route(web::get().to(events::handlers::get_event)))
+    .service(web::resource("/events/{event_id}/participants").route(web::get().to(events::handlers::get_event_participants)));
     // .service(web::resource("/events/teams").route(web::get().to(events::handlers::get_event_teams)))
     // .service(
     //     web::resource("/events/teams/{team_id}")

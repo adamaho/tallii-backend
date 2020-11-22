@@ -42,6 +42,19 @@ pub struct EventCreator {
     pub username: String,
 }
 
+/// Representation of a new EventParticipantRow
+#[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
+pub struct EventParticipantRow {
+    pub event_participant_id: i32,
+    pub event_id: i32,
+    pub user_id: i32,
+    pub username: String,
+    pub avatar: Option<String>,
+    pub taunt: Option<String>,
+    pub status: String,
+    pub created_at: chrono::NaiveDateTime,
+}
+
 /// Representation of an New Event
 #[derive(Deserialize, Debug)]
 pub struct NewEvent {
@@ -73,7 +86,7 @@ pub struct NewEventTeam {
     pub name: String,
 }
 
-// Representation of a new EventTeamParticipant
+/// Representation of a new EventTeamParticipant
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct EventTeamParticipant {
     pub event_team_id: i32,
