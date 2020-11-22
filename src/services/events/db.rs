@@ -5,8 +5,8 @@ use sqlx::{PgPool, Transaction};
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::events::models::{
-    Event, EventCreator, EventParticipantRow, EventQueryParams, EventResponsePayload, EventRow,
-    EventTeam, NewEvent, NewEventTeam,
+    Event, EventCreator, EventParticipant, EventParticipantRequest, EventParticipantRow,
+    EventQueryParams, EventResponsePayload, EventRow, EventTeam, NewEvent, NewEventTeam,
 };
 
 pub struct EventRepository;
@@ -163,7 +163,10 @@ impl EventParticipantRepository {
     }
 
     /// Gets all Participants for a single event
-    pub async fn get_many(pool: &PgPool, event_id: &i32) -> Result<Vec<EventParticipantRow>, TalliiError> {
+    pub async fn get_many(
+        pool: &PgPool,
+        event_id: &i32,
+    ) -> Result<Vec<EventParticipantRow>, TalliiError> {
         let participants = sqlx::query_as::<_, EventParticipantRow>(
             r#"
                 select
@@ -190,6 +193,32 @@ impl EventParticipantRepository {
         .await?;
 
         Ok(participants)
+    }
+
+    /// Updates a single participant
+    pub async fn update(
+        pool: &PgPool,
+        event_participant_id: &i32,
+        participant: &EventParticipantRequest,
+    ) -> Result<(), TalliiError> {
+        sqlx::query(
+            r#"
+                update
+                    events_participants
+                set
+                    user_id = $1,
+                    status = $2
+                where
+                    event_participant_id = $3
+            "#,
+        )
+        .bind(&participant.user_id)
+        .bind(&participant.status)
+        .bind(event_participant_id)
+        .execute(pool)
+        .await?;
+
+        Ok(())
     }
 }
 

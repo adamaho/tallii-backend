@@ -3,7 +3,7 @@ use sqlx::PgPool;
 
 use crate::services::auth::AuthenticatedUser;
 use crate::services::events::db::{EventParticipantRepository, EventRepository};
-use crate::services::events::models::{Event, EventQueryParams, NewEvent};
+use crate::services::events::models::{Event, EventParticipantRequest, EventQueryParams, NewEvent};
 use crate::services::TalliiResponse;
 
 /// Creates a new Event
@@ -34,7 +34,7 @@ pub async fn create(
     Ok(HttpResponse::Created().json("event created"))
 }
 
-// Gets all Events for the user
+/// Gets all Events for the user
 pub async fn get_events(
     pool: web::Data<PgPool>,
     user: AuthenticatedUser,
@@ -45,7 +45,7 @@ pub async fn get_events(
     Ok(HttpResponse::Ok().json(events))
 }
 
-// Gets a single event for the user
+/// Gets a single event for the user
 pub async fn get_event(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
@@ -56,7 +56,7 @@ pub async fn get_event(
     Ok(HttpResponse::Ok().json(event))
 }
 
-// Gets all participants in a single event
+/// Gets all participants in a single event
 pub async fn get_event_participants(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
@@ -65,6 +65,22 @@ pub async fn get_event_participants(
     let participants = EventParticipantRepository::get_many(&pool, &event_id).await?;
 
     Ok(HttpResponse::Ok().json(participants))
+}
+
+/// Updates an event participant
+pub async fn update_event_participant(
+    pool: web::Data<PgPool>,
+    _user: AuthenticatedUser,
+    path_params: web::Path<(i32, i32)>,
+    participant: web::Json<EventParticipantRequest>,
+) -> TalliiResponse {
+    // get the inner tuple of params
+    let (_, event_participant_id) = path_params.into_inner();
+
+    // update the participant
+    EventParticipantRepository::update(&pool, &event_participant_id, &participant).await?;
+
+    Ok(HttpResponse::Ok().json("participant updated"))
 }
 
 //
