@@ -13,6 +13,11 @@ GET {{baseUrl}}/api/v1/events/7/teams HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 
+### Get Event teams participants
+GET {{baseUrl}}/api/v1/events/7/teams/participants HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
 ### Get Event Participants
 GET {{baseUrl}}/api/v1/events/6/participants HTTP/1.1
 Authorization: Bearer {{token}}

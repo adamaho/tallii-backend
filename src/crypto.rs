@@ -57,7 +57,7 @@ impl Crypto {
         let jwt_secret = self.jwt_secret.clone();
 
         web::block(move || {
-            let now = Utc::now() + Duration::days(1); // Expires in 1 day
+            let now = Utc::now() + Duration::days(365); // Expires in 1 year
             let claims = Claims {
                 sub: user_id,
                 username,

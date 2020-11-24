@@ -96,7 +96,7 @@ pub async fn get_event_teams(
 ) -> TalliiResponse {
     let teams = EventTeamRepository::get_many(&pool, &event_id).await?;
 
-    Ok(HttpResponse::Ok().json("teams"))
+    Ok(HttpResponse::Ok().json(teams))
 }
 
 /// Creates an event team
@@ -127,30 +127,13 @@ pub async fn create_event_team(
     Ok(HttpResponse::Created().json("Team Created."))
 }
 
-//
-// // Gets all Teams and Members for an Event
-// pub async fn get_event_team_members(
-//     pool: web::Data<PgPool>,
-//     _user: AuthenticatedUser,
-//     params: web::Query<EventTeamMemberParams>,
-// ) -> TalliiResponse {
-//     // TODO: validate user is apart of the group
-//
-//     let members = EventTeamMemberRepository::get_many_by_event_id(&pool, &params).await?;
-//
-//     Ok(HttpResponse::Ok().json(members))
-// }
-//
-// // Updates a team
-// pub async fn update_team(
-//     pool: web::Data<PgPool>,
-//     _user: AuthenticatedUser,
-//     event_team_id: web::Path<i32>,
-//     team: web::Json<EditEventTeam>,
-// ) -> TalliiResponse {
-//     // TODO: validate user is apart of the group
-//
-//     EventTeamRepository::update(&pool, &event_team_id, &team).await?;
-//
-//     Ok(HttpResponse::Ok().finish())
-// }
+/// Gets all Teams and Members for an Event
+pub async fn get_event_team_participants(
+    pool: web::Data<PgPool>,
+    _user: AuthenticatedUser,
+    event_id: web::Path<i32>,
+) -> TalliiResponse {
+    let participants = EventTeamParticipantsRepository::get_many(&pool, &event_id).await?;
+
+    Ok(HttpResponse::Ok().json(participants))
+}

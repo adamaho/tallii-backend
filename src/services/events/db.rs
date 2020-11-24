@@ -6,8 +6,7 @@ use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::events::models::{
     Event, EventCreator, EventParticipant, EventParticipantRequest, EventParticipantRow,
-    EventQueryParams, EventResponsePayload, EventRow, EventTeam, EventTeamResponse, EventTeamRow,
-    NewEvent, NewEventTeam,
+    EventQueryParams, EventResponsePayload, EventRow, EventTeam, EventTeamParticipant, EventTeamRow, NewEvent, NewEventTeam,
 };
 
 pub struct EventRepository;
@@ -251,9 +250,8 @@ impl EventTeamRepository {
     }
 
     // Gets all teams for a single event
-    pub async fn get_many(pool: &PgPool, event_id: &i32) -> Result<(), TalliiError> {
-        let mut teams: Vec<EventTeamResponse> = Vec::new();
-        sqlx::query_as::<_, EventTeamRow>(
+    pub async fn get_many(pool: &PgPool, event_id: &i32) -> Result<Vec<EventTeam>, TalliiError> {
+        let teams = sqlx::query_as::<_, EventTeam>(
             r#"
                 select
                     events_teams.event_team_id,
@@ -261,27 +259,18 @@ impl EventTeamRepository {
                     events_teams.name,
                     events_teams.score,
                     events_teams.winner,
-                    events_teams.created_at,
-                    etp.event_participant_id
+                    events_teams.created_at
                 from
                     events_teams
-                left join
-                    events_teams_participants etp
-                on
-                    events_teams.event_team_id = etp.event_team_id
                 where
                     event_id = $1;
             "#,
         )
         .bind(event_id)
         .fetch_all(pool)
-        .await?
-        .into_iter()
-        .for_each(|row| {
-            println!("{:?}", row);
-        });
+        .await?;
 
-        Ok(())
+        Ok(teams)
     }
 }
 
@@ -317,5 +306,33 @@ impl EventTeamParticipantsRepository {
         sqlx::query(&query).execute(tx).await?;
 
         Ok(())
+    }
+
+    // Gets team participants for a single event
+    pub async fn get_many(
+        pool: &PgPool,
+        event_id: &i32,
+    ) -> Result<Vec<EventTeamParticipant>, TalliiError> {
+        let participants = sqlx::query_as::<_, EventTeamParticipant>(
+            r#"
+                select
+                    events_teams.event_team_id,
+                    etp.event_participant_id,
+                    etp.created_at
+                from
+                    events_teams
+                left join
+                    events_teams_participants etp
+                on
+                    events_teams.event_team_id = etp.event_team_id
+                where
+                    event_id = $1;
+            "#,
+        )
+        .bind(event_id)
+        .fetch_all(pool)
+        .await?;
+
+        Ok(participants)
     }
 }
