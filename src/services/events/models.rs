@@ -119,6 +119,7 @@ pub struct NewEventTeam {
     pub participants: Vec<i32>,
 }
 
+// TODO: rename participant to member
 /// Representation of a new EventTeamParticipant
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct EventTeamParticipant {
