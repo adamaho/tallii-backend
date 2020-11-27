@@ -7,7 +7,7 @@ use crate::services::events::db::{
     EventTeamRepository,
 };
 use crate::services::events::models::{
-    Event, EventParticipantRequest, EventQueryParams, NewEvent, NewEventTeam,
+    Event, EventParticipantRequest, CreatedEventResponse, EventQueryParams, NewEvent, NewEventTeam,
 };
 use crate::services::TalliiResponse;
 
@@ -36,7 +36,7 @@ pub async fn create(
     tx.commit().await?;
 
     // respond with json saying the event is created
-    Ok(HttpResponse::Created().json("event created"))
+    Ok(HttpResponse::Created().json(CreatedEventResponse { event_id: created_event.event_id }))
 }
 
 /// Gets all Events for the user

@@ -11,6 +11,12 @@ pub struct Event {
     pub created_at: chrono::NaiveDateTime,
 }
 
+/// Database representation of an Event
+#[derive(Serialize, Debug)]
+pub struct CreatedEventResponse {
+    pub event_id: i32
+}
+
 /// Database representation of an Event query
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct EventRow {
