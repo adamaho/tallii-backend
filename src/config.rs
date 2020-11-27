@@ -22,7 +22,6 @@ impl Config {
     pub fn from_env() -> Result<Self, config::ConfigError> {
         dotenv().ok();
 
-        println!("asdfasdf");
         tracing_subscriber::fmt()
             .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
             .init();
