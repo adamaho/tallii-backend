@@ -1,5 +1,25 @@
 ### Get Events
-GET {{baseUrl}}/api/v1/events?group_id=2 HTTP/1.1
+GET {{baseUrl}}/api/v1/events/6 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### Get Specific Event Participant
+GET {{baseUrl}}/api/v1/events/6/participants/7 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### Get Event teams
+GET {{baseUrl}}/api/v1/events/7/teams HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### Get Event teams participants
+GET {{baseUrl}}/api/v1/events/7/teams/participants HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### Get Event Participants
+GET {{baseUrl}}/api/v1/events/6/participants HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 

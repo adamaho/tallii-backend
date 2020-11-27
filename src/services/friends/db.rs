@@ -3,7 +3,10 @@ use sqlx::PgPool;
 
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
-use crate::services::friends::models::{FriendRequest, FriendRequestAcceptance, FriendResponse, FriendRequestDeny};
+use crate::services::friends::models::{
+    FriendCount, FriendQueryParams, FriendRequest, FriendRequestAcceptance, FriendRequestDeny,
+    FriendResponse,
+};
 use crate::services::users::models::User;
 
 pub struct FriendRepository;
@@ -12,18 +15,25 @@ impl FriendRepository {
     /// Gets a list of friends
     pub async fn get_many(
         pool: &PgPool,
-        user: &AuthenticatedUser,
+        params: &FriendQueryParams,
     ) -> Result<Vec<FriendResponse>, TalliiError> {
+        // select the friends
         let friends = sqlx::query_as::<_, FriendResponse>(
             r#"
-                select users.user_id, users.username, users.avatar, users.taunt
-                from friends inner join users on users.user_id = friends.friend_id
-                where friends.user_id = $1 and friend_status = 'friend'
+                select
+                    users.user_id, users.username, users.avatar, users.taunt
+                from
+                    friends
+                inner join
+                    users on users.user_id = friends.friend_id
+                where
+                    friends.user_id = $1 and friend_status = 'friend'
             "#,
         )
-        .bind(user.user_id)
+        .bind(params.user_id)
         .fetch_all(pool)
         .await?;
+
         Ok(friends)
     }
 
@@ -34,9 +44,14 @@ impl FriendRepository {
     ) -> Result<Vec<FriendResponse>, TalliiError> {
         let requests = sqlx::query_as::<_, FriendResponse>(
             r#"
-                select users.user_id, users.username, users.avatar, users.taunt
-                from friends inner join users on users.user_id = friends.friend_id
-                where friends.user_id = $1 and friend_status = 'requested'
+                select
+                    users.user_id, users.username, users.avatar, users.taunt
+                from
+                    friends
+                inner join
+                    users on users.user_id = friends.friend_id
+                where
+                    friends.user_id = $1 and friend_status = 'requested'
             "#,
         )
         .bind(user.user_id)
@@ -53,9 +68,14 @@ impl FriendRepository {
     ) -> Result<Vec<FriendResponse>, TalliiError> {
         let requests = sqlx::query_as::<_, FriendResponse>(
             r#"
-                select users.user_id, users.username, users.avatar, users.taunt
-                from friends inner join users on users.user_id = friends.user_id
-                where friends.friend_id = $1 and friend_status = 'requested'
+                select
+                    users.user_id, users.username, users.avatar, users.taunt
+                from
+                    friends
+                inner join
+                    users on users.user_id = friends.user_id
+                where
+                    friends.friend_id = $1 and friend_status = 'requested'
             "#,
         )
         .bind(user.user_id)
@@ -126,12 +146,10 @@ impl FriendRepository {
     pub async fn deny_friend_request(
         pool: &PgPool,
         requested_user: &FriendRequestDeny,
-        user: &AuthenticatedUser
+        user: &AuthenticatedUser,
     ) -> Result<(), TalliiError> {
         // delete row for the friend request
-        sqlx::query(
-            "delete from friends where user_id = $1 and friend_id = $2",
-        )
+        sqlx::query("delete from friends where user_id = $1 and friend_id = $2")
             .bind(&requested_user.user_id)
             .bind(&user.user_id)
             .execute(pool)
@@ -144,12 +162,10 @@ impl FriendRepository {
     pub async fn cancel_friend_request(
         pool: &PgPool,
         sent_friend: &FriendRequestDeny,
-        user: &AuthenticatedUser
+        user: &AuthenticatedUser,
     ) -> Result<(), TalliiError> {
         // delete row for the friend request
-        sqlx::query(
-            "delete from friends where friend_id = $1 and user_id = $2",
-        )
+        sqlx::query("delete from friends where friend_id = $1 and user_id = $2")
             .bind(&sent_friend.user_id)
             .bind(&user.user_id)
             .execute(pool)

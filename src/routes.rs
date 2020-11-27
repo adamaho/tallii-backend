@@ -1,6 +1,6 @@
 use actix_web::web;
 
-use crate::services::{events, friends, groups, users};
+use crate::services::{events, friends, users};
 
 pub fn define_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(
@@ -22,7 +22,8 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
     .service(
         web::resource("/users/check-email").route(web::post().to(users::handlers::check_email)),
     )
-    .service(web::resource("/me").route(web::get().to(users::handlers::get_me)))
+    .service(web::resource("/users/{user_id}").route(web::get().to(users::handlers::get_user)))
+    .service(web::resource("/users").route(web::get().to(users::handlers::search_users)))
     .service(web::resource("/login").route(web::post().to(users::handlers::login)))
     .service(web::resource("/signup").route(web::post().to(users::handlers::signup)))
     .service(web::resource("/friends").route(web::get().to(friends::handlers::get_friends)))
@@ -48,32 +49,26 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
             .route(web::post().to(friends::handlers::accept_friend_request)),
     )
     .service(
-        web::resource("/groups")
-            .route(web::post().to(groups::handlers::create))
-            .route(web::get().to(groups::handlers::get)),
-    )
-    .service(
-        web::resource("/groups/{group_id}")
-            .route(web::put().to(groups::handlers::update))
-            .route(web::delete().to(groups::handlers::delete)),
-    )
-    .service(
-        web::resource("/groups/{group_id}/members")
-            .route(web::get().to(groups::handlers::get_members))
-            .route(web::post().to(groups::handlers::create_member)),
-    )
-    .service(
         web::resource("/events")
             .route(web::get().to(events::handlers::get_events))
             .route(web::post().to(events::handlers::create)),
     )
-    .service(web::resource("/events/teams").route(web::get().to(events::handlers::get_event_teams)))
+    .service(web::resource("/events/{event_id}").route(web::get().to(events::handlers::get_event)))
     .service(
-        web::resource("/events/teams/{team_id}")
-            .route(web::put().to(events::handlers::update_team)),
+        web::resource("/events/{event_id}/participants")
+            .route(web::get().to(events::handlers::get_event_participants)),
     )
     .service(
-        web::resource("/events/teams/members")
-            .route(web::get().to(events::handlers::get_event_team_members)),
+        web::resource("/events/{event_id}/participants/{event_participant_id}")
+            .route(web::put().to(events::handlers::update_event_participant)),
+    )
+    .service(
+        web::resource("/events/{event_id}/teams")
+            .route(web::get().to(events::handlers::get_event_teams))
+            .route(web::post().to(events::handlers::create_event_team)),
+    )
+    .service(
+        web::resource("/events/{event_id}/teams/participants")
+            .route(web::get().to(events::handlers::get_event_team_participants))
     );
 }

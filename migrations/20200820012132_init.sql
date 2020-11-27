@@ -18,25 +18,6 @@ create table users (
     created_at timestamp not null default current_timestamp
 );
 
--- Group
-create table groups (
-    group_id serial primary key,
-    name varchar(40) not null,
-    description text,
-    avatar text,
-    created_at timestamp not null default current_timestamp
-);
-
--- Group Members
-create table groups_members (
-    group_id integer not null references groups(group_id) on delete cascade,
-    user_id integer not null references users(user_id),
-    role varchar(40),
-    created_at timestamp not null default current_timestamp,
-    primary key (group_id, user_id)
-);
-
-
 -- Friends
 create table friends (
     user_id integer not null references users(user_id),
@@ -46,30 +27,22 @@ create table friends (
     primary key (user_id, friend_id)
 );
 
--- Tags
-create table tags (
-    tag_id serial primary key,
-    group_id integer not null references groups(group_id),
-    name text not null,
-    created_at timestamp not null default current_timestamp
-);
-
 -- Events
 create table events (
     event_id serial primary key,
-    group_id integer not null references groups(group_id),
     name text not null,
     description text,
-    event_type text not null, -- individual or team
     creator_user_id integer not null references users(user_id),
     created_at timestamp not null default current_timestamp
 );
 
--- Events Tags
-create table events_tags (
-    event_tag_id serial primary key,
+-- Events Participants
+create table events_participants (
+    event_participant_id serial primary key,
     event_id integer not null references events(event_id),
-    tag_id integer not null references tags(tag_id)
+    user_id integer not null references users(user_id),
+    status text not null default 'pending', -- pending, declined, accepted
+    created_at timestamp not null default current_timestamp
 );
 
 -- Events Teams
@@ -82,11 +55,10 @@ create table events_teams (
     created_at timestamp not null default current_timestamp
 );
 
--- Event Team Members
-create table events_teams_members (
-    event_team_member_id serial primary key,
+-- Event Team Participants
+create table events_teams_participants (
     event_team_id integer not null references events_teams(event_team_id),
-    user_id integer not null references users(user_id),
+    event_participant_id integer not null references events_participants(event_participant_id),
     created_at timestamp not null default current_timestamp
 );
 

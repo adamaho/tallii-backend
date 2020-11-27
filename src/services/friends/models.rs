@@ -9,6 +9,11 @@ pub struct Friend {
     pub created_at: chrono::NaiveDateTime,
 }
 
+#[derive(sqlx::FromRow, Debug, Serialize)]
+pub struct FriendCount {
+    pub count: i64,
+}
+
 /// Database representation of a Friend
 #[derive(sqlx::FromRow, Debug, Serialize)]
 pub struct FriendResponse {
@@ -43,4 +48,10 @@ pub struct EditFriend {
     pub friend_id: i32,
     pub friend_status: String,
     pub created_at: Option<chrono::NaiveDateTime>,
+}
+
+/// Query Params for FriendQueryParams
+#[derive(Debug, Deserialize)]
+pub struct FriendQueryParams {
+    pub user_id: i32,
 }
