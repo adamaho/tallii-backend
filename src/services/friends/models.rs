@@ -23,22 +23,21 @@ pub struct FriendResponse {
     pub taunt: Option<String>,
 }
 
-/// Representation of a New Friend
+/// Represents the operation to perform for the request
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "snake_case")]
+pub enum FriendOperation {
+    SendRequest,
+    AcceptRequest,
+    CancelRequest,
+    DenyRequest,
+}
+
+/// Represents the post request body of a friend
 #[derive(Debug, Deserialize)]
 pub struct FriendRequest {
-    pub username: String,
-}
-
-/// Representation of a New Friend
-#[derive(Debug, Deserialize)]
-pub struct FriendRequestAcceptance {
     pub user_id: i32,
-}
-
-/// Representation of a New Friend
-#[derive(Debug, Deserialize)]
-pub struct FriendRequestDeny {
-    pub user_id: i32,
+    pub operation: FriendOperation,
 }
 
 /// Representation of an Friend to update
@@ -50,8 +49,18 @@ pub struct EditFriend {
     pub created_at: Option<chrono::NaiveDateTime>,
 }
 
+/// Represents the Friend Status to query for
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum FriendStatus {
+    Invites,
+    Requests,
+    Friends,
+}
+
 /// Query Params for FriendQueryParams
 #[derive(Debug, Deserialize)]
 pub struct FriendQueryParams {
     pub user_id: i32,
+    pub status: Option<FriendStatus>,
 }

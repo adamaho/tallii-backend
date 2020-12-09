@@ -7,15 +7,10 @@ use crate::services::auth::AuthenticatedUser;
 use crate::services::TalliiResponse;
 
 use super::db::{InviteCodesTable, UsersTable};
-use super::models::{
-    CheckEmail, CheckUsername, CreateInviteCode, LoginUser, NewUser, UserQuery,
-};
+use super::models::{CheckEmail, CheckUsername, CreateInviteCode, LoginUser, NewUser, UserQuery};
 
 /// Gets all invite codes
-pub async fn get_invite_codes(
-    pool: web::Data<PgPool>,
-    user: AuthenticatedUser,
-) -> TalliiResponse {
+pub async fn get_invite_codes(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
     // check if the user is me to make sure that no one can make invite codes
     if user.username != String::from("adamaho") {
         return Err(TalliiError::UNAUTHORIZED.default());
@@ -29,10 +24,7 @@ pub async fn get_invite_codes(
 }
 
 /// Checks the validity of the invite code
-pub async fn check_invite_code(
-    pool: web::Data<PgPool>,
-    code: web::Path<String>,
-) -> TalliiResponse {
+pub async fn check_invite_code(pool: web::Data<PgPool>, code: web::Path<String>) -> TalliiResponse {
     // execute the query
     let is_valid = InviteCodesTable::is_valid(&pool, &code).await?;
 

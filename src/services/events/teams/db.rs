@@ -26,10 +26,10 @@ impl EventsTeamsTable {
                 returning *
             "#,
         )
-            .bind(&event_id)
-            .bind(&team.name)
-            .fetch_one(tx)
-            .await?;
+        .bind(&event_id)
+        .bind(&team.name)
+        .fetch_one(tx)
+        .await?;
 
         Ok(created_team)
     }
@@ -51,19 +51,17 @@ impl EventsTeamsTable {
                     event_id = $1;
             "#,
         )
-            .bind(event_id)
-            .fetch_all(pool)
-            .await?;
+        .bind(event_id)
+        .fetch_all(pool)
+        .await?;
 
         Ok(teams)
     }
 }
 
-
 pub struct EventsTeamsPlayersTable;
 
 impl EventsTeamsPlayersTable {
-
     /// Creates many event team players
     pub async fn create_many(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
@@ -116,9 +114,9 @@ impl EventsTeamsPlayersTable {
                     event_id = $1;
             "#,
         )
-            .bind(event_id)
-            .fetch_all(pool)
-            .await?;
+        .bind(event_id)
+        .fetch_all(pool)
+        .await?;
 
         Ok(players)
     }

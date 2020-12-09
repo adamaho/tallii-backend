@@ -5,11 +5,7 @@ use crate::services::auth::AuthenticatedUser;
 
 use crate::services::events::db::EventsTable;
 
-use crate::services::events::models::{
-    CreatedEventResponse,
-    EventQueryParams,
-    NewEvent
-};
+use crate::services::events::models::{CreatedEventResponse, EventQueryParams, NewEvent};
 
 use crate::services::events::players::db::EventsPlayersTable;
 
@@ -40,7 +36,9 @@ pub async fn create_event(
     tx.commit().await?;
 
     // respond with json saying the event is created
-    Ok(HttpResponse::Created().json(CreatedEventResponse { event_id: created_event.event_id }))
+    Ok(HttpResponse::Created().json(CreatedEventResponse {
+        event_id: created_event.event_id,
+    }))
 }
 
 /// Gets all Events for the user

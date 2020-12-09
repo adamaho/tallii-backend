@@ -13,7 +13,7 @@ pub struct Event {
 /// Database representation of an Event
 #[derive(Serialize, Debug)]
 pub struct CreatedEventResponse {
-    pub event_id: i32
+    pub event_id: i32,
 }
 
 /// Database representation of an Event query

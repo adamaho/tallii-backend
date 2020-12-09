@@ -6,12 +6,7 @@ use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 
 use crate::services::events::models::{
-    Event,
-    EventCreator,
-    EventQueryParams,
-    EventResponsePayload,
-    EventRow,
-    NewEvent
+    Event, EventCreator, EventQueryParams, EventResponsePayload, EventRow, NewEvent,
 };
 
 pub struct EventsTable;

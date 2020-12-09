@@ -2,8 +2,8 @@ use actix_web::{web, HttpResponse};
 
 use sqlx::PgPool;
 
-use crate::services::TalliiResponse;
 use crate::services::auth::AuthenticatedUser;
+use crate::services::TalliiResponse;
 
 use super::db::EventsPlayersTable;
 use super::models::EventPlayerRequest;

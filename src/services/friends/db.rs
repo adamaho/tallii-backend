@@ -3,21 +3,22 @@ use sqlx::PgPool;
 
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
-use crate::services::friends::models::{FriendQueryParams, FriendRequest, FriendRequestAcceptance, FriendRequestDeny,
-    FriendResponse,
+use crate::services::friends::models::{
+    FriendQueryParams, FriendRequest, FriendResponse, FriendStatus,
 };
+
 use crate::services::users::models::User;
 
-pub struct FriendRepository;
+pub struct FriendsTable;
 
-impl FriendRepository {
+impl FriendsTable {
     /// Gets a list of friends
     pub async fn get_many(
         pool: &PgPool,
         params: &FriendQueryParams,
     ) -> Result<Vec<FriendResponse>, TalliiError> {
-        // select the friends
-        let friends = sqlx::query_as::<_, FriendResponse>(
+        // start the query
+        let mut query = String::from(
             r#"
                 select
                     users.user_id, users.username, users.avatar, users.taunt
@@ -25,63 +26,33 @@ impl FriendRepository {
                     friends
                 inner join
                     users on users.user_id = friends.friend_id
-                where
-                    friends.user_id = $1 and friend_status = 'friend'
             "#,
-        )
-        .bind(params.user_id)
-        .fetch_all(pool)
-        .await?;
+        );
+
+        // if there is a status query based on it
+        if let Some(status) = &params.status {
+            match status {
+                FriendStatus::Invites => {
+                    query.push_str("where friends.friend_id = $1 and friend_status = 'requested'");
+                }
+                FriendStatus::Requests => {
+                    query.push_str("where friends.user_id = $1 and friend_status = 'requested'");
+                }
+                FriendStatus::Friends => {
+                    query.push_str("where friends.user_id = $1 and friend_status = 'friend'");
+                }
+            }
+        } else {
+            query.push_str("where friends.user_id = $1 and friend_status = 'friend'");
+        }
+
+        // select the friends
+        let friends = sqlx::query_as::<_, FriendResponse>(&query)
+            .bind(params.user_id)
+            .fetch_all(pool)
+            .await?;
 
         Ok(friends)
-    }
-
-    /// Gets a list of friend requests where the current user is the requester
-    pub async fn get_many_requests(
-        pool: &PgPool,
-        user: &AuthenticatedUser,
-    ) -> Result<Vec<FriendResponse>, TalliiError> {
-        let requests = sqlx::query_as::<_, FriendResponse>(
-            r#"
-                select
-                    users.user_id, users.username, users.avatar, users.taunt
-                from
-                    friends
-                inner join
-                    users on users.user_id = friends.friend_id
-                where
-                    friends.user_id = $1 and friend_status = 'requested'
-            "#,
-        )
-        .bind(user.user_id)
-        .fetch_all(pool)
-        .await?;
-
-        Ok(requests)
-    }
-
-    /// Gets a list of friend invitations where the current user is the invitee
-    pub async fn get_many_invitations(
-        pool: &PgPool,
-        user: &AuthenticatedUser,
-    ) -> Result<Vec<FriendResponse>, TalliiError> {
-        let requests = sqlx::query_as::<_, FriendResponse>(
-            r#"
-                select
-                    users.user_id, users.username, users.avatar, users.taunt
-                from
-                    friends
-                inner join
-                    users on users.user_id = friends.user_id
-                where
-                    friends.friend_id = $1 and friend_status = 'requested'
-            "#,
-        )
-        .bind(user.user_id)
-        .fetch_all(pool)
-        .await?;
-
-        Ok(requests)
     }
 
     /// Creates a friend invite in the database
@@ -90,24 +61,12 @@ impl FriendRepository {
         new_friend: &FriendRequest,
         user: &AuthenticatedUser,
     ) -> Result<(), TalliiError> {
-        // fetch the friend to add by username
-        let user_to_add = sqlx::query_as::<_, User>("select * from users where username = $1")
-            .bind(&new_friend.username)
-            .fetch_optional(pool)
-            .await?;
-
-        // if there is no user with that username return an error
-        if user_to_add.is_none() {
-            // TODO: Move to invalid request or something
-            return Err(TalliiError::INTERNAL_SERVER_ERROR.default());
-        }
-
         // create the new friend request
         sqlx::query(
             "insert into friends (user_id, friend_id, friend_status) values ($1, $2, 'requested')",
         )
         .bind(&user.user_id)
-        .bind(user_to_add.unwrap().user_id)
+        .bind(&new_friend.user_id)
         .execute(pool)
         .await?;
 
@@ -117,7 +76,7 @@ impl FriendRepository {
     /// Accepts a friend invite in the database
     pub async fn accept_friend_request(
         pool: &PgPool,
-        new_friend: &FriendRequestAcceptance,
+        new_friend: &FriendRequest,
         user: &AuthenticatedUser,
     ) -> Result<(), TalliiError> {
         // create row for the friend acceptance
@@ -144,7 +103,7 @@ impl FriendRepository {
     /// Denies a friend request that was received
     pub async fn deny_friend_request(
         pool: &PgPool,
-        requested_user: &FriendRequestDeny,
+        requested_user: &FriendRequest,
         user: &AuthenticatedUser,
     ) -> Result<(), TalliiError> {
         // delete row for the friend request
@@ -160,7 +119,7 @@ impl FriendRepository {
     /// Cancels a friend request that was sent
     pub async fn cancel_friend_request(
         pool: &PgPool,
-        sent_friend: &FriendRequestDeny,
+        sent_friend: &FriendRequest,
         user: &AuthenticatedUser,
     ) -> Result<(), TalliiError> {
         // delete row for the friend request

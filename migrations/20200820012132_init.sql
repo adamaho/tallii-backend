@@ -22,7 +22,7 @@ create table users (
 create table friends (
     user_id integer not null references users(user_id),
     friend_id integer not null references users(user_id),
-    friend_status text not null, -- friend, requests, blocked
+    friend_status text not null, -- pending, declined, accepted, blocked
     created_at timestamp not null default current_timestamp,
     primary key (user_id, friend_id)
 );

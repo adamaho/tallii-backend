@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// Database representation of an EventTeam
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]

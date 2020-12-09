@@ -2,10 +2,10 @@ use actix_web::{web, HttpResponse};
 
 use sqlx::PgPool;
 
-use crate::services::TalliiResponse;
 use crate::services::auth::AuthenticatedUser;
+use crate::services::TalliiResponse;
 
-use super::db::{EventsTeamsTable, EventsTeamsPlayersTable};
+use super::db::{EventsTeamsPlayersTable, EventsTeamsTable};
 use super::models::NewEventTeam;
 
 /// Gets all Teams and Members for an Event
@@ -33,12 +33,7 @@ pub async fn create_event_team(
     let new_team = EventsTeamsTable::create(&mut tx, &event_id, &team).await?;
 
     // create the team players
-    EventsTeamsPlayersTable::create_many(
-        &mut tx,
-        &new_team.event_team_id,
-        &team.players,
-    )
-        .await?;
+    EventsTeamsPlayersTable::create_many(&mut tx, &new_team.event_team_id, &team.players).await?;
 
     // commit the transaction
     tx.commit().await?;

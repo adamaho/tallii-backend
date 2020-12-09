@@ -4,7 +4,7 @@ use sqlx::{PgPool, Transaction};
 
 use crate::errors::TalliiError;
 
-use super::models::{EventPlayerRow, EventPlayerRequest};
+use super::models::{EventPlayerRequest, EventPlayerRow};
 
 pub struct EventsPlayersTable;
 
@@ -65,9 +65,9 @@ impl EventsPlayersTable {
                     event_id = $1;
             "#,
         )
-            .bind(event_id)
-            .fetch_all(pool)
-            .await?;
+        .bind(event_id)
+        .fetch_all(pool)
+        .await?;
 
         Ok(players)
     }
@@ -89,11 +89,11 @@ impl EventsPlayersTable {
                     event_player_id = $3
             "#,
         )
-            .bind(&player.user_id)
-            .bind(&player.status)
-            .bind(event_player_id)
-            .execute(pool)
-            .await?;
+        .bind(&player.user_id)
+        .bind(&player.status)
+        .bind(event_player_id)
+        .execute(pool)
+        .await?;
 
         Ok(())
     }
