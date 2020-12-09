@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::services::events::models::PlayerStatus;
+
 /// Representation of an EventParticipant
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct EventPlayer {
@@ -14,7 +16,7 @@ pub struct EventPlayer {
 #[derive(Deserialize, Debug)]
 pub struct EventPlayerRequest {
     pub user_id: i32,
-    pub status: String,
+    pub status: PlayerStatus,
 }
 
 /// Representation of a new EventParticipantRow

@@ -55,9 +55,29 @@ pub struct NewEvent {
     pub participants: Vec<i32>,
 }
 
+/// Represents the Player Status to query for
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum PlayerStatus {
+    Pending,
+    Declined,
+    Accepted,
+}
+
+/// convert the values of the enum to a str
+impl std::fmt::Display for PlayerStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            PlayerStatus::Accepted => write!(f, "accepted"),
+            PlayerStatus::Declined => write!(f, "declined"),
+            PlayerStatus::Pending => write!(f, "pending"),
+        }
+    }
+}
+
 /// Represents Query Params for querying an event
 #[derive(Deserialize, Debug)]
 pub struct EventQueryParams {
     pub user_id: String,
-    pub player_status: Option<String>,
+    pub player_status: Option<PlayerStatus>,
 }

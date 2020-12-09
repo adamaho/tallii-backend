@@ -32,18 +32,18 @@ impl FriendsTable {
         // if there is a status query based on it
         if let Some(status) = &params.status {
             match status {
-                FriendStatus::Invites => {
-                    query.push_str("where friends.friend_id = $1 and friend_status = 'requested'");
+                FriendStatus::Pending => {
+                    query.push_str("where friends.friend_id = $1 and friend_status = 'pending'");
                 }
-                FriendStatus::Requests => {
-                    query.push_str("where friends.user_id = $1 and friend_status = 'requested'");
+                FriendStatus::Blocked => {
+                    query.push_str("where friends.user_id = $1 and friend_status = 'blocked'");
                 }
-                FriendStatus::Friends => {
-                    query.push_str("where friends.user_id = $1 and friend_status = 'friend'");
+                FriendStatus::Accepted => {
+                    query.push_str("where friends.user_id = $1 and friend_status = 'accepted'");
                 }
             }
         } else {
-            query.push_str("where friends.user_id = $1 and friend_status = 'friend'");
+            query.push_str("where friends.user_id = $1 and friend_status = 'accepted'");
         }
 
         // select the friends
@@ -63,7 +63,7 @@ impl FriendsTable {
     ) -> Result<(), TalliiError> {
         // create the new friend request
         sqlx::query(
-            "insert into friends (user_id, friend_id, friend_status) values ($1, $2, 'requested')",
+            "insert into friends (user_id, friend_id, friend_status) values ($1, $2, 'pending')",
         )
         .bind(&user.user_id)
         .bind(&new_friend.user_id)
@@ -81,7 +81,7 @@ impl FriendsTable {
     ) -> Result<(), TalliiError> {
         // create row for the friend acceptance
         sqlx::query(
-            "insert into friends (user_id, friend_id, friend_status) values ($1, $2, 'friend')",
+            "insert into friends (user_id, friend_id, friend_status) values ($1, $2, 'accepted')",
         )
         .bind(&user.user_id)
         .bind(&new_friend.user_id)
@@ -90,7 +90,7 @@ impl FriendsTable {
 
         // modify the existing row to change friend_status
         sqlx::query(
-            "update friends set friend_status = 'friend' where user_id = $1 and friend_id = $2",
+            "update friends set friend_status = 'accepted' where user_id = $1 and friend_id = $2",
         )
         .bind(&new_friend.user_id)
         .bind(&user.user_id)

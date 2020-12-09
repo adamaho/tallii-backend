@@ -53,9 +53,9 @@ pub struct EditFriend {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "lowercase")]
 pub enum FriendStatus {
-    Invites,
-    Requests,
-    Friends,
+    Pending,
+    Accepted,
+    Blocked,
 }
 
 /// Query Params for FriendQueryParams

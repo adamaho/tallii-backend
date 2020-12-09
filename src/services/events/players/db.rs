@@ -3,6 +3,7 @@ use sqlx::postgres::{PgConnection, PgQueryAs};
 use sqlx::{PgPool, Transaction};
 
 use crate::errors::TalliiError;
+use crate::services::events::models::PlayerStatus;
 
 use super::models::{EventPlayerRequest, EventPlayerRow};
 
@@ -90,7 +91,7 @@ impl EventsPlayersTable {
             "#,
         )
         .bind(&player.user_id)
-        .bind(&player.status)
+        .bind(&player.status.to_string())
         .bind(event_player_id)
         .execute(pool)
         .await?;

@@ -6,7 +6,7 @@ use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 
 use crate::services::events::models::{
-    Event, EventCreator, EventQueryParams, EventResponsePayload, EventRow, NewEvent,
+    Event, EventCreator, EventQueryParams, EventResponsePayload, EventRow, NewEvent, PlayerStatus,
 };
 
 pub struct EventsTable;
@@ -112,7 +112,7 @@ impl EventsTable {
 
         // add the optional clause for player status
         if let Some(player_status) = &params.player_status {
-            query.push_str(&format!(" and ep.status = '{}'", player_status));
+            query.push_str(&format!(" and ep.status = '{}'", player_status.to_string()));
         }
 
         // execute the query and format the response
