@@ -4,14 +4,19 @@ use sqlx::{PgPool, Transaction};
 
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
+
 use crate::services::events::models::{
-    Event, EventCreator, EventParticipant, EventParticipantRequest, EventParticipantRow,
-    EventQueryParams, EventResponsePayload, EventRow, EventTeam, EventTeamParticipant, EventTeamRow, NewEvent, NewEventTeam,
+    Event,
+    EventCreator,
+    EventQueryParams,
+    EventResponsePayload,
+    EventRow,
+    NewEvent
 };
 
-pub struct EventRepository;
+pub struct EventsTable;
 
-impl EventRepository {
+impl EventsTable {
     // initial part of the query for getting events
     fn get_event_query() -> String {
         String::from(
@@ -108,11 +113,11 @@ impl EventRepository {
         let mut query = Self::get_event_query();
 
         // filter by the user
-        query.push_str(&format!("where ep.user_id = {}", user.user_id));
+        query.push_str(&format!("where ep.user_id = {}", params.user_id));
 
-        // add the optional clause for participant status
-        if let Some(participant_status) = &params.participant_status {
-            query.push_str(&format!(" and ep.status = '{}'", participant_status));
+        // add the optional clause for player status
+        if let Some(player_status) = &params.player_status {
+            query.push_str(&format!(" and ep.status = '{}'", player_status));
         }
 
         // execute the query and format the response
@@ -126,213 +131,5 @@ impl EventRepository {
             .collect();
 
         Ok(events)
-    }
-}
-
-pub struct EventParticipantRepository;
-
-impl EventParticipantRepository {
-    /// Creates many event participants in the database
-    pub async fn create_many(
-        tx: &mut Transaction<PoolConnection<PgConnection>>,
-        event_id: &i32,
-        user_id: &i32,
-        participants: &Vec<i32>,
-    ) -> Result<(), TalliiError> {
-        // init the query
-        let mut query =
-            String::from("insert into events_participants (event_id, user_id, status) values");
-
-        // add the current user to the participants
-        query.push_str(&format!("({}, {}, 'accepted'),", event_id, user_id));
-
-        // create the queries for each of the new members and add them to the query string
-        for (i, user_id) in participants.iter().enumerate() {
-            query.push_str(&format!("({}, {}, 'pending')", event_id, user_id));
-
-            // if we are appending values onto the query we need to separate them with commas
-            if i < participants.len() - 1 {
-                query.push_str(",")
-            }
-        }
-
-        // execute the query
-        sqlx::query(&query).execute(tx).await?;
-
-        Ok(())
-    }
-
-    /// Gets all Participants for a single event
-    pub async fn get_many(
-        pool: &PgPool,
-        event_id: &i32,
-    ) -> Result<Vec<EventParticipantRow>, TalliiError> {
-        let participants = sqlx::query_as::<_, EventParticipantRow>(
-            r#"
-                select
-                    events_participants.event_participant_id,
-                    events_participants.event_id,
-                    u.user_id,
-                    u.username,
-                    u.avatar,
-                    u.taunt,
-                    events_participants.status,
-                    events_participants.created_at
-                from
-                    events_participants
-                left join
-                    users u
-                on
-                    events_participants.user_id = u.user_id
-                where
-                    event_id = $1;
-            "#,
-        )
-        .bind(event_id)
-        .fetch_all(pool)
-        .await?;
-
-        Ok(participants)
-    }
-
-    /// Updates a single participant
-    pub async fn update(
-        pool: &PgPool,
-        event_participant_id: &i32,
-        participant: &EventParticipantRequest,
-    ) -> Result<(), TalliiError> {
-        sqlx::query(
-            r#"
-                update
-                    events_participants
-                set
-                    user_id = $1,
-                    status = $2
-                where
-                    event_participant_id = $3
-            "#,
-        )
-        .bind(&participant.user_id)
-        .bind(&participant.status)
-        .bind(event_participant_id)
-        .execute(pool)
-        .await?;
-
-        Ok(())
-    }
-}
-
-pub struct EventTeamRepository;
-
-impl EventTeamRepository {
-    /// Creates an event team in the database
-    pub async fn create(
-        tx: &mut Transaction<PoolConnection<PgConnection>>,
-        event_id: &i32,
-        team: &NewEventTeam,
-    ) -> Result<EventTeam, TalliiError> {
-        // execute the query
-        let created_team = sqlx::query_as::<_, EventTeam>(
-            r#"
-                insert
-                    into events_teams (event_id, name)
-                values
-                    ($1, $2)
-                returning *
-            "#,
-        )
-        .bind(&event_id)
-        .bind(&team.name)
-        .fetch_one(tx)
-        .await?;
-
-        Ok(created_team)
-    }
-
-    // Gets all teams for a single event
-    pub async fn get_many(pool: &PgPool, event_id: &i32) -> Result<Vec<EventTeam>, TalliiError> {
-        let teams = sqlx::query_as::<_, EventTeam>(
-            r#"
-                select
-                    events_teams.event_team_id,
-                    events_teams.event_id,
-                    events_teams.name,
-                    events_teams.score,
-                    events_teams.winner,
-                    events_teams.created_at
-                from
-                    events_teams
-                where
-                    event_id = $1;
-            "#,
-        )
-        .bind(event_id)
-        .fetch_all(pool)
-        .await?;
-
-        Ok(teams)
-    }
-}
-
-pub struct EventTeamParticipantsRepository;
-
-impl EventTeamParticipantsRepository {
-    /// Creates many event team participants in the database
-    pub async fn create_many(
-        tx: &mut Transaction<PoolConnection<PgConnection>>,
-        event_team_id: &i32,
-        participants: &Vec<i32>,
-    ) -> Result<(), TalliiError> {
-        // init the query
-        let mut query = String::from(
-            r#"
-                    insert
-                        into events_teams_participants (event_team_id, event_participant_id)
-                    values
-                "#,
-        );
-
-        // create the queries for each of the new participants
-        for (i, event_participant_id) in participants.into_iter().enumerate() {
-            query.push_str(&format!("({}, {})", event_team_id, event_participant_id));
-
-            // if we are appending values onto the query we need to separate them with commas
-            if i < participants.len() - 1 {
-                query.push_str(",")
-            }
-        }
-
-        // execute the query
-        sqlx::query(&query).execute(tx).await?;
-
-        Ok(())
-    }
-
-    // Gets team participants for a single event
-    pub async fn get_many(
-        pool: &PgPool,
-        event_id: &i32,
-    ) -> Result<Vec<EventTeamParticipant>, TalliiError> {
-        let participants = sqlx::query_as::<_, EventTeamParticipant>(
-            r#"
-                select
-                    events_teams.event_team_id,
-                    etp.event_participant_id,
-                    etp.created_at
-                from
-                    events_teams
-                left join
-                    events_teams_participants etp
-                on
-                    events_teams.event_team_id = etp.event_team_id
-                where
-                    event_id = $1;
-            "#,
-        )
-        .bind(event_id)
-        .fetch_all(pool)
-        .await?;
-
-        Ok(participants)
     }
 }

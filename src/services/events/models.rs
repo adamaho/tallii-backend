@@ -48,39 +48,6 @@ pub struct EventCreator {
     pub username: String,
 }
 
-/// Representation of an EventParticipant
-#[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
-pub struct EventParticipant {
-    pub event_participant_id: i32,
-    pub event_id: i32,
-    pub user_id: i32,
-    pub status: String,
-    pub created_at: chrono::NaiveDateTime,
-}
-
-/// Representation of an EventParticipant to Update or Add
-#[derive(Deserialize, Debug)]
-pub struct EventParticipantRequest {
-    pub event_participant_id: Option<i32>,
-    pub event_id: Option<i32>,
-    pub user_id: i32,
-    pub status: String,
-    pub created_at: Option<chrono::NaiveDateTime>,
-}
-
-/// Representation of a new EventParticipantRow
-#[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
-pub struct EventParticipantRow {
-    pub event_participant_id: i32,
-    pub event_id: i32,
-    pub user_id: i32,
-    pub username: String,
-    pub avatar: Option<String>,
-    pub taunt: Option<String>,
-    pub status: String,
-    pub created_at: chrono::NaiveDateTime,
-}
-
 /// Representation of an New Event
 #[derive(Deserialize, Debug)]
 pub struct NewEvent {
@@ -92,44 +59,6 @@ pub struct NewEvent {
 /// Represents Query Params for querying an event
 #[derive(Deserialize, Debug)]
 pub struct EventQueryParams {
-    pub participant_status: Option<String>,
-}
-
-/// Database representation of an EventTeam
-#[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
-pub struct EventTeam {
-    pub event_team_id: i32,
-    pub event_id: i32,
-    pub name: String,
-    pub score: i32,
-    pub winner: bool,
-    pub created_at: chrono::NaiveDateTime,
-}
-
-/// Database representation of an EventTeam row
-#[derive(sqlx::FromRow, Deserialize, Serialize, Clone, Debug)]
-pub struct EventTeamRow {
-    pub event_team_id: i32,
-    pub event_id: i32,
-    pub name: String,
-    pub score: i32,
-    pub winner: bool,
-    pub created_at: chrono::NaiveDateTime,
-    pub event_participant_id: i32,
-}
-
-/// Representation of a new EventTeam
-#[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
-pub struct NewEventTeam {
-    pub name: String,
-    pub participants: Vec<i32>,
-}
-
-// TODO: rename participant to member
-/// Representation of a new EventTeamParticipant
-#[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
-pub struct EventTeamParticipant {
-    pub event_team_id: i32,
-    pub event_participant_id: i32,
-    pub created_at: chrono::NaiveDateTime,
+    pub user_id: String,
+    pub player_status: Option<String>,
 }
