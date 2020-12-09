@@ -3,8 +3,7 @@ use sqlx::PgPool;
 
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
-use crate::services::friends::models::{
-    FriendCount, FriendQueryParams, FriendRequest, FriendRequestAcceptance, FriendRequestDeny,
+use crate::services::friends::models::{FriendQueryParams, FriendRequest, FriendRequestAcceptance, FriendRequestDeny,
     FriendResponse,
 };
 use crate::services::users::models::User;

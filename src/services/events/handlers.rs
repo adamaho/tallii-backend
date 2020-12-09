@@ -6,7 +6,6 @@ use crate::services::auth::AuthenticatedUser;
 use crate::services::events::db::EventsTable;
 
 use crate::services::events::models::{
-    Event,
     CreatedEventResponse,
     EventQueryParams,
     NewEvent

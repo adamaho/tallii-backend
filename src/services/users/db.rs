@@ -8,9 +8,9 @@ use crate::errors::TalliiError;
 
 use super::models::{InviteCode, NewUser, PublicUser, User, UserQuery};
 
-pub struct InviteCodeRepository;
+pub struct InviteCodesTable;
 
-impl InviteCodeRepository {
+impl InviteCodesTable {
     /// Checks if the provided invite code is valid
     pub async fn is_valid(pool: &PgPool, id: &String) -> Result<bool, TalliiError> {
         // get the invite code, if it exists
@@ -61,21 +61,20 @@ impl InviteCodeRepository {
     }
 }
 
-#[derive(Debug)]
-pub struct UserRepository;
+pub struct UsersTable;
 
-impl UserRepository {
+impl UsersTable {
     /// Fetches a user with the provided user_id
-    pub async fn get_by_user_id(pool: &PgPool, user_id: &i32) -> Result<PublicUser, TalliiError> {
-        let user = sqlx::query_as::<_, PublicUser>(
-            "select user_id, avatar, email, username, verified, taunt from users where user_id = $1"
-        )
-            .bind(user_id)
-            .fetch_one(pool)
-            .await?;
-
-        Ok(user)
-    }
+    // pub async fn get_by_user_id(pool: &PgPool, user_id: &i32) -> Result<PublicUser, TalliiError> {
+    //     let user = sqlx::query_as::<_, PublicUser>(
+    //         "select user_id, avatar, email, username, verified, taunt from users where user_id = $1"
+    //     )
+    //         .bind(user_id)
+    //         .fetch_one(pool)
+    //         .await?;
+    //
+    //     Ok(user)
+    // }
 
     /// Fetches a user with the provided email
     pub async fn get_by_email(pool: &PgPool, email: &String) -> Result<Option<User>, TalliiError> {

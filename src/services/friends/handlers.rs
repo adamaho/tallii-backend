@@ -1,7 +1,6 @@
 use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
-use crate::generics::PaginatedResponse;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::friends::db::FriendRepository;
 use crate::services::friends::models::{

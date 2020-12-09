@@ -4,7 +4,7 @@ use super::handlers;
 
 /// Resource routes for events
 pub fn events_routes() -> Resource {
-    web::resource("/events/")
+    web::resource("/events")
         .route(web::get().to(handlers::get_events))
         .route(web::post().to(handlers::create_event))
 }

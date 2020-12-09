@@ -6,24 +6,23 @@ use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::TalliiResponse;
 
-use super::db::{InviteCodeRepository, UserRepository};
+use super::db::{InviteCodesTable, UsersTable};
 use super::models::{
-    CheckEmail, CheckUsername, CreateInviteCode, InviteCode, LoginUser, NewUser, UserQuery,
+    CheckEmail, CheckUsername, CreateInviteCode, LoginUser, NewUser, UserQuery,
 };
 
 /// Gets all invite codes
-pub async fn get_all_invite_codes(
+pub async fn get_invite_codes(
     pool: web::Data<PgPool>,
     user: AuthenticatedUser,
 ) -> TalliiResponse {
-    println!("{:?}", user.username);
     // check if the user is me to make sure that no one can make invite codes
     if user.username != String::from("adamaho") {
         return Err(TalliiError::UNAUTHORIZED.default());
     }
 
     // execute the query
-    let all_invite_codes = InviteCodeRepository::get_all(&pool).await?;
+    let all_invite_codes = InviteCodesTable::get_all(&pool).await?;
 
     // respond with all of the invite codes
     Ok(HttpResponse::Ok().json(all_invite_codes))
@@ -32,12 +31,12 @@ pub async fn get_all_invite_codes(
 /// Checks the validity of the invite code
 pub async fn check_invite_code(
     pool: web::Data<PgPool>,
-    code: web::Json<InviteCode>,
+    code: web::Path<String>,
 ) -> TalliiResponse {
     // execute the query
-    let is_valid = InviteCodeRepository::is_valid(&pool, &code.id).await?;
+    let is_valid = InviteCodesTable::is_valid(&pool, &code).await?;
 
-    let user = UserRepository::get_by_invite_code(&pool, &code.id).await?;
+    let user = UsersTable::get_by_invite_code(&pool, &code).await?;
 
     // if not valid return an error
     if !is_valid || user.is_some() {
@@ -59,7 +58,7 @@ pub async fn create_invite_codes(
     }
 
     // execute the query
-    InviteCodeRepository::create_many(&pool, new_codes.amount).await?;
+    InviteCodesTable::create_many(&pool, new_codes.amount).await?;
 
     // response with created
     Ok(HttpResponse::Created().finish())
@@ -71,7 +70,7 @@ pub async fn check_username(
     payload: web::Json<CheckUsername>,
 ) -> TalliiResponse {
     // execute the query
-    match UserRepository::get_by_username(&pool, &payload.username).await? {
+    match UsersTable::get_by_username(&pool, &payload.username).await? {
         Some(_) => Err(TalliiError::USERNAME_TAKEN.default()),
         None => Ok(HttpResponse::Ok().json("")),
     }
@@ -83,7 +82,7 @@ pub async fn check_email(
     payload: web::Json<CheckEmail>,
 ) -> TalliiResponse {
     // execute the query
-    match UserRepository::get_by_email(&pool, &payload.email).await? {
+    match UsersTable::get_by_email(&pool, &payload.email).await? {
         Some(_) => Err(TalliiError::EMAIL_TAKEN.default()),
         None => Ok(HttpResponse::Ok().json("")),
     }
@@ -96,7 +95,7 @@ pub async fn login(
     person: web::Json<LoginUser>,
 ) -> Result<HttpResponse, TalliiError> {
     // check if there is a user with the provided email
-    let user = match UserRepository::get_by_email(&pool, &person.email).await? {
+    let user = match UsersTable::get_by_email(&pool, &person.email).await? {
         Some(u) => u,
         None => {
             return Err(TalliiError::INVALID_LOGIN.default());
@@ -125,7 +124,7 @@ pub async fn signup(
     new_user: web::Json<NewUser>,
 ) -> TalliiResponse {
     // check to make sure the invite code is valid
-    let is_valid_invite_code = InviteCodeRepository::is_valid(&pool, &new_user.invite_code).await?;
+    let is_valid_invite_code = InviteCodesTable::is_valid(&pool, &new_user.invite_code).await?;
 
     // if not valid return an InvalidInviteCode error
     if !is_valid_invite_code {
@@ -133,12 +132,12 @@ pub async fn signup(
     }
 
     // check to make sure the invite code is not taken by another user
-    if let Some(_) = UserRepository::get_by_invite_code(&pool, &new_user.invite_code).await? {
+    if let Some(_) = UsersTable::get_by_invite_code(&pool, &new_user.invite_code).await? {
         return Err(TalliiError::INVALID_INVITE_CODE.default());
     }
 
     // create the new user in the database
-    let created_user = UserRepository::create(&pool, &new_user, &crypto).await?;
+    let created_user = UsersTable::create(&pool, &new_user, &crypto).await?;
 
     // TODO: send verification email to user
 
@@ -158,7 +157,7 @@ pub async fn get_user(
     _user: AuthenticatedUser,
 ) -> TalliiResponse {
     // get me from the database
-    let user = UserRepository::get_by_username(&pool, &username).await?;
+    let user = UsersTable::get_by_username(&pool, &username).await?;
 
     // response with json of me
     Ok(HttpResponse::Ok().json(user))
@@ -171,7 +170,7 @@ pub async fn search_users(
     params: web::Query<UserQuery>,
 ) -> TalliiResponse {
     // get me from the database
-    let users = UserRepository::search_by_username(&pool, &params).await?;
+    let users = UsersTable::search_by_username(&pool, &params).await?;
 
     // response with json of me
     Ok(HttpResponse::Ok().json(users))

@@ -3,7 +3,6 @@ use sqlx::postgres::{PgConnection, PgQueryAs};
 use sqlx::{PgPool, Transaction};
 
 use crate::errors::TalliiError;
-use crate::services::auth::AuthenticatedUser;
 
 use super::models::{EventPlayerRow, EventPlayerRequest};
 

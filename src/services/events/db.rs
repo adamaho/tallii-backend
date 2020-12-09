@@ -106,7 +106,7 @@ impl EventsTable {
     /// Gets all Events for user
     pub async fn get_many(
         pool: &PgPool,
-        user: &AuthenticatedUser,
+        _user: &AuthenticatedUser,
         params: &EventQueryParams,
     ) -> Result<Vec<EventResponsePayload>, TalliiError> {
         // start the query

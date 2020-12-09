@@ -1,6 +1,6 @@
 use actix_web::{web, HttpResponse};
 
-use sqlx::{PgPool, Transaction};
+use sqlx::PgPool;
 
 use crate::services::TalliiResponse;
 use crate::services::auth::AuthenticatedUser;

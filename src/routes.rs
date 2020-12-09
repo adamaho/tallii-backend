@@ -1,31 +1,17 @@
 use actix_web::web;
 
-use crate::services::{events, friends, users};
+use crate::services::{friends, users};
 use crate::services::events::players::routes::{players_routes, players_entity_routes};
 use crate::services::events::teams::routes::{teams_routes, teams_players_routes};
 use crate::services::events::routes::{events_routes, events_entity_routes};
+use crate::services::users::routes::{invite_codes_routes, invite_codes_entity_routes, users_entity_routes, users_username_routes, users_email_routes};
 
 pub fn define_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(
-        web::resource("/invite-codes")
-            .route(web::post().to(users::handlers::check_invite_code))
-            .route(web::get().to(users::handlers::get_all_invite_codes)),
-    )
-    .service(
-        web::resource("/invite-codes/new")
-            .route(web::post().to(users::handlers::create_invite_codes)),
-    )
-    .service(
-        web::resource("/users/check-username")
-            .route(web::post().to(users::handlers::check_username)),
-    )
-    .service(
-        web::resource("/users/check-email").route(web::post().to(users::handlers::check_email)),
-    )
-    .service(
-        web::resource("/users/check-email").route(web::post().to(users::handlers::check_email)),
-    )
-    .service(web::resource("/users/{user_id}").route(web::get().to(users::handlers::get_user)))
+    cfg.service(invite_codes_routes())
+    .service(invite_codes_entity_routes())
+    .service(users_entity_routes())
+    .service(users_email_routes())
+    .service(users_username_routes())
     .service(web::resource("/users").route(web::get().to(users::handlers::search_users)))
     .service(web::resource("/login").route(web::post().to(users::handlers::login)))
     .service(web::resource("/signup").route(web::post().to(users::handlers::signup)))

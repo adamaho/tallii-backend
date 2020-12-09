@@ -6,7 +6,7 @@ use sqlx::PgPool;
 
 use crate::crypto::Crypto;
 use crate::errors::TalliiError;
-use crate::services::users::db::UserRepository;
+use crate::services::users::db::UsersTable;
 
 #[derive(Debug)]
 pub struct AuthenticatedUser {
@@ -40,7 +40,7 @@ impl FromRequest for AuthenticatedUser {
                         .map_err(|_err| TalliiError::UNAUTHORIZED.default())?;
 
                     // check to make sure the provided username and user_id combo is valid
-                    UserRepository::get_by_username_and_id(
+                    UsersTable::get_by_username_and_id(
                         &p.into_inner(),
                         &token.claims.sub,
                         &token.claims.username,

@@ -1,4 +1,3 @@
-use crate::services::users::models::PublicUser;
 use serde::{Deserialize, Serialize};
 
 /// Database representation of an Event
