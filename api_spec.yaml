@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: "0.2",
+  version: "0.2"
   title: Tallii API
 paths:
   /api/v1/login:
@@ -12,7 +12,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginSchema'
+              $ref: '#/components/schemas/LoginBody'
       responses:
         200:
           description: The jwt token for the session of the user
@@ -34,7 +34,7 @@ paths:
                 $ref: '#/components/schemas/Error'
   /api/v1/signup:
     post:
-      operationId: login,
+      operationId: signup,
       description: Logs a user in if the provided credentials are correct.
       requestBody:
         required: true
