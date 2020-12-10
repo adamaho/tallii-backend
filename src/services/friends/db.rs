@@ -21,7 +21,7 @@ impl FriendsTable {
         let mut query = String::from(
             r#"
                 select
-                    users.user_id, users.username, users.avatar, users.taunt
+                    users.user_id, users.username, users.avatar, users.taunt, friends.created_at
                 from
                     friends
                 inner join

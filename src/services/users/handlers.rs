@@ -64,7 +64,7 @@ pub async fn check_username(
     // execute the query
     match UsersTable::get_by_username(&pool, &payload.username).await? {
         Some(_) => Err(TalliiError::USERNAME_TAKEN.default()),
-        None => Ok(HttpResponse::Ok().json("")),
+        None => Ok(HttpResponse::Ok().finish()),
     }
 }
 
@@ -76,7 +76,7 @@ pub async fn check_email(
     // execute the query
     match UsersTable::get_by_email(&pool, &payload.email).await? {
         Some(_) => Err(TalliiError::EMAIL_TAKEN.default()),
-        None => Ok(HttpResponse::Ok().json("")),
+        None => Ok(HttpResponse::Ok().finish()),
     }
 }
 

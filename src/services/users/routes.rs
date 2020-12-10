@@ -21,12 +21,12 @@ pub fn users_entity_routes() -> Resource {
 
 /// Resource routes for checking user email
 pub fn users_email_routes() -> Resource {
-    web::resource("/users/check-email").route(web::get().to(handlers::check_email))
+    web::resource("/users/check-email/{email}").route(web::get().to(handlers::check_email))
 }
 
 /// Resource routes for checking username
 pub fn users_username_routes() -> Resource {
-    web::resource("/users/check-username").route(web::get().to(handlers::check_username))
+    web::resource("/users/check-username/{username}").route(web::get().to(handlers::check_username))
 }
 
 /// Resource routes for logging in

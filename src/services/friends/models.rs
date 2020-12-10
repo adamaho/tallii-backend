@@ -9,11 +9,6 @@ pub struct Friend {
     pub created_at: chrono::NaiveDateTime,
 }
 
-#[derive(sqlx::FromRow, Debug, Serialize)]
-pub struct FriendCount {
-    pub count: i64,
-}
-
 /// Database representation of a Friend
 #[derive(sqlx::FromRow, Debug, Serialize)]
 pub struct FriendResponse {
@@ -21,6 +16,7 @@ pub struct FriendResponse {
     pub username: String,
     pub avatar: Option<String>,
     pub taunt: Option<String>,
+    pub created_at: chrono::NaiveDateTime,
 }
 
 /// Represents the operation to perform for the request
@@ -38,15 +34,6 @@ pub enum FriendOperation {
 pub struct FriendRequest {
     pub user_id: i32,
     pub operation: FriendOperation,
-}
-
-/// Representation of an Friend to update
-#[derive(Debug, Deserialize)]
-pub struct EditFriend {
-    pub user_id: i32,
-    pub friend_id: i32,
-    pub friend_status: String,
-    pub created_at: Option<chrono::NaiveDateTime>,
 }
 
 /// Represents the Friend Status to query for

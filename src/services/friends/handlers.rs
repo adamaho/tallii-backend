@@ -40,5 +40,5 @@ pub async fn post_friends(
         }
     }
 
-    Ok(HttpResponse::Ok().json(""))
+    Ok(HttpResponse::Ok().finish())
 }

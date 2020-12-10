@@ -1,0 +1,312 @@
+openapi: "3.0.0"
+info:
+  version: "0.2",
+  title: Tallii API
+paths:
+  /api/v1/login:
+    post:
+      operationId: login,
+      description: Logs a user in if the provided credentials are correct.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginSchema'
+      responses:
+        200:
+          description: The jwt token for the session of the user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        400:
+          description: The provided login credentials are not correct.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/signup:
+    post:
+      operationId: login,
+      description: Logs a user in if the provided credentials are correct.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupBody'
+      responses:
+        200:
+          description: The jwt token for the session of the user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        400:
+          description: The provided invite code is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/users/{user_id}:
+    get:
+      operationId: getUser
+      description: Gets a user with the user_id provided in the url.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The user_id of the user of the user.
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: The user that matches the provided user_id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/users/check-email/{email}:
+    get:
+      operationId: checkEmail
+      description: Checks if the provided email is taken.
+      parameters:
+        - name: email
+          in: path
+          required: true
+          description: The email to check.
+          schema:
+            type: string
+            format: email
+      responses:
+        200:
+          description: The email is not taken.
+        400:
+          description: The email is taken.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/users/check-username/{username}:
+    get:
+      operationId: checkUsername
+      description: Checks if the provided username is taken.
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: The username to check.
+          schema:
+            type: string
+      responses:
+        200:
+          description: The username is not taken.
+        400:
+          description: The username is taken.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/friends:
+    get:
+      operationId: getFriends
+      description: Gets the friends matching the provided user_id and status.
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          description: The user_id to get friends for.
+          schema:
+            type: integer
+            format: int32
+        - name: status
+          in: query
+          required: false
+          description: The status of the friendship.
+          schema:
+            type: string
+            enum: [pending, accepted, blocked]
+      responses:
+        200:
+          description: The friends that match the provided query params.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Friend'
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: postFriends
+      description: Sends, accepts, cancels, or denies a friend request given the provided query params.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  format: int32
+                operation:
+                  type: string
+                  enum:
+                    - send_request
+                    - accept_request
+                    - cancel_request
+                    - deny_request
+      responses:
+        200:
+          description: The requested operation has completed.
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      description: An error has occurred.
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    Friend:
+      description: A friend of the currently logged in user.
+      type: object
+      required:
+        - user_id
+        - username
+        - avatar
+        - taunt
+        - created_at
+      properties:
+        user_id:
+          type: integer
+          format: int32
+        username:
+          type: string
+        avatar:
+          type: string
+          nullable: true
+        taunt:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+    LoginBody:
+      description: The body of the login request.
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    SignupBody:
+      description: The body of the signup request request.
+      type: object
+      required:
+        - email
+        - username
+        - password
+        - invite_code
+      properties:
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+        invite_code:
+          type: string
+        password:
+          type: string
+          format: password
+    Token:
+      description: A jwt token.
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+    User:
+      description: A person that is logged in to tallii.
+      type: object
+      required:
+        - user_id
+        - avatar
+        - email
+        - invite_code
+        - username
+        - taunt
+        - verified
+      properties:
+        user_id:
+          type: integer
+          format: int32
+        avatar:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+        invite_code:
+          type: string
+        username:
+          type: string
+        taunt:
+          type: string
+          nullable: true
+        verified:
+          type: boolean
+          nullable: true
