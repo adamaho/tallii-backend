@@ -4,7 +4,7 @@ use sqlx::PgPool;
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::friends::models::{
-    FriendQueryParams, FriendRequest, FriendResponse, FriendStatus,
+    MeFriendQueryParams, FriendQueryParams, FriendRequest, FriendResponse, MeFriendStatus,
 };
 
 use crate::services::users::models::User;
@@ -12,10 +12,11 @@ use crate::services::users::models::User;
 pub struct FriendsTable;
 
 impl FriendsTable {
-    /// Gets a list of friends
-    pub async fn get_many(
+    /// Gets a list of friends of the currently logged in user
+    pub async fn me_get_many(
         pool: &PgPool,
-        params: &FriendQueryParams,
+        user: &AuthenticatedUser,
+        params: &MeFriendQueryParams,
     ) -> Result<Vec<FriendResponse>, TalliiError> {
         // start the query
         let mut query = String::from(
@@ -32,13 +33,13 @@ impl FriendsTable {
         // if there is a status query based on it
         if let Some(status) = &params.status {
             match status {
-                FriendStatus::Pending => {
+                MeFriendStatus::Pending => {
                     query.push_str("where friends.friend_id = $1 and friend_status = 'pending'");
                 }
-                FriendStatus::Blocked => {
+                MeFriendStatus::Blocked => {
                     query.push_str("where friends.user_id = $1 and friend_status = 'blocked'");
                 }
-                FriendStatus::Accepted => {
+                MeFriendStatus::Accepted => {
                     query.push_str("where friends.user_id = $1 and friend_status = 'accepted'");
                 }
             }
@@ -48,6 +49,32 @@ impl FriendsTable {
 
         // select the friends
         let friends = sqlx::query_as::<_, FriendResponse>(&query)
+            .bind(user.user_id)
+            .fetch_all(pool)
+            .await?;
+
+        Ok(friends)
+    }
+
+
+    /// Gets a list of friends of the provided user_id
+    pub async fn get_many(
+        pool: &PgPool,
+        params: &FriendQueryParams,
+    ) -> Result<Vec<FriendResponse>, TalliiError> {
+        // select the friends
+        let friends = sqlx::query_as::<_, FriendResponse>(
+            r#"
+                select
+                    users.user_id, users.username, users.avatar, users.taunt, friends.created_at
+                from
+                    friends
+                inner join
+                    users on users.user_id = friends.friend_id
+                where
+                    friends.user_id = $1 and friend_status = 'accepted'
+            "#,
+        )
             .bind(params.user_id)
             .fetch_all(pool)
             .await?;

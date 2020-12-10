@@ -6,7 +6,7 @@ use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 
 use crate::services::events::models::{
-    Event, EventCreator, EventQueryParams, EventResponsePayload, EventRow, NewEvent, PlayerStatus,
+    Event, EventQueryParams, NewEvent, PlayerStatus,
 };
 
 pub struct EventsTable;
@@ -17,11 +17,11 @@ impl EventsTable {
         String::from(
             r#"
                 select
-                    events.event_id, events.name, events.description, events.creator_user_id, events.created_at, u.user_id, u.username, u.avatar
+                    events.event_id, events.name, events.description, events.creator_user_id, events.created_at
                 from
                     events
                 left join
-                    events_participants ep
+                    events_players ep
                 on
                     events.event_id = ep.event_id
                 left join
@@ -30,21 +30,6 @@ impl EventsTable {
                     events.creator_user_id = u.user_id
             "#,
         )
-    }
-
-    /// builds the response for getting an event
-    fn build_get_event_response(e: EventRow) -> EventResponsePayload {
-        EventResponsePayload {
-            event_id: e.event_id,
-            name: e.name,
-            description: e.description,
-            creator: EventCreator {
-                user_id: e.user_id,
-                username: e.username,
-                avatar: e.avatar,
-            },
-            created_at: e.created_at,
-        }
     }
 
     /// Creates an event in the database
@@ -78,7 +63,7 @@ impl EventsTable {
     pub async fn get_one(
         pool: &PgPool,
         event_id: &i32,
-    ) -> Result<EventResponsePayload, TalliiError> {
+    ) -> Result<Event, TalliiError> {
         // get the initial query
         let mut query = Self::get_event_query();
 
@@ -86,16 +71,13 @@ impl EventsTable {
         query.push_str("where events.event_id = $1");
 
         // execute the query
-        let event_row = sqlx::query_as::<_, EventRow>(&query)
+        let event = sqlx::query_as::<_, Event>(&query)
             .bind(event_id)
             .fetch_one(pool)
             .await?;
 
-        // format the response
-        let event_response = Self::build_get_event_response(event_row);
-
         // return the result
-        Ok(event_response)
+        Ok(event)
     }
 
     /// Gets all Events for user
@@ -103,7 +85,7 @@ impl EventsTable {
         pool: &PgPool,
         _user: &AuthenticatedUser,
         params: &EventQueryParams,
-    ) -> Result<Vec<EventResponsePayload>, TalliiError> {
+    ) -> Result<Vec<Event>, TalliiError> {
         // start the query
         let mut query = Self::get_event_query();
 
@@ -116,14 +98,9 @@ impl EventsTable {
         }
 
         // execute the query and format the response
-        let events = sqlx::query_as::<_, EventRow>(&query)
+        let events = sqlx::query_as::<_, Event >(&query)
             .fetch_all(pool)
-            .await?
-            .into_iter()
-            .map(|e| {
-                return Self::build_get_event_response(e);
-            })
-            .collect();
+            .await?;
 
         Ok(events)
     }

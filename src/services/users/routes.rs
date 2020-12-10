@@ -31,10 +31,10 @@ pub fn users_username_routes() -> Resource {
 
 /// Resource routes for logging in
 pub fn users_login() -> Resource {
-    web::resource("/login").route(web::get().to(handlers::login))
+    web::resource("/login").route(web::post().to(handlers::login))
 }
 
 /// Resource routes for signing up
 pub fn users_signup() -> Resource {
-    web::resource("/signup").route(web::get().to(handlers::signup))
+    web::resource("/signup").route(web::post().to(handlers::signup))
 }

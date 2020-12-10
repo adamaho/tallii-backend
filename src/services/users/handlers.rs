@@ -7,7 +7,7 @@ use crate::services::auth::AuthenticatedUser;
 use crate::services::TalliiResponse;
 
 use super::db::{InviteCodesTable, UsersTable};
-use super::models::{CheckEmail, CheckUsername, CreateInviteCode, LoginUser, NewUser, UserQuery};
+use super::models::{CreateInviteCode, LoginUser, NewUser, UserQuery};
 
 /// Gets all invite codes
 pub async fn get_invite_codes(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
@@ -59,10 +59,10 @@ pub async fn create_invite_codes(
 /// Checks if the username is taken
 pub async fn check_username(
     pool: web::Data<PgPool>,
-    payload: web::Json<CheckUsername>,
+    username: web::Path<String>,
 ) -> TalliiResponse {
     // execute the query
-    match UsersTable::get_by_username(&pool, &payload.username).await? {
+    match UsersTable::get_by_username(&pool, &username).await? {
         Some(_) => Err(TalliiError::USERNAME_TAKEN.default()),
         None => Ok(HttpResponse::Ok().finish()),
     }
@@ -71,10 +71,10 @@ pub async fn check_username(
 /// Checks if the email is taken
 pub async fn check_email(
     pool: web::Data<PgPool>,
-    payload: web::Json<CheckEmail>,
+    email: web::Path<String>,
 ) -> TalliiResponse {
     // execute the query
-    match UsersTable::get_by_email(&pool, &payload.email).await? {
+    match UsersTable::get_by_email(&pool, &email).await? {
         Some(_) => Err(TalliiError::EMAIL_TAKEN.default()),
         None => Ok(HttpResponse::Ok().finish()),
     }

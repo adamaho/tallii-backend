@@ -36,18 +36,23 @@ pub struct FriendRequest {
     pub operation: FriendOperation,
 }
 
+/// Query Params for FriendQueryParams
+#[derive(Debug, Deserialize)]
+pub struct FriendQueryParams {
+    pub user_id: i32,
+}
+
 /// Represents the Friend Status to query for
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "lowercase")]
-pub enum FriendStatus {
+pub enum MeFriendStatus {
     Pending,
     Accepted,
     Blocked,
 }
 
-/// Query Params for FriendQueryParams
+/// Query Params for getting me friend
 #[derive(Debug, Deserialize)]
-pub struct FriendQueryParams {
-    pub user_id: i32,
-    pub status: Option<FriendStatus>,
+pub struct MeFriendQueryParams {
+    pub status: Option<MeFriendStatus>,
 }
