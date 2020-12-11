@@ -12,10 +12,17 @@ pub struct Player {
     pub created_at: chrono::NaiveDateTime,
 }
 
-/// Representation of an player to Update or Add
-#[derive(Deserialize, Debug)]
-pub struct PlayerRequest {
-    pub status: PlayerStatus,
+/// Representation of a PlayerResponse
+#[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
+pub struct PlayerResponse {
+    pub player_id: i32,
+    pub event_id: i32,
+    pub user_id: i32,
+    pub username: String,
+    pub avatar: Option<String>,
+    pub taunt: Option<String>,
+    pub status: String,
+    pub created_at: chrono::NaiveDateTime,
 }
 
 /// Query params for getting players

@@ -4,7 +4,7 @@ use sqlx::{PgPool, Transaction};
 
 use crate::errors::TalliiError;
 
-use super::models::{Player, PlayerRequest};
+use super::models::{Player, PlayerResponse};
 
 pub struct PlayersTable;
 
@@ -40,13 +40,16 @@ impl PlayersTable {
     }
 
     /// Gets all Players for a single event
-    pub async fn get_many(pool: &PgPool, event_id: &i32) -> Result<Vec<Player>, TalliiError> {
-        let players = sqlx::query_as::<_, Player>(
+    pub async fn get_many(pool: &PgPool, event_id: &i32) -> Result<Vec<PlayerResponse>, TalliiError> {
+        let players = sqlx::query_as::<_, PlayerResponse>(
             r#"
                 select
                     players.player_id,
                     players.event_id,
                     players.user_id,
+                    u.username,
+                    u.avatar,
+                    u.taunt,
                     players.status,
                     players.created_at
                 from
@@ -70,7 +73,7 @@ impl PlayersTable {
     pub async fn update(
         pool: &PgPool,
         player_id: &i32,
-        player: &PlayerRequest,
+        player: &Player,
     ) -> Result<(), TalliiError> {
         sqlx::query(
             r#"
