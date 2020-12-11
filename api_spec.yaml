@@ -227,18 +227,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                user_id:
-                  type: integer
-                  format: int32
-                operation:
-                  type: string
-                  enum:
-                    - send_request
-                    - accept_request
-                    - cancel_request
-                    - deny_request
+              $ref: '#/components/schemas/FriendRequest'
       responses:
         200:
           description: The requested operation has completed.
@@ -356,6 +345,23 @@ components:
         password:
           type: string
           format: password
+    FriendRequest:
+      description: The body of the friend post request.
+      type: object
+      required:
+        - user_id
+        - operation
+      properties:
+        user_id:
+          type: integer
+          format: int32
+        operation:
+          type: string
+          enum:
+            - send_request
+            - accept_request
+            - cancel_request
+            - deny_request
     SignupCredentials:
       description: The body of the signup request request.
       type: object
