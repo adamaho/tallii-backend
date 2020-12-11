@@ -5,11 +5,11 @@ use sqlx::{PgPool, Transaction};
 use crate::errors::TalliiError;
 use crate::services::events::models::PlayerStatus;
 
-use super::models::{EventPlayer, EventPlayerRequest};
+use super::models::{Player, PlayerRequest};
 
-pub struct EventsPlayersTable;
+pub struct PlayersTable;
 
-impl EventsPlayersTable {
+impl PlayersTable {
     /// Creates many event players in the database
     pub async fn create_many(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
@@ -19,7 +19,7 @@ impl EventsPlayersTable {
     ) -> Result<(), TalliiError> {
         // init the query
         let mut query =
-            String::from("insert into events_players (event_id, user_id, status) values");
+            String::from("insert into players (event_id, user_id, status) values");
 
         // add the current user to the players
         query.push_str(&format!("({}, {}, 'accepted'),", event_id, user_id));
@@ -41,21 +41,21 @@ impl EventsPlayersTable {
     }
 
     /// Gets all Players for a single event
-    pub async fn get_many(pool: &PgPool, event_id: &i32) -> Result<Vec<EventPlayer>, TalliiError> {
-        let players = sqlx::query_as::<_, EventPlayer>(
+    pub async fn get_many(pool: &PgPool, event_id: &i32) -> Result<Vec<Player>, TalliiError> {
+        let players = sqlx::query_as::<_, Player>(
             r#"
                 select
-                    events_players.event_player_id,
-                    events_players.event_id,
-                    events_players.user_id
-                    events_players.status,
-                    events_players.created_at
+                    players.event_player_id,
+                    players.event_id,
+                    players.user_id
+                    players.status,
+                    players.created_at
                 from
-                    events_players
+                    players
                 left join
                     users u
                 on
-                    events_players.user_id = u.user_id
+                    players.user_id = u.user_id
                 where
                     event_id = $1;
             "#,
@@ -70,23 +70,21 @@ impl EventsPlayersTable {
     /// Updates a single player
     pub async fn update(
         pool: &PgPool,
-        event_player_id: &i32,
-        player: &EventPlayerRequest,
+        player_id: &i32,
+        player: &PlayerRequest,
     ) -> Result<(), TalliiError> {
         sqlx::query(
             r#"
                 update
-                    events_players
+                    players
                 set
-                    user_id = $1,
-                    status = $2
+                    status = $1
                 where
-                    event_player_id = $3
+                    player_id = $2
             "#,
         )
-        .bind(&player.user_id)
         .bind(&player.status.to_string())
-        .bind(event_player_id)
+        .bind(player_id)
         .execute(pool)
         .await?;
 

@@ -152,6 +152,19 @@ pub async fn get_user(
     Ok(HttpResponse::Ok().json(user))
 }
 
+/// Gets the profile of me
+pub async fn get_me(
+    pool: web::Data<PgPool>,
+    user: AuthenticatedUser,
+) -> TalliiResponse {
+    // get me from the database
+    let me = UsersTable::get_by_username(&pool, &user.username).await?;
+
+    // response with json of me
+    Ok(HttpResponse::Ok().json(me))
+}
+
+
 /// Gets maximum 10 users that match the provided username
 pub async fn search_users(
     pool: web::Data<PgPool>,

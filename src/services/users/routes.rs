@@ -15,6 +15,11 @@ pub fn invite_codes_entity_routes() -> Resource {
 }
 
 /// Resource routes for checking user email
+pub fn users_me_routes() -> Resource {
+    web::resource("/me").route(web::get().to(handlers::get_me))
+}
+
+/// Resource routes for checking user email
 pub fn users_entity_routes() -> Resource {
     web::resource("/users/{user_id}").route(web::get().to(handlers::get_user))
 }

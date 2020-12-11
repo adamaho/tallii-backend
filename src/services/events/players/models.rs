@@ -15,7 +15,6 @@ pub struct Player {
 /// Representation of an player to Update or Add
 #[derive(Deserialize, Debug)]
 pub struct PlayerRequest {
-    pub user_id: i32,
     pub status: PlayerStatus,
 }
 

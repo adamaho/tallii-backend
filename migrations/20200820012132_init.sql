@@ -36,18 +36,18 @@ create table events (
     created_at timestamp not null default current_timestamp
 );
 
--- Events Participants
-create table events_players (
-    event_player_id serial primary key,
+-- Players
+create table players (
+    player_id serial primary key,
     event_id integer not null references events(event_id) on delete cascade,
     user_id integer not null references users(user_id),
     status text not null default 'pending', -- pending, declined, accepted
     created_at timestamp not null default current_timestamp
 );
 
--- Events Teams
-create table events_teams (
-    event_team_id serial primary key,
+-- Teams
+create table teams (
+    team_id serial primary key,
     event_id integer not null references events(event_id) on delete cascade,
     name text not null,
     score integer not null default 0,
@@ -55,10 +55,10 @@ create table events_teams (
     created_at timestamp not null default current_timestamp
 );
 
--- Event Team Participants
-create table events_teams_players (
-    event_team_id integer not null references events_teams(event_team_id) on delete cascade,
-    event_player_id integer not null references events_players(event_player_id) on delete cascade,
+-- Team Players
+create table teams_players (
+    team_id integer not null references teams(team_id) on delete cascade,
+    player_id integer not null references players(player_id) on delete cascade,
     created_at timestamp not null default current_timestamp
 );
 
