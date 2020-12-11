@@ -6,7 +6,7 @@ use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 
 use crate::services::events::models::{
-    Event, EventQueryParams, NewEvent, PlayerStatus,
+    Event, EventQueryParams, MeEventQueryParams, NewEvent, PlayerStatus,
 };
 
 pub struct EventsTable;
@@ -17,7 +17,11 @@ impl EventsTable {
         String::from(
             r#"
                 select
-                    events.event_id, events.name, events.description, events.creator_user_id, events.created_at
+                    events.event_id
+                    events.name
+                    events.description
+                    events.creator_user_id
+                    events.created_at
                 from
                     events
                 left join
@@ -60,10 +64,7 @@ impl EventsTable {
     }
 
     /// Gets a single event from the database
-    pub async fn get_one(
-        pool: &PgPool,
-        event_id: &i32,
-    ) -> Result<Event, TalliiError> {
+    pub async fn get_one(pool: &PgPool, event_id: &i32) -> Result<Event, TalliiError> {
         // get the initial query
         let mut query = Self::get_event_query();
 
@@ -80,25 +81,48 @@ impl EventsTable {
         Ok(event)
     }
 
-    /// Gets all Events for user
+    /// Gets all Events that a user has accepted
     pub async fn get_many(
         pool: &PgPool,
-        _user: &AuthenticatedUser,
         params: &EventQueryParams,
     ) -> Result<Vec<Event>, TalliiError> {
         // start the query
         let mut query = Self::get_event_query();
 
         // filter by the user
-        query.push_str(&format!("where ep.user_id = {}", params.user_id));
+        query.push_str("where ep.user_id = $1 and ep.status = 'accepted");
+
+        // execute the query and format the response
+        let events = sqlx::query_as::<_, Event>(&query)
+            .bind(params.user_id)
+            .fetch_all(pool)
+            .await?;
+
+        Ok(events)
+    }
+
+    /// Gets all Events for me
+    pub async fn get_me_many(
+        pool: &PgPool,
+        user: &AuthenticatedUser,
+        params: &MeEventQueryParams,
+    ) -> Result<Vec<Event>, TalliiError> {
+        // start the query
+        let mut query = Self::get_event_query();
+
+        // filter by the user
+        query.push_str(&format!("where ep.user_id = $1"));
 
         // add the optional clause for player status
         if let Some(player_status) = &params.player_status {
             query.push_str(&format!(" and ep.status = '{}'", player_status.to_string()));
+        } else {
+            query.push_str(" and ep.status = 'accepted")
         }
 
         // execute the query and format the response
-        let events = sqlx::query_as::<_, Event >(&query)
+        let events = sqlx::query_as::<_, Event>(&query)
+            .bind(user.user_id)
             .fetch_all(pool)
             .await?;
 

@@ -9,7 +9,7 @@ use super::db::EventsPlayersTable;
 use super::models::EventPlayerRequest;
 
 /// Gets all participants in a single event
-pub async fn get_event_players(
+pub async fn get_players(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
     event_id: web::Path<i32>,

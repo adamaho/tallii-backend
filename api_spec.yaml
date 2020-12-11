@@ -32,6 +32,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /api/v1/signup:
     post:
       operationId: signup,
@@ -61,6 +62,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /api/v1/invite-codes/{invite_code}:
     get:
       operationId: checkInviteCode,
@@ -87,6 +89,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /api/v1/users/{user_id}:
     get:
       operationId: getUser
@@ -112,6 +115,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /api/v1/users/check-email/{email}:
     get:
       operationId: checkEmail
@@ -139,6 +143,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /api/v1/users/check-username/{username}:
     get:
       operationId: checkUsername
@@ -165,6 +170,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /api/v1/friends:
     get:
       operationId: getFriends
@@ -192,6 +198,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /api/v1/me/friends:
     get:
       operationId: getMeFriends
@@ -219,6 +226,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
     post:
       operationId: postMeFriends
       description: Sends, accepts, cancels, or denies a friend request given the provided query params.
@@ -237,6 +245,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /api/v1/me/events:
+    get:
+      operationId: getMeEvents
+      description: Gets the events matching the provided status for the currently logged in user.
+      parameters:
+        - name: player_status
+          in: query
+          required: false
+          description: The player status of the user in the event.
+          schema:
+            type: string
+            enum: [ pending, accepted, declined ]
+      responses:
+        200:
+          description: The friends that match the provided query params.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Friend'
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
   /api/v1/events:
     get:
       operationId: getEvents
@@ -249,13 +287,6 @@ paths:
           schema:
             type: integer
             format: int32
-        - name: player_status
-          in: query
-          required: false
-          description: The player status of the user in the event.
-          schema:
-            type: string
-            enum: [ pending, accepted, declined ]
       responses:
         200:
           description: The events that match the provided query params.
@@ -271,8 +302,97 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+    post:
+      operationId: createEvent
+      description: Creates an event for the logged in user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventRequest'
+      responses:
+        200:
+          description: The event has been created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateEventResponse'
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/players:
+    get:
+      operationId: getEventPlayers
+      description: Gets all of the players of a specfic event.
+      parameters:
+        - name: event_id
+          in: query
+          required: true
+          description: The event_id to get the players for.
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: The players of the provided event_id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+
+  /api/v1/players/{player_id}:
+    put:
+      operationId: updatePlayer
+      description: Updates the status of a specific player in an event.
+      parameters:
+        parameters:
+          - name: event_id
+            in: path
+            required: true
+            description: The event_id to get the players for.
+            schema:
+              type: integer
+              format: int32
+
+
 components:
   schemas:
+    CreateEventRequest:
+      description: A create event request.
+      type: object
+      required:
+        - name
+        - players
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        players:
+          type: array
+          items:
+            type: integer
+            format: int32
+
+    CreateEventResponse:
+      description: The response of a successfully created event.
+      type: object
+      required:
+        - event_id
+      properties:
+        event_id:
+          type: integer
+          format: int32
+
     Error:
       description: An error has occurred.
       type: object
@@ -284,6 +404,7 @@ components:
           type: string
         message:
           type: string
+
     Event:
       description: An event.
       type: object
@@ -308,6 +429,7 @@ components:
         created_at:
           type: string
           format: date-time
+
     Friend:
       description: A friend of the currently logged in user.
       type: object
@@ -332,6 +454,7 @@ components:
         created_at:
           type: string
           format: date-time
+
     LoginCredentials:
       description: The body of the login request.
       type: object
@@ -345,6 +468,7 @@ components:
         password:
           type: string
           format: password
+
     FriendRequest:
       description: The body of the friend post request.
       type: object
@@ -362,6 +486,33 @@ components:
             - accept_request
             - cancel_request
             - deny_request
+
+    Player:
+      description: The user that is a part of an event.
+      type: object
+      required:
+        - event_player_id
+        - event_id
+        - user_id
+        - status
+        - created_at
+      properties:
+        event_player_id:
+          type: integer
+          format: int32
+        event_id:
+          type: integer
+          format: int32
+        user_id:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+            - pending
+            - declined
+            - accepted
+
     SignupCredentials:
       description: The body of the signup request request.
       type: object
@@ -381,6 +532,7 @@ components:
         password:
           type: string
           format: password
+
     Token:
       description: A jwt token.
       type: object
@@ -389,7 +541,8 @@ components:
       properties:
         token:
           type: string
-    User:
+
+    Me:
       description: A person that is logged in to tallii.
       type: object
       required:
@@ -419,4 +572,25 @@ components:
           nullable: true
         verified:
           type: boolean
+          nullable: true
+
+    User:
+      description: A person that is logged in to tallii.
+      type: object
+      required:
+        - user_id
+        - avatar
+        - username
+        - taunt
+      properties:
+        user_id:
+          type: integer
+          format: int32
+        avatar:
+          type: string
+          nullable: true
+        username:
+          type: string
+        taunt:
+          type: string
           nullable: true

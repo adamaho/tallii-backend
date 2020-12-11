@@ -21,7 +21,7 @@ pub struct CreatedEventResponse {
 pub struct NewEvent {
     pub name: String,
     pub description: Option<String>,
-    pub participants: Vec<i32>,
+    pub players: Vec<i32>,
 }
 
 /// Represents the Player Status to query for
@@ -44,9 +44,14 @@ impl std::fmt::Display for PlayerStatus {
     }
 }
 
-/// Represents Query Params for querying an event
+/// Represents Query Params for querying events of me
+#[derive(Deserialize, Debug)]
+pub struct MeEventQueryParams {
+    pub player_status: Option<PlayerStatus>,
+}
+
+/// Represents Query Params for querying events of a user
 #[derive(Deserialize, Debug)]
 pub struct EventQueryParams {
-    pub user_id: String,
-    pub player_status: Option<PlayerStatus>,
+    pub user_id: i32,
 }

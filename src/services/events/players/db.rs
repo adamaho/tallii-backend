@@ -5,7 +5,7 @@ use sqlx::{PgPool, Transaction};
 use crate::errors::TalliiError;
 use crate::services::events::models::PlayerStatus;
 
-use super::models::{EventPlayerRequest, EventPlayerRow};
+use super::models::{EventPlayer, EventPlayerRequest};
 
 pub struct EventsPlayersTable;
 
@@ -41,19 +41,13 @@ impl EventsPlayersTable {
     }
 
     /// Gets all Players for a single event
-    pub async fn get_many(
-        pool: &PgPool,
-        event_id: &i32,
-    ) -> Result<Vec<EventPlayerRow>, TalliiError> {
-        let players = sqlx::query_as::<_, EventPlayerRow>(
+    pub async fn get_many(pool: &PgPool, event_id: &i32) -> Result<Vec<EventPlayer>, TalliiError> {
+        let players = sqlx::query_as::<_, EventPlayer>(
             r#"
                 select
                     events_players.event_player_id,
                     events_players.event_id,
-                    u.user_id,
-                    u.username,
-                    u.avatar,
-                    u.taunt,
+                    events_players.user_id
                     events_players.status,
                     events_players.created_at
                 from

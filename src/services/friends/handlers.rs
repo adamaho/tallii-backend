@@ -3,7 +3,9 @@ use sqlx::PgPool;
 
 use crate::services::auth::AuthenticatedUser;
 use crate::services::friends::db::FriendsTable;
-use crate::services::friends::models::{FriendOperation, FriendQueryParams, MeFriendQueryParams, FriendRequest};
+use crate::services::friends::models::{
+    FriendOperation, FriendQueryParams, FriendRequest, MeFriendQueryParams,
+};
 
 use crate::services::TalliiResponse;
 
@@ -18,14 +20,12 @@ pub async fn get_friends(
     Ok(HttpResponse::Ok().json(friends))
 }
 
-
 /// Gets a list of friends that match the provided query param for the currently logged in user
 pub async fn get_me_friends(
     pool: web::Data<PgPool>,
     params: web::Query<MeFriendQueryParams>,
     user: AuthenticatedUser,
 ) -> TalliiResponse {
-
     let friends = FriendsTable::me_get_many(&pool, &user, &params).await?;
 
     Ok(HttpResponse::Ok().json(friends))

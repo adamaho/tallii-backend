@@ -3,11 +3,11 @@ use sqlx::PgPool;
 
 use crate::services::auth::AuthenticatedUser;
 
-use crate::services::events::db::EventsTable;
+use super::db::EventsTable;
 
-use crate::services::events::models::{CreatedEventResponse, EventQueryParams, NewEvent};
+use super::models::{CreatedEventResponse, EventQueryParams, MeEventQueryParams, NewEvent};
 
-use crate::services::events::players::db::EventsPlayersTable;
+use super::players::db::EventsPlayersTable;
 
 use crate::services::TalliiResponse;
 
@@ -28,7 +28,7 @@ pub async fn create_event(
         &mut tx,
         &created_event.event_id,
         &user.user_id,
-        &new_event.participants,
+        &new_event.players,
     )
     .await?;
 
@@ -44,10 +44,20 @@ pub async fn create_event(
 /// Gets all Events for the user
 pub async fn get_events(
     pool: web::Data<PgPool>,
-    user: AuthenticatedUser,
     params: web::Query<EventQueryParams>,
 ) -> TalliiResponse {
-    let events = EventsTable::get_many(&pool, &user, &params).await?;
+    let events = EventsTable::get_many(&pool, &params).await?;
+
+    Ok(HttpResponse::Ok().json(events))
+}
+
+/// Gets all Events for the user
+pub async fn get_me_events(
+    pool: web::Data<PgPool>,
+    user: AuthenticatedUser,
+    params: web::Query<MeEventQueryParams>,
+) -> TalliiResponse {
+    let events = EventsTable::get_me_many(&pool, &user, &params).await?;
 
     Ok(HttpResponse::Ok().json(events))
 }

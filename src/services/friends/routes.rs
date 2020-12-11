@@ -4,8 +4,7 @@ use super::handlers;
 
 /// Resource routes for friends
 pub fn friends_routes() -> Resource {
-    web::resource("/friends")
-        .route(web::get().to(handlers::get_friends))
+    web::resource("/friends").route(web::get().to(handlers::get_friends))
 }
 
 /// Resource routes for me friends

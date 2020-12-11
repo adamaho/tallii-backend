@@ -92,7 +92,7 @@ impl UsersTable {
         username: &String,
     ) -> Result<Option<PublicUser>, TalliiError> {
         let user_with_username =
-            sqlx::query_as::<_, PublicUser>("select user_id, avatar, email, username, verified, taunt from users where username = $1")
+            sqlx::query_as::<_, PublicUser>("select user_id, avatar, username, taunt from users where username = $1")
                 .bind(username)
                 .fetch_optional(pool)
                 .await?;
@@ -136,7 +136,7 @@ impl UsersTable {
         params: &UserQuery,
     ) -> Result<Vec<PublicUser>, TalliiError> {
         let matching_users =
-            sqlx::query_as::<_, PublicUser>("select user_id, avatar, email, username, verified, taunt from users where username like $1 limit 10")
+            sqlx::query_as::<_, PublicUser>("select user_id, avatar, username, taunt from users where username like $1 limit 10")
                 .bind(format!("%{}%", &params.username))
                 .fetch_all(pool)
                 .await?;

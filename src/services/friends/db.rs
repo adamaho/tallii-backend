@@ -4,7 +4,7 @@ use sqlx::PgPool;
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::friends::models::{
-    MeFriendQueryParams, FriendQueryParams, FriendRequest, FriendResponse, MeFriendStatus,
+    FriendQueryParams, FriendRequest, FriendResponse, MeFriendQueryParams, MeFriendStatus,
 };
 
 use crate::services::users::models::User;
@@ -56,7 +56,6 @@ impl FriendsTable {
         Ok(friends)
     }
 
-
     /// Gets a list of friends of the provided user_id
     pub async fn get_many(
         pool: &PgPool,
@@ -75,9 +74,9 @@ impl FriendsTable {
                     friends.user_id = $1 and friend_status = 'accepted'
             "#,
         )
-            .bind(params.user_id)
-            .fetch_all(pool)
-            .await?;
+        .bind(params.user_id)
+        .fetch_all(pool)
+        .await?;
 
         Ok(friends)
     }

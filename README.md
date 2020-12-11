@@ -15,6 +15,5 @@ In order to develop in the backend you will need to make sure you have rust inst
 4. Build and run the application: `cargo run`
 
 ### TODO
-- Add delete cascades to events
 - Clean up code in any spots that need it. Split up some of it into different files for different endpoints
 - Create a docker container for performing the migrations

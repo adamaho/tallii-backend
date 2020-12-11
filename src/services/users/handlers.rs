@@ -69,10 +69,7 @@ pub async fn check_username(
 }
 
 /// Checks if the email is taken
-pub async fn check_email(
-    pool: web::Data<PgPool>,
-    email: web::Path<String>,
-) -> TalliiResponse {
+pub async fn check_email(pool: web::Data<PgPool>, email: web::Path<String>) -> TalliiResponse {
     // execute the query
     match UsersTable::get_by_email(&pool, &email).await? {
         Some(_) => Err(TalliiError::EMAIL_TAKEN.default()),

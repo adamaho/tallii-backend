@@ -9,6 +9,11 @@ pub fn events_routes() -> Resource {
         .route(web::post().to(handlers::create_event))
 }
 
+/// Resource routes for events
+pub fn events_me_routes() -> Resource {
+    web::resource("/me/events").route(web::get().to(handlers::get_me_events))
+}
+
 /// Resource routes for a specific event
 pub fn events_entity_routes() -> Resource {
     web::resource("/events/{event_id}").route(web::get().to(handlers::get_event))

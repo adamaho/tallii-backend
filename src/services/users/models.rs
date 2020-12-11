@@ -16,12 +16,21 @@ pub struct User {
 
 /// Representation of a user that can be publicized
 #[derive(sqlx::FromRow, Serialize)]
-pub struct PublicUser {
+pub struct MeUser {
     pub user_id: i32,
     pub avatar: Option<String>,
     pub email: String,
     pub username: String,
     pub verified: Option<bool>,
+    pub taunt: Option<String>,
+}
+
+/// Representation of a user that can be publicized
+#[derive(sqlx::FromRow, Serialize)]
+pub struct PublicUser {
+    pub user_id: i32,
+    pub avatar: Option<String>,
+    pub username: String,
     pub taunt: Option<String>,
 }
 
