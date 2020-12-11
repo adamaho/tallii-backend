@@ -3,7 +3,6 @@ use sqlx::postgres::{PgConnection, PgQueryAs};
 use sqlx::{PgPool, Transaction};
 
 use crate::errors::TalliiError;
-use crate::services::events::models::PlayerStatus;
 
 use super::models::{Player, PlayerRequest};
 

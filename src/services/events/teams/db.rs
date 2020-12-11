@@ -4,8 +4,8 @@ use sqlx::{PgPool, Transaction};
 
 use crate::errors::TalliiError;
 
-use super::models::{EventTeam, NewEventTeam};
-use crate::services::events::teams::models::EventTeamPlayer;
+use super::models::{Team, NewTeam};
+use crate::services::events::teams::models::TeamPlayer;
 
 pub struct EventsTeamsTable;
 
@@ -13,20 +13,19 @@ impl EventsTeamsTable {
     /// Creates an event team in the database
     pub async fn create(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
-        event_id: &i32,
-        team: &NewEventTeam,
-    ) -> Result<EventTeam, TalliiError> {
+        team: &NewTeam,
+    ) -> Result<Team, TalliiError> {
         // execute the query
-        let created_team = sqlx::query_as::<_, EventTeam>(
+        let created_team = sqlx::query_as::<_, Team>(
             r#"
                 insert
-                    into events_teams (event_id, name)
+                    into teams (event_id, name)
                 values
                     ($1, $2)
                 returning *
             "#,
         )
-        .bind(&event_id)
+        .bind(&team.event_id)
         .bind(&team.name)
         .fetch_one(tx)
         .await?;
@@ -35,18 +34,18 @@ impl EventsTeamsTable {
     }
 
     // Gets all teams for a single event
-    pub async fn get_many(pool: &PgPool, event_id: &i32) -> Result<Vec<EventTeam>, TalliiError> {
-        let teams = sqlx::query_as::<_, EventTeam>(
+    pub async fn get_many(pool: &PgPool, event_id: &i32) -> Result<Vec<Team>, TalliiError> {
+        let teams = sqlx::query_as::<_, Team>(
             r#"
                 select
-                    events_teams.event_team_id,
-                    events_teams.event_id,
-                    events_teams.name,
-                    events_teams.score,
-                    events_teams.winner,
-                    events_teams.created_at
+                    teams.event_team_id,
+                    teams.event_id,
+                    teams.name,
+                    teams.score,
+                    teams.winner,
+                    teams.created_at
                 from
-                    events_teams
+                    teams
                 where
                     event_id = $1;
             "#,
@@ -59,27 +58,27 @@ impl EventsTeamsTable {
     }
 }
 
-pub struct EventsTeamsPlayersTable;
+pub struct TeamsPlayersTable;
 
-impl EventsTeamsPlayersTable {
+impl TeamsPlayersTable {
     /// Creates many event team players
     pub async fn create_many(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
-        event_team_id: &i32,
+        team_id: &i32,
         players: &Vec<i32>,
     ) -> Result<(), TalliiError> {
         // init the query
         let mut query = String::from(
             r#"
-                    insert
-                        into events_teams_players (event_team_id, event_player_id)
-                    values
-                "#,
+                insert
+                    into teams_players (team_id, player_id)
+                values
+            "#,
         );
 
         // create the queries for each of the new participants
-        for (i, event_player_id) in players.into_iter().enumerate() {
-            query.push_str(&format!("({}, {})", event_team_id, event_player_id));
+        for (i, player_id) in players.into_iter().enumerate() {
+            query.push_str(&format!("({}, {})", team_id, player_id));
 
             // if we are appending values onto the query we need to separate them with commas
             if i < players.len() - 1 {
@@ -96,25 +95,25 @@ impl EventsTeamsPlayersTable {
     // Gets team players for a single event
     pub async fn get_many(
         pool: &PgPool,
-        event_id: &i32,
-    ) -> Result<Vec<EventTeamPlayer>, TalliiError> {
-        let players = sqlx::query_as::<_, EventTeamPlayer>(
+        team_id: &i32,
+    ) -> Result<Vec<TeamPlayer>, TalliiError> {
+        let players = sqlx::query_as::<_, TeamPlayer>(
             r#"
                 select
-                    events_teams.event_team_id,
-                    etp.event_player_id,
+                    teams.team_id,
+                    etp.player_id,
                     etp.created_at
                 from
-                    events_teams
+                    teams
                 left join
-                    events_teams_players etp
+                    teams_players etp
                 on
-                    events_teams.event_team_id = etp.event_team_id
+                    teams.team_id = etp.team_id
                 where
-                    event_id = $1;
+                    team_id = $1;
             "#,
         )
-        .bind(event_id)
+        .bind(team_id)
         .fetch_all(pool)
         .await?;
 

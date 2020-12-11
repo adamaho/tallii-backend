@@ -7,7 +7,7 @@ use super::db::EventsTable;
 
 use super::models::{CreatedEventResponse, EventQueryParams, MeEventQueryParams, NewEvent};
 
-use super::players::db::EventsPlayersTable;
+use super::players::db::PlayersTable;
 
 use crate::services::TalliiResponse;
 
@@ -24,7 +24,7 @@ pub async fn create_event(
     let created_event = EventsTable::create(&mut tx, &new_event, &user).await?;
 
     // create the participants in the transaction
-    EventsPlayersTable::create_many(
+    PlayersTable::create_many(
         &mut tx,
         &created_event.event_id,
         &user.user_id,

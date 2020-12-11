@@ -5,50 +5,49 @@ use sqlx::PgPool;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::TalliiResponse;
 
-use super::db::{EventsTeamsPlayersTable, EventsTeamsTable};
-use super::models::NewEventTeam;
+use super::db::{TeamsPlayersTable, EventsTeamsTable};
+use super::models::{NewTeam, TeamQueryParams};
 
 /// Gets all Teams and Members for an Event
-pub async fn get_event_teams(
+pub async fn get_teams(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
-    event_id: web::Path<i32>,
+    params: web::Query<TeamQueryParams>,
 ) -> TalliiResponse {
-    let teams = EventsTeamsTable::get_many(&pool, &event_id).await?;
+    let teams = EventsTeamsTable::get_many(&pool, &params.event_id).await?;
 
     Ok(HttpResponse::Ok().json(teams))
 }
 
 /// Creates an event team
-pub async fn create_event_team(
+pub async fn create_team(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
-    event_id: web::Path<i32>,
-    team: web::Json<NewEventTeam>,
+    team: web::Json<NewTeam>,
 ) -> TalliiResponse {
     // start the transaction
     let mut tx = pool.begin().await?;
 
     // create the team
-    let new_team = EventsTeamsTable::create(&mut tx, &event_id, &team).await?;
+    let new_team = EventsTeamsTable::create(&mut tx, &team).await?;
 
     // create the team players
-    EventsTeamsPlayersTable::create_many(&mut tx, &new_team.event_team_id, &team.players).await?;
+    TeamsPlayersTable::create_many(&mut tx, &new_team.team_id, &team.players).await?;
 
     // commit the transaction
     tx.commit().await?;
 
     // respond with created
-    Ok(HttpResponse::Created().json("Team Created."))
+    Ok(HttpResponse::Created().finish())
 }
 
 /// Gets all Teams and Members for an Event
-pub async fn get_event_team_players(
+pub async fn get_team_players(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
     event_id: web::Path<i32>,
 ) -> TalliiResponse {
-    let players = EventsTeamsPlayersTable::get_many(&pool, &event_id).await?;
+    let players = TeamsPlayersTable::get_many(&pool, &event_id).await?;
 
     Ok(HttpResponse::Ok().json(players))
 }

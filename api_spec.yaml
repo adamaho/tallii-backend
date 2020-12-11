@@ -173,7 +173,7 @@ paths:
 
   /api/v1/friends:
     get:
-      operationId: getFriends
+      operationId: getFriendsOfUser
       description: Gets the friends matching the provided user_id and status.
       parameters:
         - name: user_id
@@ -219,7 +219,7 @@ paths:
 
   /api/v1/me/friends:
     get:
-      operationId: getMeFriends
+      operationId: getFriendsOfMe
       description: Gets the friends matching the provided status for the currently logged in user.
       parameters:
         - name: status
@@ -246,7 +246,7 @@ paths:
                 $ref: '#/components/schemas/Error'
 
     post:
-      operationId: postMeFriends
+      operationId: updateFriendsOfMe
       description: Sends, accepts, cancels, or denies a friend request given the provided query params.
       requestBody:
         required: true
@@ -266,7 +266,7 @@ paths:
 
   /api/v1/me/events:
     get:
-      operationId: getMeEvents
+      operationId: getMyEvents
       description: Gets the events matching the provided status for the currently logged in user.
       parameters:
         - name: player_status
@@ -293,7 +293,7 @@ paths:
 
   /api/v1/events:
     get:
-      operationId: getEvents
+      operationId: getUsersEvents
       description: Gets all events that match the provided query params.
       parameters:
         - name: user_id
@@ -344,7 +344,7 @@ paths:
 
   /api/v1/players:
     get:
-      operationId: getEventPlayers
+      operationId: getPlayersInEvent
       description: Gets all of the players of a specfic event.
       parameters:
         - name: event_id
@@ -378,7 +378,7 @@ paths:
         - name: player_id
           in: path
           required: true
-          description: The player_id to to update the status of.
+          description: The player_id to update the status of.
           schema:
             type: integer
             format: int32
@@ -391,6 +391,85 @@ paths:
       responses:
         200:
           description: The player has been successfully updated
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/teams:
+    get:
+      operationId: getTeamsForEvent
+      description: Gets all of the teams associated with an event
+      parameters:
+        - name: event_id
+          in: query
+          required: true
+          description: The event_id to ge the teams for
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: The teams that are associated with the provided event.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createTeam
+      description: Creates a new team.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTeamRequest'
+      responses:
+        201:
+          description: The team was successfully created.
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/teams/{team_id}/players:
+    get:
+      operationId: getPlayersForTeam
+      description: Gets all of the players associated with the provided team_id.
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          description: The team_id to get the players for.
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: The players that are on the provided team.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   schemas:
@@ -565,6 +644,34 @@ components:
         password:
           type: string
           format: password
+
+    Team:
+      description: A team that is part of an event.
+      type: object
+      required:
+        - team_id
+        - event_id
+        - name
+        - score
+        - winner
+        - created_at
+      properties:
+        team_id:
+          type: integer
+          format: int32
+        event_id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        score:
+          type: integer
+          format: int32
+        winner:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
 
     Token:
       description: A jwt token.

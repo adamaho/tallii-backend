@@ -7,8 +7,6 @@ use crate::services::friends::models::{
     FriendQueryParams, FriendRequest, FriendResponse, MeFriendQueryParams, MeFriendStatus,
 };
 
-use crate::services::users::models::User;
-
 pub struct FriendsTable;
 
 impl FriendsTable {
