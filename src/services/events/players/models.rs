@@ -5,7 +5,7 @@ use crate::services::events::models::PlayerStatus;
 /// Representation of a Player
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct Player {
-    pub event_player_id: i32,
+    pub player_id: i32,
     pub event_id: i32,
     pub user_id: i32,
     pub status: String,

@@ -44,9 +44,9 @@ impl PlayersTable {
         let players = sqlx::query_as::<_, Player>(
             r#"
                 select
-                    players.event_player_id,
+                    players.player_id,
                     players.event_id,
-                    players.user_id
+                    players.user_id,
                     players.status,
                     players.created_at
                 from

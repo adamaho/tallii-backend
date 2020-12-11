@@ -38,7 +38,7 @@ impl EventsTeamsTable {
         let teams = sqlx::query_as::<_, Team>(
             r#"
                 select
-                    teams.event_team_id,
+                    teams.team_id,
                     teams.event_id,
                     teams.name,
                     teams.score,
@@ -110,7 +110,7 @@ impl TeamsPlayersTable {
                 on
                     teams.team_id = etp.team_id
                 where
-                    team_id = $1;
+                    teams.team_id = $1;
             "#,
         )
         .bind(team_id)

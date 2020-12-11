@@ -228,7 +228,7 @@ paths:
           description: The status of the friendship.
           schema:
             type: string
-            enum: [pending, accepted, blocked]
+            enum: [invited, requested, accepted, blocked]
       responses:
         200:
           description: The friends that match the provided query params.
@@ -335,6 +335,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateEventResponse'
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /api/v1/events/{event_id}:
+    get:
+      operationId: getEvent
+      description: Gets an event that matches the event_id in the url.
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event_id to query for.
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: The event that matches the provided event_id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
         500:
           description: An internal server error has occured.
           content:

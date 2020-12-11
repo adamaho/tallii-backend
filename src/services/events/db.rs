@@ -17,17 +17,17 @@ impl EventsTable {
         String::from(
             r#"
                 select
-                    events.event_id
-                    events.name
-                    events.description
-                    events.creator_user_id
+                    events.event_id,
+                    events.name,
+                    events.description,
+                    events.creator_user_id,
                     events.created_at
                 from
                     events
                 left join
-                    events_players ep
+                    players p
                 on
-                    events.event_id = ep.event_id
+                    events.event_id = p.event_id
                 left join
                     users u
                 on
@@ -90,7 +90,7 @@ impl EventsTable {
         let mut query = Self::get_event_query();
 
         // filter by the user
-        query.push_str("where ep.user_id = $1 and ep.status = 'accepted");
+        query.push_str("where p.user_id = $1 and p.status = 'accepted'");
 
         // execute the query and format the response
         let events = sqlx::query_as::<_, Event>(&query)
@@ -111,13 +111,11 @@ impl EventsTable {
         let mut query = Self::get_event_query();
 
         // filter by the user
-        query.push_str(&format!("where ep.user_id = $1"));
+        query.push_str(&format!("where p.user_id = $1"));
 
         // add the optional clause for player status
         if let Some(player_status) = &params.player_status {
-            query.push_str(&format!(" and ep.status = '{}'", player_status.to_string()));
-        } else {
-            query.push_str(" and ep.status = 'accepted")
+            query.push_str(&format!(" and p.status = '{}'", player_status.to_string()));
         }
 
         // execute the query and format the response

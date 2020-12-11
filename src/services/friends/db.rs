@@ -20,29 +20,68 @@ impl FriendsTable {
         let mut query = String::from(
             r#"
                 select
-                    friends.friend_id, users.user_id, users.username, users.avatar, users.taunt, friends.created_at
+                    users.user_id, users.username, users.avatar, users.taunt, friends.created_at
                 from
                     friends
                 inner join
-                    users on users.user_id = friends.friend_id
+                    users
             "#,
         );
 
         // if there is a status query based on it
         if let Some(status) = &params.status {
             match status {
-                MeFriendStatus::Pending => {
-                    query.push_str("where friends.friend_id = $1 and friend_status = 'pending'");
+                MeFriendStatus::Invited => {
+                    query.push_str(
+                        r#"
+                            on
+                                users.user_id = friends.user_id
+                            where
+                                friends.friend_id = $1
+                            and
+                                friend_status = 'pending'
+                        "#
+                    );
+                }
+                MeFriendStatus::Requested => {
+                    query.push_str(
+                        r#"
+                            on
+                                users.user_id = friends.friend_id
+                            where
+                                friends.friend_id = $1
+                            and
+                                friend_status = 'pending'
+                        "#
+                    );
                 }
                 MeFriendStatus::Blocked => {
-                    query.push_str("where friends.user_id = $1 and friend_status = 'blocked'");
+                    query.push_str(
+                        r#"
+                            on
+                                users.user_id = friends.friend_id
+                            where
+                                friends.user_id = $1
+                            and
+                                friend_status = 'blocked'
+                        "#
+                    );
                 }
                 MeFriendStatus::Accepted => {
-                    query.push_str("where friends.user_id = $1 and friend_status = 'accepted'");
+                    query.push_str(
+                        r#"
+                            on
+                                users.user_id = friends.friend_id
+                            where
+                                friends.user_id = $1
+                            and
+                                friend_status = 'accepted'
+                        "#
+                    );
                 }
             }
         } else {
-            query.push_str("where friends.user_id = $1 and friend_status = 'accepted'");
+            query.push_str("where friends.user_id = $1");
         }
 
         // select the friends

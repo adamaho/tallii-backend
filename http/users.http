@@ -15,7 +15,7 @@ content-type: application/json
 
 ### Create new Invite Codes
 
-POST {{baseUrl}}/api/v1/invite-codes/new HTTP/1.1
+POST {{baseUrl}}/api/v1/invite-codes HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 
@@ -29,10 +29,10 @@ POST {{baseUrl}}/api/v1/signup HTTP/1.1
 content-type: application/json
 
 {
-    "email": "foo4@bar.com",
-    "invite_code": "vIlTvM",
+    "email": "bryanne@gmail.com",
+    "invite_code": "EXqNWd",
     "password": "password",
-    "username": "foo4.bar"
+    "username": "bryanne"
 }
 
 ### Log user in
@@ -41,6 +41,6 @@ POST {{baseUrl}}/api/v1/login HTTP/1.1
 content-type: application/json
 
 {
-    "email": "adam.aho@hey.com",
+    "email": "bryanne@gmail.com",
     "password": "password"
 }

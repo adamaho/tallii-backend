@@ -1,0 +1,19 @@
+### Create Team
+POST {{baseUrl}}/api/v1/teams HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "event_id": 1,
+  "name": "Team 1",
+  "players": [1]
+}
+
+### Get Teams
+GET {{baseUrl}}/api/v1/teams?event_id=1 HTTP/1.1
+Authorization: Bearer {{token}}
+
+
+### Get Teams Players
+GET {{baseUrl}}/api/v1/teams/1/players HTTP/1.1
+Authorization: Bearer {{token}}
