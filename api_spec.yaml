@@ -90,6 +90,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /api/v1/users/search:
+    get:
+      operationId: getSearchUsers
+      description: Gets any users that match the params.
+      parameters:
+        - name: username
+          in: query
+          required: true
+          description: The partial username to search for.
+          schema:
+            type: string
+      responses:
+        200:
+          description: The users that match the query.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+
   /api/v1/users/{username}:
     get:
       operationId: getUser
