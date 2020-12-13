@@ -5,6 +5,7 @@ use sqlx::{PgPool, Transaction};
 use crate::errors::TalliiError;
 
 use super::models::{Player, PlayerResponse};
+use crate::services::events::players::models::UpdatePlayerRequest;
 
 pub struct PlayersTable;
 
@@ -73,7 +74,7 @@ impl PlayersTable {
     pub async fn update(
         pool: &PgPool,
         player_id: &i32,
-        player: &Player,
+        player: &UpdatePlayerRequest,
     ) -> Result<(), TalliiError> {
         sqlx::query(
             r#"

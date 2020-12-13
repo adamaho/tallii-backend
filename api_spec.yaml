@@ -437,7 +437,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Player'
+              $ref: '#/components/schemas/UpdatePlayerRequest'
       responses:
         200:
           $ref: '#/components/schemas/UpdatePlayerResponse'
@@ -717,6 +717,15 @@ components:
         created_at:
           type: string
           format: date-time
+
+    UpdatePlayerRequest:
+      description: The player to update.
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/PlayerStatus'
 
     PlayerStatus:
       description: The status of the player in the event.

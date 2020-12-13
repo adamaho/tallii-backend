@@ -12,6 +12,12 @@ pub struct Player {
     pub created_at: chrono::NaiveDateTime,
 }
 
+/// Representation of a player to update
+#[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
+pub struct UpdatePlayerRequest {
+    pub status: String,
+}
+
 /// Representation of a PlayerResponse
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct PlayerResponse {
