@@ -714,6 +714,9 @@ components:
           nullable: true
         status:
           $ref: '#/components/schemas/PlayerStatus'
+        created_at:
+          type: string
+          format: date-time
 
     PlayerStatus:
       description: The status of the player in the event.
