@@ -116,7 +116,7 @@ paths:
   /api/v1/users/{username}:
     get:
       operationId: getUser
-      description: Gets a user with the user_id provided in the url.
+      description: Gets a user with the username provided in the url.
       parameters:
         - name: username
           in: path
@@ -599,6 +599,7 @@ components:
         - name
         - description
         - creator_user_id
+        - creator_username
         - created_at
       properties:
         event_id:
@@ -612,6 +613,14 @@ components:
         creator_user_id:
           type: integer
           format: int32
+        creator_username:
+          type: string
+        creator_avatar:
+          type: string
+          nullable: true
+        creator_taunt:
+          type: string
+          nullable: true
         created_at:
           type: string
           format: date-time

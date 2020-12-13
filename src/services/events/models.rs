@@ -11,6 +11,19 @@ pub struct Event {
 }
 
 /// Database representation of an Event
+#[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
+pub struct EventResponse {
+    pub event_id: i32,
+    pub name: String,
+    pub description: Option<String>,
+    pub creator_user_id: i32,
+    pub creator_username: String,
+    pub creator_taunt: Option<String>,
+    pub creator_avatar: Option<String>,
+    pub created_at: chrono::NaiveDateTime,
+}
+
+/// Database representation of an Event
 #[derive(Serialize, Debug)]
 pub struct CreatedEventResponse {
     pub event_id: i32,
