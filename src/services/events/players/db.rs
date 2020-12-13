@@ -21,16 +21,16 @@ impl PlayersTable {
             String::from("insert into players (event_id, user_id, status) values");
 
         // add the current user to the players
-        query.push_str(&format!("({}, {}, 'accepted'),", event_id, user_id));
+        query.push_str(&format!("({}, {}, 'accepted')", event_id, user_id));
 
         // create the queries for each of the new players and add them to the query string
         for (i, user_id) in players.iter().enumerate() {
-            query.push_str(&format!("({}, {}, 'pending')", event_id, user_id));
-
             // if we are appending values onto the query we need to separate them with commas
             if i < players.len() - 1 {
                 query.push_str(",")
             }
+
+            query.push_str(&format!("({}, {}, 'pending')", event_id, user_id));
         }
 
         // execute the query

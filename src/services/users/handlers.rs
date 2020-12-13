@@ -171,9 +171,9 @@ pub async fn search_users(
     _user: AuthenticatedUser,
     params: web::Query<UserQuery>,
 ) -> TalliiResponse {
-    // get me from the database
+    // search for users in db
     let users = UsersTable::search_by_username(&pool, &params).await?;
 
-    // response with json of me
+    // response with json of users
     Ok(HttpResponse::Ok().json(users))
 }

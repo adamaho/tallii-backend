@@ -49,7 +49,7 @@ impl FriendsTable {
                             on
                                 users.user_id = friends.friend_id
                             where
-                                friends.friend_id = $1
+                                friends.user_id = $1
                             and
                                 friend_status = 'pending'
                         "#

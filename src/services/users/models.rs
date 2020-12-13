@@ -26,7 +26,7 @@ pub struct MeUser {
 }
 
 /// Representation of a user that can be publicized
-#[derive(sqlx::FromRow, Serialize)]
+#[derive(sqlx::FromRow, Serialize, Debug)]
 pub struct PublicUser {
     pub user_id: i32,
     pub avatar: Option<String>,

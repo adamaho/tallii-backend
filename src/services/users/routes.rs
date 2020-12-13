@@ -21,7 +21,7 @@ pub fn users_me_routes() -> Resource {
 
 /// Resource routes for getting users
 pub fn users_search_routes() -> Resource {
-    web::resource("/users/search").route(web::get().to(handlers::search_users))
+    web::resource("/users").route(web::get().to(handlers::search_users))
 }
 
 /// Resource routes for checking user email
