@@ -5,8 +5,8 @@ use sqlx::PgPool;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::TalliiResponse;
 
-use super::db::{TeamsPlayersTable, EventsTeamsTable};
-use super::models::{NewTeam, TeamQueryParams, TeamPlayerQueryParams};
+use super::db::{EventsTeamsTable, TeamsPlayersTable};
+use super::models::{NewTeam, TeamPlayerQueryParams, TeamQueryParams, UpdateTeamRequest};
 
 /// Gets all Teams and Members for an Event
 pub async fn get_teams(
@@ -39,6 +39,18 @@ pub async fn create_team(
 
     // respond with created
     Ok(HttpResponse::Created().finish())
+}
+
+/// Updates a specific team
+pub async fn update_team(
+    pool: web::Data<PgPool>,
+    _user: AuthenticatedUser,
+    team_id: web::Path<i32>,
+    team: web::Json<UpdateTeamRequest>,
+) -> TalliiResponse {
+    EventsTeamsTable::update(&pool, &team_id, &team).await?;
+
+    Ok(HttpResponse::Ok().finish())
 }
 
 /// Gets all Teams and Members for an Event

@@ -9,8 +9,19 @@ content-type: application/json
   "players": [1]
 }
 
+### Create Team
+PUT {{baseUrl}}/api/v1/teams/2 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "name": "foooasdfdsasdfasdfasdfasdfasdfasdfasdf",
+  "score": 1020,
+  "winner": false
+}
+
 ### Get Teams
-GET {{baseUrl}}/api/v1/teams?event_id=1 HTTP/1.1
+GET {{baseUrl}}/api/v1/teams?event_id=6 HTTP/1.1
 Authorization: Bearer {{token}}
 
 

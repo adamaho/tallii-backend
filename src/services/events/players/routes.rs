@@ -9,6 +9,5 @@ pub fn players_routes() -> Resource {
 
 /// Resource routes for a specific event player
 pub fn players_entity_routes() -> Resource {
-    web::resource("/players/{player_id}")
-        .route(web::put().to(handlers::update_player))
+    web::resource("/players/{player_id}").route(web::put().to(handlers::update_player))
 }

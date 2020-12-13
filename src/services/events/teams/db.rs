@@ -4,8 +4,10 @@ use sqlx::{PgPool, Transaction};
 
 use crate::errors::TalliiError;
 
-use super::models::{Team, NewTeam};
-use crate::services::events::teams::models::{TeamPlayer, TeamPlayerQueryParams};
+use super::models::{NewTeam, Team};
+use crate::services::events::teams::models::{
+    TeamPlayer, TeamPlayerQueryParams, UpdateTeamRequest,
+};
 
 pub struct EventsTeamsTable;
 
@@ -56,6 +58,34 @@ impl EventsTeamsTable {
 
         Ok(teams)
     }
+
+    /// Update a specific team
+    pub async fn update(
+        pool: &PgPool,
+        team_id: &i32,
+        team: &UpdateTeamRequest,
+    ) -> Result<(), TalliiError> {
+        sqlx::query(
+            r#"
+                update
+                    teams
+                set
+                    name = $1,
+                    score = $2,
+                    winner = $3
+                where
+                    team_id = $4
+            "#,
+        )
+        .bind(&team.name)
+        .bind(&team.score)
+        .bind(&team.winner)
+        .bind(team_id)
+        .execute(pool)
+        .await?;
+
+        Ok(())
+    }
 }
 
 pub struct TeamsPlayersTable;
@@ -95,7 +125,7 @@ impl TeamsPlayersTable {
     // Gets team players for a single event
     pub async fn get_many(
         pool: &PgPool,
-        params: &TeamPlayerQueryParams
+        params: &TeamPlayerQueryParams,
     ) -> Result<Vec<TeamPlayer>, TalliiError> {
         let players = sqlx::query_as::<_, TeamPlayer>(
             r#"

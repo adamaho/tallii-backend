@@ -5,7 +5,9 @@ use sqlx::{PgPool, Transaction};
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 
-use crate::services::events::models::{Event, EventQueryParams, MeEventQueryParams, NewEvent, EventResponse};
+use crate::services::events::models::{
+    Event, EventQueryParams, EventResponse, MeEventQueryParams, NewEvent,
+};
 
 pub struct EventsTable;
 

@@ -40,7 +40,7 @@ impl FriendsTable {
                                 friends.friend_id = $1
                             and
                                 friend_status = 'pending'
-                        "#
+                        "#,
                     );
                 }
                 MeFriendStatus::Requested => {
@@ -52,7 +52,7 @@ impl FriendsTable {
                                 friends.user_id = $1
                             and
                                 friend_status = 'pending'
-                        "#
+                        "#,
                     );
                 }
                 MeFriendStatus::Blocked => {
@@ -64,7 +64,7 @@ impl FriendsTable {
                                 friends.user_id = $1
                             and
                                 friend_status = 'blocked'
-                        "#
+                        "#,
                     );
                 }
                 MeFriendStatus::Accepted => {
@@ -76,7 +76,7 @@ impl FriendsTable {
                                 friends.user_id = $1
                             and
                                 friend_status = 'accepted'
-                        "#
+                        "#,
                     );
                 }
             }

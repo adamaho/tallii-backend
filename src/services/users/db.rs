@@ -64,7 +64,6 @@ impl InviteCodesTable {
 pub struct UsersTable;
 
 impl UsersTable {
-
     /// Fetches a user with the provided email
     pub async fn get_by_email(pool: &PgPool, email: &String) -> Result<Option<User>, TalliiError> {
         let user_with_email = sqlx::query_as::<_, User>("select * from users where email = $1")
@@ -80,11 +79,12 @@ impl UsersTable {
         pool: &PgPool,
         username: &String,
     ) -> Result<Option<PublicUser>, TalliiError> {
-        let user_with_username =
-            sqlx::query_as::<_, PublicUser>("select user_id, avatar, username, taunt from users where username = $1")
-                .bind(username)
-                .fetch_optional(pool)
-                .await?;
+        let user_with_username = sqlx::query_as::<_, PublicUser>(
+            "select user_id, avatar, username, taunt from users where username = $1",
+        )
+        .bind(username)
+        .fetch_optional(pool)
+        .await?;
 
         Ok(user_with_username)
     }
@@ -124,11 +124,12 @@ impl UsersTable {
         pool: &PgPool,
         params: &UserQuery,
     ) -> Result<Vec<PublicUser>, TalliiError> {
-        let matching_users =
-            sqlx::query_as::<_, PublicUser>("select user_id, avatar, username, taunt from users where username like $1 limit 10")
-                .bind(format!("%{}%", &params.username))
-                .fetch_all(pool)
-                .await?;
+        let matching_users = sqlx::query_as::<_, PublicUser>(
+            "select user_id, avatar, username, taunt from users where username like $1 limit 10",
+        )
+        .bind(format!("%{}%", &params.username))
+        .fetch_all(pool)
+        .await?;
 
         Ok(matching_users)
     }

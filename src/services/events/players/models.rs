@@ -1,7 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-use crate::services::events::models::PlayerStatus;
-
 /// Representation of a Player
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct Player {

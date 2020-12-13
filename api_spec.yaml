@@ -493,6 +493,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /api/v1/teams/{team_id}:
+    put:
+      operationId: updateTeam
+      description: Gets all of the teams associated with an event
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTeamRequest'
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          description: The team_id to update.
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: The team was successfully updated
+        500:
+          description: An internal server error has occured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /api/v1/teams/players:
     get:
       operationId: getTeamsPlayersInEvent
@@ -578,6 +605,22 @@ components:
           items:
             type: integer
             format: int32
+
+    UpdateTeamRequest:
+      description: The request required to update a team
+      type: object
+      required:
+        - name
+        - score
+        - winner
+      properties:
+        name:
+          type: string
+        score:
+          type: integer
+          format: int32
+        winner:
+          type: boolean
 
     Error:
       description: An error has occurred.

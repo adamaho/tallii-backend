@@ -6,7 +6,7 @@ use crate::services::auth::AuthenticatedUser;
 use crate::services::TalliiResponse;
 
 use super::db::PlayersTable;
-use super::models::{Player, PlayerResponse, PlayerQueryParams};
+use super::models::PlayerQueryParams;
 use crate::services::events::players::models::UpdatePlayerRequest;
 
 /// Gets all participants in a single event
@@ -29,7 +29,6 @@ pub async fn update_player(
     player_id: web::Path<i32>,
     player: web::Json<UpdatePlayerRequest>,
 ) -> TalliiResponse {
-
     // update the participant
     PlayersTable::update(&pool, &player_id, &player).await?;
 
