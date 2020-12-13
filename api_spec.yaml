@@ -427,13 +427,13 @@ paths:
 
   /api/v1/teams:
     get:
-      operationId: getTeamsForEvent
+      operationId: getTeamsInEvent
       description: Gets all of the teams associated with an event
       parameters:
         - name: event_id
           in: query
           required: true
-          description: The event_id to ge the teams for
+          description: The event_id to get the teams for.
           schema:
             type: integer
             format: int32
@@ -470,27 +470,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /api/v1/teams/{team_id}/players:
+  /api/v1/teams/players:
     get:
-      operationId: getPlayersForTeam
+      operationId: getTeamsPlayersInEvent
       description: Gets all of the players associated with the provided team_id.
       parameters:
-        - name: team_id
-          in: path
+        - name: event_id
+          in: query
           required: true
-          description: The team_id to get the players for.
+          description: The event_id to get the team players for.
           schema:
             type: integer
             format: int32
       responses:
         200:
-          description: The players that are on the provided team.
+          description: The players that are on the teams of the event.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Player'
+                  $ref: '#/components/schemas/TeamPlayer'
         500:
           description: An internal server error has occured.
           content:
@@ -735,6 +735,24 @@ components:
           format: int32
         winner:
           type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    TeamPlayer:
+      description: A player that is a part of a team.
+      type: object
+      required:
+        - team_id
+        - player_id
+        - created_at
+      properties:
+        team_id:
+          type: integer
+          format: int32
+        player_id:
+          type: integer
+          format: int32
         created_at:
           type: string
           format: date-time

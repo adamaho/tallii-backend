@@ -5,7 +5,7 @@ use sqlx::{PgPool, Transaction};
 use crate::errors::TalliiError;
 
 use super::models::{Team, NewTeam};
-use crate::services::events::teams::models::TeamPlayer;
+use crate::services::events::teams::models::{TeamPlayer, TeamPlayerQueryParams};
 
 pub struct EventsTeamsTable;
 
@@ -95,25 +95,25 @@ impl TeamsPlayersTable {
     // Gets team players for a single event
     pub async fn get_many(
         pool: &PgPool,
-        team_id: &i32,
+        params: &TeamPlayerQueryParams
     ) -> Result<Vec<TeamPlayer>, TalliiError> {
         let players = sqlx::query_as::<_, TeamPlayer>(
             r#"
                 select
-                    teams.team_id,
-                    etp.player_id,
-                    etp.created_at
+                    teams_players.team_id,
+                    teams_players.player_id,
+                    teams_players.created_at
                 from
-                    teams
+                    teams_players
                 left join
-                    teams_players etp
+                    teams t
                 on
-                    teams.team_id = etp.team_id
+                    teams_players.team_id = t.team_id
                 where
-                    teams.team_id = $1;
+                    t.event_id = $1
             "#,
         )
-        .bind(team_id)
+        .bind(params.event_id)
         .fetch_all(pool)
         .await?;
 

@@ -15,5 +15,5 @@ Authorization: Bearer {{token}}
 
 
 ### Get Teams Players
-GET {{baseUrl}}/api/v1/teams/1/players HTTP/1.1
+GET {{baseUrl}}/api/v1/teams/players?event_id=1 HTTP/1.1
 Authorization: Bearer {{token}}

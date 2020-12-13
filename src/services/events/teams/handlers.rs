@@ -6,7 +6,7 @@ use crate::services::auth::AuthenticatedUser;
 use crate::services::TalliiResponse;
 
 use super::db::{TeamsPlayersTable, EventsTeamsTable};
-use super::models::{NewTeam, TeamQueryParams};
+use super::models::{NewTeam, TeamQueryParams, TeamPlayerQueryParams};
 
 /// Gets all Teams and Members for an Event
 pub async fn get_teams(
@@ -45,9 +45,9 @@ pub async fn create_team(
 pub async fn get_team_players(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
-    event_id: web::Path<i32>,
+    params: web::Query<TeamPlayerQueryParams>,
 ) -> TalliiResponse {
-    let players = TeamsPlayersTable::get_many(&pool, &event_id).await?;
+    let players = TeamsPlayersTable::get_many(&pool, &params).await?;
 
     Ok(HttpResponse::Ok().json(players))
 }

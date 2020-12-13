@@ -19,12 +19,18 @@ pub struct NewTeam {
     pub players: Vec<i32>,
 }
 
-/// Representation of a new TeamPlayer
+/// Representation of a player on a team
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct TeamPlayer {
     pub team_id: i32,
     pub player_id: i32,
     pub created_at: chrono::NaiveDateTime,
+}
+
+/// Query params for getting players on a specific team
+#[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
+pub struct TeamPlayerQueryParams {
+    pub event_id: i32
 }
 
 /// Query params for getting teams of a specific event
