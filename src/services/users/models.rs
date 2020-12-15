@@ -72,5 +72,5 @@ pub struct CreateInviteCode {
 /// Representation of the search query
 #[derive(Debug, Deserialize)]
 pub struct UserQuery {
-    pub username: String,
+    pub q: String,
 }

@@ -108,6 +108,25 @@ paths:
         500:
           $ref: '#/components/responses/InternalError'
 
+  /api/v1/users/{username}/check:
+    get:
+      operationId: checkUsername
+      description: Checks if the provided username is taken.
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: The username of the user to get
+          schema:
+            type: string
+      responses:
+        204:
+          description: The username is available
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalError'
+
   /api/v1/users/{username}/followers:
     get:
       operationId: getUserFollowers

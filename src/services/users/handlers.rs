@@ -56,7 +56,7 @@ pub async fn create_invite_codes(
     Ok(HttpResponse::Created().finish())
 }
 
-/// Checks if the username is taken
+/// Gets a user by the provided username
 pub async fn check_username(
     pool: web::Data<PgPool>,
     username: web::Path<String>,
@@ -64,12 +64,12 @@ pub async fn check_username(
     // execute the query
     match UsersTable::get_by_username(&pool, &username).await? {
         Some(_) => Err(TalliiError::USERNAME_TAKEN.default()),
-        None => Ok(HttpResponse::Ok().finish()),
+        None => Ok(HttpResponse::NoContent().finish()),
     }
 }
 
 /// Checks if the email is taken
-pub async fn check_email(pool: web::Data<PgPool>, email: web::Path<String>) -> TalliiResponse {
+pub async fn check_user_email(pool: web::Data<PgPool>, email: web::Path<String>) -> TalliiResponse {
     // execute the query
     match UsersTable::get_by_email(&pool, &email).await? {
         Some(_) => Err(TalliiError::EMAIL_TAKEN.default()),
@@ -139,8 +139,17 @@ pub async fn signup(
     Ok(HttpResponse::Ok().json(TokenResponse { token }))
 }
 
+/// Gets me
+pub async fn get_me(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
+    // get me from the database
+    let me = UsersTable::get_by_username(&pool, &user.username).await?;
+
+    // response with json of me
+    Ok(HttpResponse::Ok().json(me))
+}
+
 /// Gets the profile of a specific user
-pub async fn get_user(
+pub async fn get_user_by_username(
     pool: web::Data<PgPool>,
     username: web::Path<String>,
     _user: AuthenticatedUser,
@@ -152,16 +161,7 @@ pub async fn get_user(
     Ok(HttpResponse::Ok().json(user))
 }
 
-/// Gets the profile of me
-pub async fn get_me(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
-    // get me from the database
-    let me = UsersTable::get_by_username(&pool, &user.username).await?;
-
-    // response with json of me
-    Ok(HttpResponse::Ok().json(me))
-}
-
-/// Gets maximum 10 users that match the provided username
+/// Gets maximum users that match the provided username
 pub async fn search_users(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
