@@ -412,6 +412,58 @@ paths:
         500:
           $ref: '#/components/responses/InternalError'
 
+  /api/v1/events/{event_id}/members:
+    get:
+      operationId: getMembers
+      description: The members associated with the provided event
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to get the members of
+          schema:
+            type: number
+      responses:
+        200:
+          description: The members associated with the provided event
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/events/{event_id}/invitations:
+    post:
+      operationId: inviteMember
+      description: Invites a member to the provided event
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to get the members of
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddMemberRequest'
+      responses:
+        204:
+          description: The member was added
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+
   /api/v1/events/{event_id}/teams:
     get:
       operationId: getTeams
