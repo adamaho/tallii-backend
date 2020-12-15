@@ -91,8 +91,8 @@ paths:
 
   /api/v1/users/{email}:
     get:
-      operationId: getUserByEmail
-      description: Gets a user matching the provided email
+      operationId: checkUserEmail
+      description: Checks if the provided email is taken.
       parameters:
         - name: email
           in: path
@@ -101,12 +101,8 @@ paths:
           schema:
             type: string
       responses:
-        200:
-          description: The user that matches the provided email
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
+        204:
+          description: The email is available
         400:
           $ref: '#/components/responses/BadRequest'
         500:
@@ -301,7 +297,7 @@ paths:
         500:
           $ref: '#/components/responses/InternalError'
 
-  /api/v1/me/events/invites:
+  /api/v1/me/events/invitations:
     get:
       operationId: getMeEventInvitations
       description: Gets the invites to events of the currently logged in user
