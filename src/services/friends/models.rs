@@ -3,9 +3,9 @@ use serde::{Deserialize, Serialize};
 /// Database representation of a Friend
 #[derive(sqlx::FromRow, Debug, Serialize)]
 pub struct Friend {
-    pub user_id: i32,
-    pub friend_id: i32,
-    pub friend_status: String,
+    pub user_id: String,
+    pub friend_user_id: String,
+    pub state: String,
     pub created_at: chrono::NaiveDateTime,
 }
 

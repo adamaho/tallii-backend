@@ -6,189 +6,95 @@ use crate::services::auth::AuthenticatedUser;
 use crate::services::friends::models::{
     FriendQueryParams, FriendRequest, FriendResponse, MeFriendQueryParams, MeFriendStatus,
 };
+use crate::services::users::models::User;
+use crate::services::users::db::UsersTable;
 
 pub struct FriendsTable;
 
 impl FriendsTable {
-    /// Gets a list of friends of the currently logged in user
-    pub async fn me_get_many(
-        pool: &PgPool,
-        user: &AuthenticatedUser,
-        params: &MeFriendQueryParams,
-    ) -> Result<Vec<FriendResponse>, TalliiError> {
-        // start the query
-        let mut query = String::from(
+    /// Gets a list of followers of the provided username
+    pub async fn get_followers_by_id(pool: &PgPool, user_id: &i32) -> Result<Vec<User>, TalliiError> {
+        let followers = sqlx::query_as::<_, User>(
             r#"
                 select
-                    users.user_id, users.username, users.avatar, users.taunt, friends.created_at
+                    u.user_id,
+                    u.avatar,
+                    u.username,
+                    u.taunt
                 from
-                    friends
+                    friends f
                 inner join
-                    users
-            "#,
-        );
-
-        // if there is a status query based on it
-        if let Some(status) = &params.status {
-            match status {
-                MeFriendStatus::Invited => {
-                    query.push_str(
-                        r#"
-                            on
-                                users.user_id = friends.user_id
-                            where
-                                friends.friend_id = $1
-                            and
-                                friend_status = 'pending'
-                        "#,
-                    );
-                }
-                MeFriendStatus::Requested => {
-                    query.push_str(
-                        r#"
-                            on
-                                users.user_id = friends.friend_id
-                            where
-                                friends.user_id = $1
-                            and
-                                friend_status = 'pending'
-                        "#,
-                    );
-                }
-                MeFriendStatus::Blocked => {
-                    query.push_str(
-                        r#"
-                            on
-                                users.user_id = friends.friend_id
-                            where
-                                friends.user_id = $1
-                            and
-                                friend_status = 'blocked'
-                        "#,
-                    );
-                }
-                MeFriendStatus::Accepted => {
-                    query.push_str(
-                        r#"
-                            on
-                                users.user_id = friends.friend_id
-                            where
-                                friends.user_id = $1
-                            and
-                                friend_status = 'accepted'
-                        "#,
-                    );
-                }
-            }
-        } else {
-            query.push_str("where friends.user_id = $1");
-        }
-
-        // select the friends
-        let friends = sqlx::query_as::<_, FriendResponse>(&query)
-            .bind(user.user_id)
+                    users u
+                on
+                    f.user_id = u.user_id
+                where
+                    f.friend_user_id = $1
+            "#
+        )
+            .bind(user_id)
             .fetch_all(pool)
             .await?;
 
-        Ok(friends)
+        Ok(followers)
     }
 
-    /// Gets a list of friends of the provided user_id
-    pub async fn get_many(
-        pool: &PgPool,
-        params: &FriendQueryParams,
-    ) -> Result<Vec<FriendResponse>, TalliiError> {
-        // select the friends
-        let friends = sqlx::query_as::<_, FriendResponse>(
+    /// Gets a list of users that the username is following
+    pub async fn get_following_by_id(pool: &PgPool, user_id: &i32) -> Result<Vec<User>, TalliiError> {
+        let followers = sqlx::query_as::<_, User>(
             r#"
                 select
-                    friends.friend_id, users.user_id, users.username, users.avatar, users.taunt, friends.created_at
+                    u.user_id,
+                    u.avatar,
+                    u.username,
+                    u.taunt
                 from
-                    friends
+                    friends f
                 inner join
-                    users on users.user_id = friends.friend_id
+                    users u
+                on
+                    f.friend_user_id = u.user_id
                 where
-                    friends.user_id = $1 and friend_status = 'accepted'
-            "#,
+                    f.user_id = $1
+            "#
         )
-        .bind(params.user_id)
-        .fetch_all(pool)
-        .await?;
+            .bind(user_id)
+            .fetch_all(pool)
+            .await?;
 
-        Ok(friends)
+        Ok(followers)
     }
 
-    /// Creates a friend invite in the database
-    pub async fn create_friend_request(
-        pool: &PgPool,
-        new_friend: &FriendRequest,
-        user: &AuthenticatedUser,
-    ) -> Result<(), TalliiError> {
-        // create the new friend request
+    /// Follows a user based on the provided username
+    pub async fn follow_user_by_id(pool: &PgPool, user_id: &i32, friend_user_id: &i32) -> Result<(), TalliiError> {
         sqlx::query(
-            "insert into friends (user_id, friend_id, friend_status) values ($1, $2, 'pending')",
+            r#"
+                insert into
+                    friends (user_id, friend_user_id, state)
+                values
+                    ($1, $2, 'active')
+            "#
         )
-        .bind(&user.user_id)
-        .bind(&new_friend.user_id)
-        .execute(pool)
-        .await?;
-
-        Ok(())
-    }
-
-    /// Accepts a friend invite in the database
-    pub async fn accept_friend_request(
-        pool: &PgPool,
-        new_friend: &FriendRequest,
-        user: &AuthenticatedUser,
-    ) -> Result<(), TalliiError> {
-        // create row for the friend acceptance
-        sqlx::query(
-            "insert into friends (user_id, friend_id, friend_status) values ($1, $2, 'accepted')",
-        )
-        .bind(&user.user_id)
-        .bind(&new_friend.user_id)
-        .execute(pool)
-        .await?;
-
-        // modify the existing row to change friend_status
-        sqlx::query(
-            "update friends set friend_status = 'accepted' where user_id = $1 and friend_id = $2",
-        )
-        .bind(&new_friend.user_id)
-        .bind(&user.user_id)
-        .execute(pool)
-        .await?;
-
-        Ok(())
-    }
-
-    /// Denies a friend request that was received
-    pub async fn deny_friend_request(
-        pool: &PgPool,
-        requested_user: &FriendRequest,
-        user: &AuthenticatedUser,
-    ) -> Result<(), TalliiError> {
-        // delete row for the friend request
-        sqlx::query("delete from friends where user_id = $1 and friend_id = $2")
-            .bind(&requested_user.user_id)
-            .bind(&user.user_id)
+            .bind(user_id)
+            .bind(friend_user_id)
             .execute(pool)
             .await?;
 
         Ok(())
     }
 
-    /// Cancels a friend request that was sent
-    pub async fn cancel_friend_request(
-        pool: &PgPool,
-        sent_friend: &FriendRequest,
-        user: &AuthenticatedUser,
-    ) -> Result<(), TalliiError> {
-        // delete row for the friend request
-        sqlx::query("delete from friends where friend_id = $1 and user_id = $2")
-            .bind(&sent_friend.user_id)
-            .bind(&user.user_id)
+    /// Unfollows a user based on the provided username
+    pub async fn unfollow_user_by_id(pool: &PgPool, user_id: &i32, friend_user_id: &i32) -> Result<(), TalliiError> {
+        sqlx::query(
+            r#"
+                delete from
+                    friends f
+                where
+                    f.user_id = $1
+                    and f.friend_user_id = $1
+            "#
+        )
+            .bind(user_id)
+            .bind(friend_user_id)
             .execute(pool)
             .await?;
 

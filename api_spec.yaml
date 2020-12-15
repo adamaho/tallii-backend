@@ -196,7 +196,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/Event'
         400:
           $ref: '#/components/responses/BadRequest'
         500:
@@ -911,17 +911,8 @@ components:
         description:
           type: string
           nullable: true
-        creator_user_id:
-          type: integer
-          format: int32
-        creator_username:
-          type: string
-        creator_avatar:
-          type: string
-          nullable: true
-        creator_taunt:
-          type: string
-          nullable: true
+        creator:
+          $ref: '#/components/schemas/User'
         created_at:
           type: string
           format: date-time

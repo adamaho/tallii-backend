@@ -8,50 +8,87 @@ use crate::services::friends::models::{
 };
 
 use crate::services::TalliiResponse;
+use crate::services::users::db::UsersTable;
+use crate::errors::TalliiError;
 
-/// Gets a list of friends that match the provided query param
-pub async fn get_friends(
+/// Gets the followers of me
+pub async fn get_me_followers(
     pool: web::Data<PgPool>,
-    params: web::Query<FriendQueryParams>,
-    _user: AuthenticatedUser,
+    user: AuthenticatedUser
 ) -> TalliiResponse {
-    let friends = FriendsTable::get_many(&pool, &params).await?;
+    // get all users that me follows
+    let followers = FriendsTable::get_followers_by_id(&pool, &user.user_id).await?;
 
-    Ok(HttpResponse::Ok().json(friends))
+    Ok(HttpResponse::Ok().json(followers))
 }
 
-/// Gets a list of friends that match the provided query param for the currently logged in user
-pub async fn get_me_friends(
+/// Gets the users me is following
+pub async fn get_me_following(
     pool: web::Data<PgPool>,
-    params: web::Query<MeFriendQueryParams>,
-    user: AuthenticatedUser,
+    user: AuthenticatedUser
 ) -> TalliiResponse {
-    let friends = FriendsTable::me_get_many(&pool, &user, &params).await?;
+    // get all users that me follows
+    let following = FriendsTable::get_following_by_id(&pool, &user.user_id).await?;
 
-    Ok(HttpResponse::Ok().json(friends))
+    Ok(HttpResponse::Ok().json(following))
 }
 
-/// creates, accepts, denies, or cancels friend requests
-pub async fn post_me_friends(
+/// Follows the provided user matching the username
+pub async fn follow_user(
     pool: web::Data<PgPool>,
-    friend: web::Json<FriendRequest>,
-    user: AuthenticatedUser,
+    username: web::Path<String>,
+    user: AuthenticatedUser
 ) -> TalliiResponse {
-    // handle the request based on the operation
-    match &friend.operation {
-        FriendOperation::SendRequest => {
-            FriendsTable::create_friend_request(&pool, &friend, &user).await?;
-        }
-        FriendOperation::AcceptRequest => {
-            FriendsTable::accept_friend_request(&pool, &friend, &user).await?;
-        }
-        FriendOperation::DenyRequest => {
-            FriendsTable::deny_friend_request(&pool, &friend, &user).await?;
-        }
-        FriendOperation::CancelRequest => {
-            FriendsTable::cancel_friend_request(&pool, &friend, &user).await?;
-        }
+    if let Some(friend) = UsersTable::get_by_username(&pool, &username).await {
+        FriendsTable::follow_user_by_id(&pool, &user.user_id, &friend.user_id).await?;
+
+        Ok(HttpResponse::NoContent().finish())
+    } else {
+        Err(TalliiError::NOT_FOUND.default())
     }
+}
 
-    Ok(HttpResponse::Ok().finish())
+/// Unfollows the provided user matching the username
+pub async fn unfollow_user(
+    pool: web::Data<PgPool>,
+    username: web::Path<String>,
+    _user: AuthenticatedUser
+) -> TalliiResponse {
+    if let Some(friend) = UsersTable::get_by_username(&pool, &username).await {
+        FriendsTable::unfollow_user_by_id(&pool, &user.user_id, &friend.user_id).await?;
+
+        Ok(HttpResponse::NoContent().finish())
+    } else {
+        Err(TalliiError::NOT_FOUND.default())
+    }
+}
+
+/// Gets the followers of the user matching the provided username
+pub async fn get_user_followers(
+    pool: web::Data<PgPool>,
+    username: web::Path<String>,
+    _user: AuthenticatedUser
+) -> TalliiResponse {
+    if let Some(user) = UsersTable::get_by_username(&pool, &username).await {
+        let followers = FriendsTable::get_followers_by_id(&pool, &user.user_id).await?;
+
+        Ok(HttpResponse::Ok().json(followers))
+    } else {
+        Err(TalliiError::NOT_FOUND.default())
+    }
+}
+
+/// Gets the users the provided username is following
+pub async fn get_user_following(
+    pool: web::Data<PgPool>,
+    username: web::Path<String>,
+    _user: AuthenticatedUser
+) -> TalliiResponse {
+    if let Some(user) = UsersTable::get_by_username(&pool, &username).await {
+        let following = FriendsTable::get_following_by_id(&pool, &user.user_id).await?;
+
+        Ok(HttpResponse::Ok().json(following))
+    } else {
+        Err(TalliiError::NOT_FOUND.default())
+    }
 }

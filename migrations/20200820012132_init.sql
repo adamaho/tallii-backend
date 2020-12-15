@@ -7,7 +7,7 @@ insert into invite_codes (id) values ('aho');
 
 -- Users
 create table users (
-    user_id serial not null unique,
+    user_id serial primary key,
     username varchar(100) not null unique,
     avatar text,
     email text not null unique,
@@ -16,16 +16,15 @@ create table users (
     taunt text,
     verified boolean default false,
     created_at timestamp not null default current_timestamp,
-    primary key (user_id, username)
 );
 
 -- Friends
 create table friends (
-    username varchar not null references users(username),
-    friend_username varchar not null references users(username),
+    user_id varchar not null references users(username),
+    friend_user_id varchar not null references users(username),
     state text not null, -- active, blocked
     created_at timestamp not null default current_timestamp,
-    primary key (username, friend_username)
+    primary key (user_id, friend_user_id)
 );
 
 -- Events
@@ -33,7 +32,7 @@ create table events (
     event_id serial primary key,
     name text not null,
     description text,
-    creator_username varchar not null references users(username),
+    creator_user_id varchar not null references users(user_id),
     created_at timestamp not null default current_timestamp
 );
 
@@ -41,7 +40,7 @@ create table events (
 create table events_members (
     member_id serial primary key,
     event_id integer not null references events(event_id) on delete cascade,
-    username varchar not null references users(username),
+    user_id varchar not null references users(user_id),
     status text not null default 'pending', -- pending, declined, active
     created_at timestamp not null default current_timestamp
 );

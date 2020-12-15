@@ -2,18 +2,6 @@ use actix_web::{web, Resource};
 
 use super::handlers;
 
-/// Resource routes for friends
-pub fn friends_routes() -> Resource {
-    web::resource("/friends").route(web::get().to(handlers::get_friends))
-}
-
-/// Resource routes for me friends
-pub fn friends_me_routes() -> Resource {
-    web::resource("/me/friends")
-        .route(web::get().to(handlers::get_me_friends))
-        .route(web::post().to(handlers::post_me_friends))
-}
-
 /// Resource routes getting the currently logged in users followers
 pub fn users_me_followers_routes() -> Resource {
     web::resource("/me/followers").route(web::get().to(handlers::get_me_followers))

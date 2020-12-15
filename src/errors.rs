@@ -20,6 +20,7 @@ impl std::fmt::Display for TalliiError {
 
 impl TalliiError {
     pub const INTERNAL_SERVER_ERROR: TalliiErrorCode = TalliiErrorCode("INTERNAL_SERVER_ERROR");
+    pub const NOT_FOUND: TalliiErrorCode = TalliiErrorCode("NOT_FOUND");
     pub const INVALID_INVITE_CODE: TalliiErrorCode = TalliiErrorCode("INVALID_INVITE_CODE");
     pub const UNAUTHORIZED: TalliiErrorCode = TalliiErrorCode("UNAUTHORIZED");
     pub const INVALID_LOGIN: TalliiErrorCode = TalliiErrorCode("INVALID_LOGIN");
@@ -38,6 +39,9 @@ impl TalliiErrorCode {
         let message = match self {
             TalliiError::INTERNAL_SERVER_ERROR => {
                 "Oops, something seems to have gone wrong on our end."
+            }
+            TalliiError::NOT_FOUND => {
+                "Cannot find resource."
             }
             TalliiError::INVALID_INVITE_CODE => "The provided invite code is invalid.",
             TalliiError::UNAUTHORIZED => "User does not have the permissions to fulfill request.",
@@ -90,6 +94,7 @@ impl ResponseError for TalliiError {
     fn status_code(&self) -> StatusCode {
         match self.code {
             TalliiError::INTERNAL_SERVER_ERROR => StatusCode::INTERNAL_SERVER_ERROR,
+            TalliiError::NOT_FOUND => StatusCode::NOT_FOUND,
             TalliiError::INVALID_INVITE_CODE => StatusCode::BAD_REQUEST,
             TalliiError::UNAUTHORIZED => StatusCode::UNAUTHORIZED,
             TalliiError::INVALID_LOGIN => StatusCode::BAD_REQUEST,
