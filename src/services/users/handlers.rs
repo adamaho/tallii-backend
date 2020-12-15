@@ -144,6 +144,13 @@ pub async fn get_me(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiR
     // get me from the database
     let me = UsersTable::get_by_username(&pool, &user.username).await?;
 
+    if user.is_some() {
+        // response with json of me
+        Ok(HttpResponse::Ok().json(user))
+    } else {
+        Err(TalliiError::NOT_FOUND.default())
+    }
+
     // response with json of me
     Ok(HttpResponse::Ok().json(me))
 }
@@ -157,8 +164,12 @@ pub async fn get_user_by_username(
     // get me from the database
     let user = UsersTable::get_by_username(&pool, &username).await?;
 
-    // response with json of me
-    Ok(HttpResponse::Ok().json(user))
+    if user.is_some() {
+        // response with json of me
+        Ok(HttpResponse::Ok().json(user))
+    } else {
+        Err(TalliiError::NOT_FOUND.default())
+    }
 }
 
 /// Gets maximum users that match the provided username
