@@ -6,7 +6,7 @@ paths:
   /api/v1/login:
     post:
       operationId: login,
-      description: Logs a user in if the provided credentials are correct.
+      description: Logs a user in if the provided credentials are correct
       requestBody:
         required: true
         content:
@@ -21,22 +21,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Token'
         400:
-          description: The provided login credentials are not correct.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/BadRequest'
         500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/InternalError'
 
   /api/v1/signup:
     post:
       operationId: signup,
-      description: Logs a user in if the provided credentials are correct.
+      description: Logs a user in if the provided credentials are correct
       requestBody:
         required: true
         content:
@@ -51,299 +43,286 @@ paths:
               schema:
                 $ref: '#/components/schemas/Token'
         400:
-          description: The provided invite code is invalid.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/BadRequest'
         500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/InternalError'
 
   /api/v1/invite-codes/{invite_code}:
     get:
       operationId: checkInviteCode,
-      description: Checks if the provided invite code is valid and not taken.
+      description: Checks if the provided invite code is valid and not taken
       parameters:
         - name: invite_code
           in: path
           required: true
-          description: The invite_code to check.
+          description: The invite_code to check
           schema:
             type: string
       responses:
-        200:
+        204:
           description: The provided invite_code is valid
         400:
-          description: The provided invite code is invalid.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/BadRequest'
         500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /api/v1/users:
-    get:
-      operationId: getUsers
-      description: Gets any users that match the params.
-      parameters:
-        - name: username
-          in: query
-          required: true
-          description: The partial username to search for.
-          schema:
-            type: string
-      responses:
-        200:
-          description: The users that match the query.
-          content:
-            application/json:
-              schema:
-                type: array
-                nullable: true
-                items:
-                  $ref: '#/components/schemas/User'
-
+          $ref: '#/components/responses/InternalError'
 
   /api/v1/users/{username}:
     get:
-      operationId: getUser
-      description: Gets a user with the username provided in the url.
+      operationId: getUserByUsername
+      description: Gets a user matching the provided username
       parameters:
         - name: username
           in: path
           required: true
-          description: The username of the user to get.
+          description: The username of the user to get
           schema:
             type: string
       responses:
         200:
-          description: The user that matches the provided user_id.
+          description: The user that matches the provided username
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
         500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/InternalError'
 
-  /api/v1/users/check-email/{email}:
+  /api/v1/users/{email}:
     get:
-      operationId: checkEmail
-      description: Checks if the provided email is taken.
+      operationId: getUserByEmail
+      description: Gets a user matching the provided email
       parameters:
         - name: email
           in: path
           required: true
-          description: The email to check.
+          description: The email of the user to get
           schema:
             type: string
-            format: email
       responses:
         200:
-          description: The email is not taken.
+          description: The user that matches the provided email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         400:
-          description: The email is taken.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/BadRequest'
         500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/InternalError'
 
-  /api/v1/users/check-username/{username}:
+  /api/v1/users/{username}/followers:
     get:
-      operationId: checkUsername
-      description: Checks if the provided username is taken.
+      operationId: getUserFollowers
+      description: Gets the followers of the specified username
       parameters:
         - name: username
           in: path
           required: true
-          description: The username to check.
+          description: The username of the user to get the followers for
           schema:
             type: string
       responses:
         200:
-          description: The username is not taken.
-        400:
-          description: The username is taken.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /api/v1/friends:
-    get:
-      operationId: getFriendsOfUser
-      description: Gets the friends matching the provided user_id and status.
-      parameters:
-        - name: user_id
-          in: query
-          required: true
-          description: The user_id to get friends for.
-          schema:
-            type: integer
-            format: int32
-      responses:
-        200:
-          description: The friends that match the provided query params.
+          description: The followers of the user matching the username
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Friend'
+                  $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
         500:
-          description: An internal server error has occured.
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/users/{username}/following:
+    get:
+      operationId: getUserFollowing
+      description: Gets the users that the matching user is following
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: The username of the user to get the followers for
+          schema:
+            type: string
+      responses:
+        200:
+          description: The followers of the user matching the username
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/users/{username}/events:
+    get:
+      operationId: getUserEvents
+      description: Gets the events of the user matching the username
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: The username of the user to get the followers for
+          schema:
+            type: string
+      responses:
+        200:
+          description: The followers of the user matching the username
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalError'
 
   /api/v1/me:
     get:
       operationId: getMe
-      description: Gets the profile of the currently logged in user
+      description: Gets the currently logged in user
       responses:
         200:
-          description: The profile of me
+          description: The currently logged in user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Me'
+                $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        400:
+          $ref: '#/components/responses/BadRequest'
         500:
-          description: An internal server error has occured.
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/me/followers:
+    get:
+      operationId: getMeFollowers
+      description: Gets the followers of the currently logged in user
+      responses:
+        200:
+          description: The followers of the currently logged in user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalError'
 
-  /api/v1/me/friends:
+  /api/v1/me/following:
     get:
-      operationId: getFriendsOfMe
-      description: Gets the friends matching the provided status for the currently logged in user.
+      operationId: getMeFollowing
+      description: Gets the users that the currently logged in user is following
+      responses:
+        200:
+          description: The users that the currently logged in user is following
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/me/follow/{username}:
+    put:
+      operationId: followUser
+      description: Follows the provided user matching the username
       parameters:
-        - name: status
-          in: query
-          required: false
-          description: The status of the friendship.
+        - name: username
+          in: path
+          required: true
+          description: The username to follow
           schema:
             type: string
-            enum: [invited, requested, accepted, blocked]
       responses:
-        200:
-          description: The friends that match the provided query params.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Friend'
+        204:
+          description: The provided user has been followed.
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        404:
+          $ref: '#/components/responses/NotFound'
         500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/InternalError'
 
-    post:
-      operationId: updateFriendsOfMe
-      description: Sends, accepts, cancels, or denies a friend request given the provided query params.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FriendRequest'
+  /api/v1/me/following/{username}:
+    delete:
+      operationId: unfollowUser
+      description: Unfollows the provided user matching the username
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: The username to unfollow
+          schema:
+            type: string
       responses:
-        200:
-          description: The requested operation has completed.
+        204:
+          description: The provided user has been followed.
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        404:
+          $ref: '#/components/responses/NotFound'
         500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/InternalError'
 
   /api/v1/me/events:
     get:
-      operationId: getMyEvents
-      description: Gets the events matching the provided status for the currently logged in user.
-      parameters:
-        - name: player_status
-          in: query
-          required: false
-          description: The player status of the user in the event.
-          schema:
-            $ref: '#/components/schemas/PlayerStatus'
+      operationId: getMeEvents
+      description: Gets the events that the currently logged in user is a member of
       responses:
         200:
-          description: The friends that match the provided query params.
+          description: The events that the currently logged in user is a member of
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Event'
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
         500:
-          description: An internal server error has occured.
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/me/events/invites:
+    get:
+      operationId: getMeEventInvitations
+      description: Gets the invites to events of the currently logged in user
+      responses:
+        200:
+          description: The invites to events of the currently logged in user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        500:
+          $ref: '#/components/responses/InternalError'
 
   /api/v1/events:
-    get:
-      operationId: getUsersEvents
-      description: Gets all events that match the provided query params.
-      parameters:
-        - name: user_id
-          in: query
-          required: true
-          description: The user_id to get events for.
-          schema:
-            type: integer
-            format: int32
-      responses:
-        200:
-          description: The events that match the provided query params.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'
-        500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
     post:
       operationId: createEvent
-      description: Creates an event for the logged in user.
+      description: Creates an event
       requestBody:
         required: true
         content:
@@ -351,202 +330,307 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateEventRequest'
       responses:
-        200:
-          description: The event has been created.
+        201:
+          description: The event was created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateEventResponse'
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        404:
+          $ref: '#/components/responses/NotFound'
         500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
+          $ref: '#/components/responses/InternalError'
 
   /api/v1/events/{event_id}:
     get:
       operationId: getEvent
-      description: Gets an event that matches the event_id in the url.
+      description: Gets an event that matches the provided event_id
       parameters:
         - name: event_id
           in: path
           required: true
-          description: The event_id to query for.
+          description: The event to get
           schema:
-            type: integer
-            format: int32
+            type: number
       responses:
         200:
-          description: The event that matches the provided event_id.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Event'
-        500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /api/v1/players:
-    get:
-      operationId: getPlayersInEvent
-      description: Gets all of the players of a specfic event.
-      parameters:
-        - name: event_id
-          in: query
-          required: true
-          description: The event_id to get the players for.
-          schema:
-            type: integer
-            format: int32
-      responses:
-        200:
-          description: The players of the provided event_id
+          description: The event that matches the provided event_id
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Player'
+                  $ref: '#/components/schemas/Event'
+        404:
+          $ref: '#/components/responses/NotFound'
         500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /api/v1/players/{player_id}:
-    put:
-      operationId: updatePlayer
-      description: Updates the status of a specific player in an event.
+          $ref: '#/components/responses/InternalError'
+    patch:
+      operationId: updateEvent
+      description: Updates the event that matches the provided event_id
       parameters:
-        - name: player_id
+        - name: event_id
           in: path
           required: true
-          description: The player_id to update the status of.
+          description: The event to update
           schema:
-            type: integer
-            format: int32
+            type: number
       requestBody:
         required: true
-        description: The player update.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdatePlayerRequest'
+              $ref: '#/components/schemas/UpdateEventRequest'
       responses:
-        200:
-          $ref: '#/components/schemas/UpdatePlayerResponse'
+        204:
+          description: The event was updated
+        403:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
         500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /api/v1/teams:
-    get:
-      operationId: getTeamsInEvent
-      description: Gets all of the teams associated with an event
+          $ref: '#/components/responses/InternalError'
+    delete:
+      operationId: deleteEvent
+      description: Deletes the event that matches the provided event_id
       parameters:
         - name: event_id
-          in: query
+          in: path
           required: true
-          description: The event_id to get the teams for.
+          description: The event to delete
           schema:
-            type: integer
-            format: int32
+            type: number
+      responses:
+        204:
+          description: The event was deleted
+        403:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/events/{event_id}/teams:
+    get:
+      operationId: getTeams
+      description: The teams associated with the provided event
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to get the teams of
+          schema:
+            type: number
       responses:
         200:
-          description: The teams that are associated with the provided event.
+          description: The teams associated with the provided event
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Team'
+        404:
+          $ref: '#/components/responses/NotFound'
         500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/InternalError'
     post:
       operationId: createTeam
-      description: Creates a new team.
+      description: Creates a team
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateTeamRequest'
       responses:
-        201:
-          description: The team was successfully created.
+        204:
+          description: The team was created
+        403:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
         500:
-          description: An internal server error has occured.
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/events/{event_id}/teams/{team_id}:
+    get:
+      operationId: getTeam
+      description: Gets an event that matches the provided event_id
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to get the team of
+          schema:
+            type: number
+        - name: team_id
+          in: path
+          required: true
+          description: The team to get
+          schema:
+            type: number
+      responses:
+        200:
+          description: The team that matches the provided event_id and team_id
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-
-  /api/v1/teams/{team_id}:
-    put:
+                $ref: '#/components/schemas/Team'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+    patch:
       operationId: updateTeam
-      description: Gets all of the teams associated with an event
+      description: Updates the team that matches the provided event_id and team_id
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/UpdateTeamRequest'
+      responses:
+        204:
+          description: The team was updated
+        403:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+    delete:
+      operationId: deleteTeam
+      description: Deletes the team that matches the provided event_id and team_id
+      responses:
+        204:
+          description: The team was deleted
+        403:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/events/{event_id}/teams/{team_id}/members:
+    get:
+      operationId: getTeamMembers,
+      description: Gets team members that matches the provided event_id and team_id
       parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to get the team of
+          schema:
+            type: number
         - name: team_id
           in: path
           required: true
-          description: The team_id to update.
+          description: The team to get the members of
           schema:
-            type: integer
-            format: int32
+            type: number
       responses:
         200:
-          description: The team was successfully updated
-        500:
-          description: An internal server error has occured.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /api/v1/teams/players:
-    get:
-      operationId: getTeamsPlayersInEvent
-      description: Gets all of the players associated with the provided team_id.
-      parameters:
-        - name: event_id
-          in: query
-          required: true
-          description: The event_id to get the team players for.
-          schema:
-            type: integer
-            format: int32
-      responses:
-        200:
-          description: The players that are on the teams of the event.
+          description: The team members that matches the provided event_id and team_id
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TeamPlayer'
+                  $ref: '#/components/schemas/TeamMember'
+        404:
+          $ref: '#/components/responses/NotFound'
         500:
-          description: An internal server error has occured.
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/events/{event_id}/teams/{team_id}/members/{username}:
+    delete:
+      operationId: removeTeamMember
+      description: Deletes the team member matching the provided username
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to get the team of
+          schema:
+            type: number
+        - name: team_id
+          in: path
+          required: true
+          description: The team to get the members of
+          schema:
+            type: number
+        - name: username
+          in: path
+          required: true
+          description: The username to update
+          schema:
+            type: string
+      responses:
+        204:
+          description: The team member was deleted
+        403:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+    put:
+      operationId: addTeamMember
+      description: Adds the team member matching the provided username to the team
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to get the team of
+          schema:
+            type: number
+        - name: team_id
+          in: path
+          required: true
+          description: The team to get the members of
+          schema:
+            type: number
+        - name: username
+          in: path
+          required: true
+          description: The username to add
+          schema:
+            type: string
+      responses:
+        204:
+          description: The team member was added
+        403:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/search/users:
+    get:
+      operationId: searchUsers
+      description: Searches users that match the provided username
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: The partial username string to search for
+          schema:
+            type: string
+      responses:
+        200:
+          description: The users that match the partial username string
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        500:
+          $ref: '#/components/responses/InternalError'
 
 components:
   securitySchemes:
@@ -556,9 +640,53 @@ components:
       bearerFormat: JWT
 
   responses:
-    UpdatePlayerResponse:
-      description: The player has been updated.
+    NotAuthenticated:
+      description: Not authenticated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotAuthorized:
+      description: Not authorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InternalError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
   schemas:
+    UpdateEventRequest:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
     CreateEventRequest:
       description: A create event request.
       type: object
