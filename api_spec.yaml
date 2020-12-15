@@ -453,12 +453,75 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddMemberRequest'
+              $ref: '#/components/schemas/InviteMemberRequest'
       responses:
         204:
           description: The member was added
         401:
           $ref: '#/components/responses/NotAuthenticated'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+
+
+  /api/v1/events/{event_id}/members/{username}:
+    patch:
+      operationId: updateMember
+      description: Update a member that matches the provided username and event_id
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event_id the member is a part of
+          schema:
+            type: number
+        - name: username
+          in: path
+          required: true
+          description: The username of the member to update
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMemberRequest'
+      responses:
+        204:
+          description: The member was updated
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        403:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+    delete:
+      operationId: removeMember
+      description: Removes a member from the provided event
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event_id the member is a part of
+          schema:
+            type: number
+        - name: username
+          in: path
+          required: true
+          description: The username of the member to update
+          schema:
+            type: string
+      responses:
+        204:
+          description: The member was removed
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        403:
+          $ref: '#/components/responses/NotAuthorized'
         404:
           $ref: '#/components/responses/NotFound'
         500:
