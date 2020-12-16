@@ -14,7 +14,7 @@ pub fn members_user_routes() -> Resource {
         .route(web::delete().to(handlers::delete_member))
 }
 
-/// Resource routes for a specific event player
-pub fn players_entity_routes() -> Resource {
-    web::resource("/players/{player_id}").route(web::put().to(handlers::update_player))
-}
+// /// Resource routes for a specific event player
+// pub fn players_entity_routes() -> Resource {
+//     web::resource("/players/{player_id}").route(web::put().to(handlers::update_player))
+// }

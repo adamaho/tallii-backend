@@ -5,7 +5,7 @@ use sqlx::{PgPool, Transaction};
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 
-use crate::services::events::models::{Event, EventResponse, NewEvent, EventRow, UpdateEventRequest};
+use crate::services::events::models::{Event, EventResponse, EventRow, UpdateEventRequest, CreateEventRequest};
 use crate::services::users::models::PublicUser;
 
 pub struct EventsTable;
@@ -15,7 +15,7 @@ impl EventsTable {
     /// Creates an event in the database
     pub async fn create(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
-        new_event: &NewEvent,
+        new_event: &CreateEventRequest,
         user: &AuthenticatedUser,
     ) -> Result<Event, TalliiError> {
         let event = sqlx::query_as::<_, Event>(
@@ -54,20 +54,20 @@ impl EventsTable {
                     u.user_id,
                     u.username,
                     u.taunt,
-                    u.avatar
+                    u.avatar,
                     events.created_at
                 from
                     events
                 left join
-                    players p
+                    events_members em
                 on
-                    events.event_id = p.event_id
+                    events.event_id = em.event_id
                 left join
                     users u
                 on
                     events.creator_user_id = u.user_id
                 where
-                    p.user_id = $1 and state = $2
+                    em.user_id = $1 and state = $2
             "#
         )
             .bind(user_id)
@@ -108,20 +108,20 @@ impl EventsTable {
                     u.user_id,
                     u.username,
                     u.taunt,
-                    u.avatar
+                    u.avatar,
                     events.created_at
                 from
                     events
                 left join
-                    players p
+                    events_members em
                 on
-                    events.event_id = p.event_id
+                    events.event_id = em.event_id
                 left join
                     users u
                 on
                     events.creator_user_id = u.user_id
                 where
-                    event_id = $1
+                    events.event_id = $1
             "#
         )
             .bind(event_id)

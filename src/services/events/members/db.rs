@@ -4,8 +4,8 @@ use sqlx::{PgPool, Transaction};
 
 use crate::errors::TalliiError;
 
-use super::models::{PlayerResponse, EventMember};
-use crate::services::events::members::models::{UpdatePlayerRequest, EventMemberResponse, UpdateMemberRequest};
+use super::models::{EventMember};
+use crate::services::events::members::models::{EventMemberResponse, UpdateMemberRequest};
 
 pub struct EventMembersTable;
 

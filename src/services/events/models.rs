@@ -8,7 +8,7 @@ pub struct Event {
     pub event_id: i32,
     pub name: String,
     pub description: Option<String>,
-    pub creator_username: String,
+    pub creator_user_id: i32,
     pub created_at: chrono::NaiveDateTime,
 }
 
@@ -50,8 +50,8 @@ pub struct CreatedEventResponse {
 
 /// Representation of an New Event
 #[derive(Deserialize, Debug)]
-pub struct NewEvent {
+pub struct CreateEventRequest {
     pub name: String,
     pub description: Option<String>,
-    pub players: Vec<i32>,
+    pub members: Vec<i32>,
 }

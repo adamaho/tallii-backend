@@ -34,7 +34,7 @@ pub async fn update_member(
     let (event_id, user_id) = path_params.into_inner();
 
     // check to make sure user is member of event
-    if let Some(member) = EventMembersTable::get_member_by_user_id(&pool, &event_id, &user.user_id).await {
+    if let Some(member) = EventMembersTable::get_member_by_user_id(&pool, &event_id, &user.user_id).await? {
 
         // check to make sure user is admin or themselves
         if member.role == String::from("admin") || user.user_id == user_id {
@@ -58,7 +58,7 @@ pub async fn delete_member(
     let (event_id, user_id) = path_params.into_inner();
 
     // check to make sure user is member of event
-    if let Some(member) = EventMembersTable::get_member_by_user_id(&pool, &event_id, &user.user_id).await {
+    if let Some(member) = EventMembersTable::get_member_by_user_id(&pool, &event_id, &user.user_id).await? {
 
         // check to make sure user is admin or themselves
         if member.role == String::from("admin") || user.user_id == user_id {

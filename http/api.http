@@ -98,3 +98,44 @@ content-type: application/json
 GET {{baseUrl}}/api/v1/users/bryanne/following HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
+
+### getMeEvents
+GET {{baseUrl}}/api/v1/me/events HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### createEvent
+POST {{baseUrl}}/api/v1/events HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "name": "My Event",
+  "description": "This is the description of the event",
+  "members": [2]
+}
+
+### getEvent
+GET {{baseUrl}}/api/v1/events/2 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### updateEvent
+PATCH {{baseUrl}}/api/v1/events/2 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "name": "Adam's Event",
+  "description": "This is a better description"
+}
+
+### deleteEvent
+DELETE {{baseUrl}}/api/v1/events/4 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### getMeEventInvitations
+GET {{baseUrl}}/api/v1/me/events/invitations HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json

@@ -5,7 +5,7 @@ use crate::services::auth::AuthenticatedUser;
 
 use super::db::EventsTable;
 
-use super::models::{CreatedEventResponse, EventQueryParams, MeEventQueryParams, NewEvent};
+use super::models::{CreatedEventResponse, CreateEventRequest};
 
 use super::members::db::EventMembersTable;
 
@@ -17,7 +17,7 @@ use crate::services::users::db::UsersTable;
 /// Creates a new Event
 pub async fn create_event(
     pool: web::Data<PgPool>,
-    new_event: web::Json<NewEvent>,
+    new_event: web::Json<CreateEventRequest>,
     user: AuthenticatedUser,
 ) -> TalliiResponse {
     // start the transaction
@@ -31,7 +31,7 @@ pub async fn create_event(
         &mut tx,
         &created_event.event_id,
         &user.user_id,
-        &new_event.players,
+        &new_event.members,
     )
     .await?;
 
@@ -99,32 +99,31 @@ pub async fn update_event(
     if let Some(member) = EventMembersTable::get_member_by_user_id(&pool, &event_id, &user.user_id).await? {
         if member.role == String::from("admin") {
             EventsTable::update_event_by_id(&pool, &event_id, &update_event_request).await?;
+            Ok(HttpResponse::NoContent().finish())
         } else {
             Err(TalliiError::FORBIDDEN.default())
         }
     } else {
         Err(TalliiError::NOT_FOUND.default())
     }
-
-    Ok(HttpResponse::NoContent().finish())
 }
 
 /// Deletes a single event
 pub async fn delete_event(
     pool: web::Data<PgPool>,
-    _user: AuthenticatedUser,
+    user: AuthenticatedUser,
     event_id: web::Path<i32>,
 ) -> TalliiResponse {
     if let Some(member) = EventMembersTable::get_member_by_user_id(&pool, &event_id, &user.user_id).await? {
         if member.role == String::from("admin") {
             EventsTable::delete_event_by_id(&pool, &event_id).await?;
+
+            Ok(HttpResponse::NoContent().finish())
         } else {
             Err(TalliiError::FORBIDDEN.default())
         }
     } else {
         Err(TalliiError::NOT_FOUND.default())
     }
-
-    Ok(HttpResponse::NoContent().finish())
 }
 

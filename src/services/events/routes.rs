@@ -17,8 +17,8 @@ pub fn events_me_routes() -> Resource {
 pub fn events_entity_routes() -> Resource {
     web::resource("/events/{event_id}")
         .route(web::get().to(handlers::get_event))
-        .route(web::put().to(handlers::update_event))
-        .route(web::put().to(handlers::delete_event))
+        .route(web::patch().to(handlers::update_event))
+        .route(web::delete().to(handlers::delete_event))
 }
 
 /// Resource routes getting the events of the currently logged in user
@@ -34,5 +34,5 @@ pub fn users_me_events_invites_routes() -> Resource {
 /// Resource routes for user username events
 pub fn users_username_events_routes() -> Resource {
     web::resource("/users/{username}/events")
-        .route(web::get().to(handlers::get_user_events))
+        .route(web::get().to(handlers::get_users_events))
 }

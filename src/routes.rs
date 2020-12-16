@@ -1,7 +1,7 @@
 use actix_web::web;
 
 // use crate::services::events::members::routes::{players_entity_routes, players_routes};
-// use crate::services::events::routes::{events_entity_routes, events_me_routes, events_routes};
+use crate::services::events::routes::{events_entity_routes, events_me_routes, events_routes, users_me_events_invites_routes};
 // use crate::services::events::teams::routes::{
 //     teams_entity_routes, teams_players_routes, teams_routes,
 // };
@@ -23,10 +23,11 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
         .service(users_me_following_username_routes())
         .service(users_username_followers_routes())
         .service(users_username_following_routes())
-        .service(users_me_following_routes());
-        // .service(events_routes())
-        // .service(events_me_routes())
-        // .service(events_entity_routes())
+        .service(users_me_following_routes())
+        .service(events_routes())
+        .service(events_me_routes())
+        .service(events_entity_routes())
+        .service(users_me_events_invites_routes());
         // .service(players_routes())
         // .service(players_entity_routes())
         // .service(teams_routes())
