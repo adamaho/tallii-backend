@@ -1,6 +1,6 @@
 use actix_web::web;
 
-use crate::services::events::players::routes::{players_entity_routes, players_routes};
+use crate::services::events::members::routes::{players_entity_routes, players_routes};
 use crate::services::events::routes::{events_entity_routes, events_me_routes, events_routes};
 use crate::services::events::teams::routes::{
     teams_entity_routes, teams_players_routes, teams_routes,

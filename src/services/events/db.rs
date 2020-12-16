@@ -5,39 +5,12 @@ use sqlx::{PgPool, Transaction};
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 
-use crate::services::events::models::{
-    Event, EventQueryParams, EventResponse, MeEventQueryParams, NewEvent,
-};
+use crate::services::events::models::{Event, EventResponse, NewEvent, EventRow, UpdateEventRequest};
+use crate::services::users::models::PublicUser;
 
 pub struct EventsTable;
 
 impl EventsTable {
-    // initial part of the query for getting events
-    fn get_event_query() -> String {
-        String::from(
-            r#"
-                select
-                    events.event_id,
-                    events.name,
-                    events.description,
-                    events.creator_user_id,
-                    u.username as creator_username,
-                    u.taunt as creator_taunt,
-                    u.avatar as creator_avatar,
-                    events.created_at
-                from
-                    events
-                left join
-                    players p
-                on
-                    events.event_id = p.event_id
-                left join
-                    users u
-                on
-                    events.creator_user_id = u.user_id
-            "#,
-        )
-    }
 
     /// Creates an event in the database
     pub async fn create(
@@ -57,76 +30,163 @@ impl EventsTable {
                     *
             "#,
         )
-        .bind(&new_event.name)
-        .bind(&new_event.description)
-        .bind(&user.user_id)
-        .fetch_one(tx)
-        .await?;
+            .bind(&new_event.name)
+            .bind(&new_event.description)
+            .bind(&user.user_id)
+            .fetch_one(tx)
+            .await?;
 
         Ok(event)
     }
 
-    /// Gets a single event from the database
-    pub async fn get_one(pool: &PgPool, event_id: &i32) -> Result<EventResponse, TalliiError> {
-        // get the initial query
-        let mut query = Self::get_event_query();
+    /// Gets events that a specific user id is a part of
+    pub async fn get_events_for_user_id(
+        pool: &PgPool,
+        user_id: &i32,
+        state: &str
+    ) -> Result<Vec<EventResponse>, TalliiError> {
+        let events = sqlx::query_as::<_, EventRow>(
+            r#"
+                select
+                    events.event_id,
+                    events.name,
+                    events.description,
+                    u.user_id,
+                    u.username,
+                    u.taunt,
+                    u.avatar
+                    events.created_at
+                from
+                    events
+                left join
+                    players p
+                on
+                    events.event_id = p.event_id
+                left join
+                    users u
+                on
+                    events.creator_user_id = u.user_id
+                where
+                    p.user_id = $1 and state = $2
+            "#
+        )
+            .bind(user_id)
+            .bind(state)
+            .fetch_all(pool)
+            .await?
+            .into_iter()
+            .map(| event | {
+                EventResponse {
+                    event_id: event.event_id,
+                    name: event.name,
+                    description: event.description,
+                    creator: PublicUser {
+                        user_id: event.user_id,
+                        avatar: event.avatar,
+                        username: event.username,
+                        taunt: event.taunt
+                    },
+                    created_at: event.created_at
+                }
+            })
+            .collect();
 
-        // push the predicate
-        query.push_str("where events.event_id = $1");
+        Ok(events)
+    }
 
-        // execute the query
-        let event = sqlx::query_as::<_, EventResponse>(&query)
+    /// Gets events that a specific user id is a part of
+    pub async fn get_event_by_id(
+        pool: &PgPool,
+        event_id: &i32
+    ) -> Result<EventResponse, TalliiError> {
+        let event = sqlx::query_as::<_, EventRow>(
+            r#"
+                select
+                    events.event_id,
+                    events.name,
+                    events.description,
+                    u.user_id,
+                    u.username,
+                    u.taunt,
+                    u.avatar
+                    events.created_at
+                from
+                    events
+                left join
+                    players p
+                on
+                    events.event_id = p.event_id
+                left join
+                    users u
+                on
+                    events.creator_user_id = u.user_id
+                where
+                    event_id = $1
+            "#
+        )
             .bind(event_id)
             .fetch_one(pool)
             .await?;
 
-        // return the result
-        Ok(event)
+        let event_to_return = EventResponse {
+            event_id: event.event_id,
+            name: event.name,
+            description: event.description,
+            creator: PublicUser {
+                user_id: event.user_id,
+                avatar: event.avatar,
+                username: event.username,
+                taunt: event.taunt
+            },
+            created_at: event.created_at
+        };
+
+        Ok(event_to_return)
     }
 
-    /// Gets all Events that a user has accepted
-    pub async fn get_many(
+    /// Updates an event with the provided event_id
+    pub async fn update_event_by_id(
         pool: &PgPool,
-        params: &EventQueryParams,
-    ) -> Result<Vec<EventResponse>, TalliiError> {
-        // start the query
-        let mut query = Self::get_event_query();
-
-        // filter by the user
-        query.push_str("where p.user_id = $1 and p.status = 'accepted'");
-
-        // execute the query and format the response
-        let events = sqlx::query_as::<_, EventResponse>(&query)
-            .bind(params.user_id)
-            .fetch_all(pool)
+        event_id: &i32,
+        update_event_request: &UpdateEventRequest,
+    ) -> Result<(), TalliiError> {
+        sqlx::query(
+            r#"
+                update
+                    events
+                set
+                    name = $1,
+                    description = $2
+                where
+                    event_id = $3
+            "#
+        )
+            .bind(&update_event_request.name)
+            .bind(&update_event_request.description)
+            .bind(event_id)
+            .execute(pool)
             .await?;
 
-        Ok(events)
+        Ok(())
     }
 
-    /// Gets all Events for me
-    pub async fn get_me_many(
+    /// Updates an event with the provided event_id
+    pub async fn delete_event_by_id(
         pool: &PgPool,
-        user: &AuthenticatedUser,
-        params: &MeEventQueryParams,
-    ) -> Result<Vec<EventResponse>, TalliiError> {
-        // start the query
-        let mut query = Self::get_event_query();
-
-        // filter by the user
-        query.push_str(&format!("where p.user_id = $1"));
-
-        // add the optional clause for player status
-        if let Some(player_status) = &params.player_status {
-            query.push_str(&format!(" and p.status = '{}'", player_status.to_string()));
-        }
-
-        // execute the query and format the response
-        let events = sqlx::query_as::<_, EventResponse>(&query)
-            .bind(user.user_id)
-            .fetch_all(pool)
+        event_id: &i32
+    ) -> Result<(), TalliiError> {
+        sqlx::query(
+            r#"
+                delete from
+                    events
+                where
+                    event_id = $1
+            "#
+        )
+            .bind(event_id)
+            .execute(pool)
             .await?;
 
-        Ok(events)
+        Ok(())
     }
 }

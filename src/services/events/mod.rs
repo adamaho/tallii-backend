@@ -1,4 +1,4 @@
-pub mod players;
+pub mod members;
 pub mod teams;
 
 pub mod db;

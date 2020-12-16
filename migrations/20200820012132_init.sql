@@ -41,7 +41,8 @@ create table events_members (
     member_id serial primary key,
     event_id integer not null references events(event_id) on delete cascade,
     user_id varchar not null references users(user_id),
-    status text not null default 'pending', -- pending, declined, active
+    role text not null default 'member', -- member, admin
+    state text not null default 'pending', -- pending, declined, active
     created_at timestamp not null default current_timestamp
 );
 

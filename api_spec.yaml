@@ -177,17 +177,18 @@ paths:
         500:
           $ref: '#/components/responses/InternalError'
 
-  /api/v1/users/{username}/events:
+  /api/v1/users/{user_id}/events:
     get:
       operationId: getUserEvents
       description: Gets the events of the user matching the username
       parameters:
-        - name: username
+        - name: user_id
           in: path
           required: true
-          description: The username of the user to get the followers for
+          description: The user_id of the user to get the events for
           schema:
-            type: string
+            type: integer
+            format: int32
       responses:
         200:
           description: The followers of the user matching the username
@@ -480,10 +481,10 @@ paths:
           $ref: '#/components/responses/InternalError'
 
 
-  /api/v1/events/{event_id}/members/{username}:
+  /api/v1/events/{event_id}/members/{user_id}:
     patch:
       operationId: updateMember
-      description: Update a member that matches the provided username and event_id
+      description: Update a member that matches the provided user_id and event_id
       parameters:
         - name: event_id
           in: path
@@ -491,12 +492,13 @@ paths:
           description: The event_id the member is a part of
           schema:
             type: number
-        - name: username
+        - name: user_id
           in: path
           required: true
-          description: The username of the member to update
+          description: The user_id of the member to update
           schema:
-            type: string
+            type: integer
+            format: i32
       requestBody:
         required: true
         content:

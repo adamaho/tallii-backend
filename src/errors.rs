@@ -23,6 +23,7 @@ impl TalliiError {
     pub const NOT_FOUND: TalliiErrorCode = TalliiErrorCode("NOT_FOUND");
     pub const INVALID_INVITE_CODE: TalliiErrorCode = TalliiErrorCode("INVALID_INVITE_CODE");
     pub const UNAUTHORIZED: TalliiErrorCode = TalliiErrorCode("UNAUTHORIZED");
+    pub const FORBIDDEN: TalliiErrorCode = TalliiErrorCode("FORBIDDEN");
     pub const INVALID_LOGIN: TalliiErrorCode = TalliiErrorCode("INVALID_LOGIN");
     pub const USERNAME_TAKEN: TalliiErrorCode = TalliiErrorCode("USERNAME_TAKEN");
     pub const EMAIL_TAKEN: TalliiErrorCode = TalliiErrorCode("EMAIL_TAKEN");
@@ -37,14 +38,11 @@ impl TalliiErrorCode {
     pub fn default(self) -> TalliiError {
         // match on the message
         let message = match self {
-            TalliiError::INTERNAL_SERVER_ERROR => {
-                "Oops, something seems to have gone wrong on our end."
-            }
-            TalliiError::NOT_FOUND => {
-                "Cannot find resource."
-            }
+            TalliiError::INTERNAL_SERVER_ERROR => "Oops, something seems to have gone wrong on our end.",
+            TalliiError::NOT_FOUND => "Cannot find resource.",
+            TalliiError::FORBIDDEN => "User does not have the permissions to fulfill request.",
             TalliiError::INVALID_INVITE_CODE => "The provided invite code is invalid.",
-            TalliiError::UNAUTHORIZED => "User does not have the permissions to fulfill request.",
+            TalliiError::UNAUTHORIZED => "User must log in to fulfill request.",
             TalliiError::INVALID_LOGIN => "User has provided invalid login credentials.",
             TalliiError::USERNAME_TAKEN => "The provided username is not available",
             TalliiError::EMAIL_TAKEN => "The provided email is not available",
@@ -96,6 +94,7 @@ impl ResponseError for TalliiError {
             TalliiError::INTERNAL_SERVER_ERROR => StatusCode::INTERNAL_SERVER_ERROR,
             TalliiError::NOT_FOUND => StatusCode::NOT_FOUND,
             TalliiError::INVALID_INVITE_CODE => StatusCode::BAD_REQUEST,
+            TalliiError::FORBIDDEN => StatusCode::FORBIDDEN,
             TalliiError::UNAUTHORIZED => StatusCode::UNAUTHORIZED,
             TalliiError::INVALID_LOGIN => StatusCode::BAD_REQUEST,
             TalliiError::USERNAME_TAKEN => StatusCode::BAD_REQUEST,

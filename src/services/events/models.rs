@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::services::users::models::User;
+use crate::services::users::models::PublicUser;
 
 /// Database representation of an Event
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
@@ -12,14 +12,34 @@ pub struct Event {
     pub created_at: chrono::NaiveDateTime,
 }
 
-/// Database representation of an Event
+/// Event row that is queried
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
+pub struct EventRow {
+    pub event_id: i32,
+    pub name: String,
+    pub description: Option<String>,
+    pub user_id: i32,
+    pub avatar: Option<String>,
+    pub username: String,
+    pub taunt: Option<String>,
+    pub created_at: chrono::NaiveDateTime,
+}
+
+/// Event response payload
+#[derive(Deserialize, Serialize, Debug)]
 pub struct EventResponse {
     pub event_id: i32,
     pub name: String,
     pub description: Option<String>,
-    pub creator: User,
+    pub creator: PublicUser,
     pub created_at: chrono::NaiveDateTime,
+}
+
+/// Update event request
+#[derive(Deserialize, Serialize, Debug)]
+pub struct UpdateEventRequest {
+    pub name: String,
+    pub description: Option<String>,
 }
 
 /// Database representation of an Event
@@ -34,36 +54,4 @@ pub struct NewEvent {
     pub name: String,
     pub description: Option<String>,
     pub players: Vec<i32>,
-}
-
-/// Represents the Player Status to query for
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "lowercase")]
-pub enum PlayerStatus {
-    Pending,
-    Declined,
-    Accepted,
-}
-
-/// convert the values of the enum to a str
-impl std::fmt::Display for PlayerStatus {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            PlayerStatus::Accepted => write!(f, "accepted"),
-            PlayerStatus::Declined => write!(f, "declined"),
-            PlayerStatus::Pending => write!(f, "pending"),
-        }
-    }
-}
-
-/// Represents Query Params for querying events of me
-#[derive(Deserialize, Debug)]
-pub struct MeEventQueryParams {
-    pub player_status: Option<PlayerStatus>,
-}
-
-/// Represents Query Params for querying events of a user
-#[derive(Deserialize, Debug)]
-pub struct EventQueryParams {
-    pub user_id: i32,
 }
