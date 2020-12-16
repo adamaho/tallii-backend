@@ -28,7 +28,7 @@ paths:
   /api/v1/signup:
     post:
       operationId: signup,
-      description: Logs a user in if the provided credentials are correct
+      description: Signs a user in if the provided credentials are correct
       requestBody:
         required: true
         content:
@@ -89,7 +89,7 @@ paths:
         500:
           $ref: '#/components/responses/InternalError'
 
-  /api/v1/users/{email}/check:
+  /api/v1/users/check-email/{email}:
     get:
       operationId: checkUserEmail
       description: Checks if the provided email is taken.
@@ -108,7 +108,7 @@ paths:
         500:
           $ref: '#/components/responses/InternalError'
 
-  /api/v1/users/{username}/check:
+  /api/v1/users/check-username/{username}:
     get:
       operationId: checkUsername
       description: Checks if the provided username is taken.
@@ -177,18 +177,17 @@ paths:
         500:
           $ref: '#/components/responses/InternalError'
 
-  /api/v1/users/{user_id}/events:
+  /api/v1/users/{username}/events:
     get:
       operationId: getUserEvents
       description: Gets the events of the user matching the username
       parameters:
-        - name: user_id
+        - name: username
           in: path
           required: true
           description: The user_id of the user to get the events for
           schema:
-            type: integer
-            format: int32
+            type: string
       responses:
         200:
           description: The followers of the user matching the username

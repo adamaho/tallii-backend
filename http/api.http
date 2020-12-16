@@ -21,23 +21,39 @@ content-type: application/json
 }
 
 ### Sign user up
-
 POST {{baseUrl}}/api/v1/signup HTTP/1.1
 content-type: application/json
 
 {
     "email": "bryanne@gmail.com",
-    "invite_code": "EXqNWd",
+    "invite_code": "MPghIH",
     "password": "password",
     "username": "bryanne"
 }
 
 ### Log user in
-
 POST {{baseUrl}}/api/v1/login HTTP/1.1
 content-type: application/json
 
 {
-    "email": "bryanne@gmail.com",
+    "email": "adam.aho@hey.com",
     "password": "password"
 }
+
+### checkUsername
+GET {{baseUrl}}/api/v1/users/check-username/adamaho HTTP/1.1
+content-type: application/json
+
+### checkEmail
+GET {{baseUrl}}/api/v1/users/check-email/adam.aho@hey.com HTTP/1.1
+content-type: application/json
+
+### getUserByUsername
+GET {{baseUrl}}/api/v1/users/adamaho HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### getMe
+GET {{baseUrl}}/api/v1/me HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json

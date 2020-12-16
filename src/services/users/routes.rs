@@ -31,19 +31,19 @@ pub fn users_me_routes() -> Resource {
 
 /// Resource routes for user username
 pub fn users_username_check_routes() -> Resource {
-    web::resource("/users/{username}/check")
+    web::resource("/users/check-username/{username}")
         .route(web::get().to(handlers::check_username))
 }
 
 /// Resource routes for checking user email
-pub fn users_email_routes() -> Resource {
-    web::resource("/users/{email}/check")
+pub fn users_email_check_routes() -> Resource {
+    web::resource("/users/check-email/{email}")
         .route(web::get().to(handlers::check_user_email))
 }
 
 /// Resource routes for user username
 pub fn users_username_routes() -> Resource {
-    web::resource("/users/{user_id}")
+    web::resource("/users/{username}")
         .route(web::get().to(handlers::get_user_by_username))
 }
 
