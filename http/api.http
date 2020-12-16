@@ -4,20 +4,11 @@ GET {{baseUrl}}/api/v1/invite-codes HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 
-### Get All Invite Codes
-
-GET {{baseUrl}}/api/v1/users/search HTTP/1.1
-Authorization: Bearer {{token}}
-content-type: application/json
 
 ### Check Invite Codes
 
-POST {{baseUrl}}/api/v1/invite-codes HTTP/1.1
+GET {{baseUrl}}/api/v1/invite-codes/ HTTP/1.1
 content-type: application/json
-
-{
-    "id": "IVllaj"
-}
 
 ### Create new Invite Codes
 

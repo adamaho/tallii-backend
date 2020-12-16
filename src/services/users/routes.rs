@@ -37,13 +37,13 @@ pub fn users_username_check_routes() -> Resource {
 
 /// Resource routes for checking user email
 pub fn users_email_routes() -> Resource {
-    web::resource("/users/{email}")
+    web::resource("/users/{email}/check")
         .route(web::get().to(handlers::check_user_email))
 }
 
 /// Resource routes for user username
 pub fn users_username_routes() -> Resource {
-    web::resource("/users/{username}")
+    web::resource("/users/{user_id}")
         .route(web::get().to(handlers::get_user_by_username))
 }
 

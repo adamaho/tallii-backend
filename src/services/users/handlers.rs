@@ -144,15 +144,12 @@ pub async fn get_me(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiR
     // get me from the database
     let me = UsersTable::get_by_username(&pool, &user.username).await?;
 
-    if user.is_some() {
+    if me.is_some() {
         // response with json of me
-        Ok(HttpResponse::Ok().json(user))
+        Ok(HttpResponse::Ok().json(me))
     } else {
         Err(TalliiError::NOT_FOUND.default())
     }
-
-    // response with json of me
-    Ok(HttpResponse::Ok().json(me))
 }
 
 /// Gets the profile of a specific user

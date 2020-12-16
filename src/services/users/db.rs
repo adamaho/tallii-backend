@@ -127,7 +127,7 @@ impl UsersTable {
         let matching_users = sqlx::query_as::<_, PublicUser>(
             "select user_id, avatar, username, taunt from users where username like $1 limit 10",
         )
-        .bind(format!("%{}%", &params.username))
+        .bind(format!("%{}%", &params.q))
         .fetch_all(pool)
         .await?;
 
