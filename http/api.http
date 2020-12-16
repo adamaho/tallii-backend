@@ -7,7 +7,7 @@ content-type: application/json
 
 ### Check Invite Codes
 
-GET {{baseUrl}}/api/v1/invite-codes/ HTTP/1.1
+GET {{baseUrl}}/api/v1/invite-codes/mBZoPP HTTP/1.1
 content-type: application/json
 
 ### Create new Invite Codes
@@ -25,10 +25,21 @@ POST {{baseUrl}}/api/v1/signup HTTP/1.1
 content-type: application/json
 
 {
-    "email": "bryanne@gmail.com",
-    "invite_code": "MPghIH",
+    "email": "adam.aho@hey.com",
+    "invite_code": "aho",
     "password": "password",
-    "username": "bryanne"
+    "username": "adamaho"
+}
+
+### Sign user up
+POST {{baseUrl}}/api/v1/signup HTTP/1.1
+content-type: application/json
+
+{
+  "email": "bryanne@gmail.com",
+  "invite_code": "mBZoPP",
+  "password": "password",
+  "username": "bryanne"
 }
 
 ### Log user in
@@ -55,5 +66,35 @@ content-type: application/json
 
 ### getMe
 GET {{baseUrl}}/api/v1/me HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### followUser
+PUT {{baseUrl}}/api/v1/me/follow/bryanne HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### unfollowUser
+DELETE {{baseUrl}}/api/v1/me/following/bryanne HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### getMeFollowers
+GET {{baseUrl}}/api/v1/me/followers HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### getMeFollowing
+GET {{baseUrl}}/api/v1/me/following HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### getUserFollowers
+GET {{baseUrl}}/api/v1/users/bryanne/followers HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### getUserFollowing
+GET {{baseUrl}}/api/v1/users/bryanne/following HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json

@@ -34,7 +34,7 @@ pub async fn check_invite_code(pool: web::Data<PgPool>, code: web::Path<String>)
     if !is_valid || user.is_some() {
         Err(TalliiError::INVALID_INVITE_CODE.default())
     } else {
-        Ok(HttpResponse::Ok().json(""))
+        Ok(HttpResponse::NoContent().finish())
     }
 }
 

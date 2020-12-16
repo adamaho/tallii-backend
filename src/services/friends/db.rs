@@ -2,19 +2,14 @@ use sqlx::postgres::PgQueryAs;
 use sqlx::PgPool;
 
 use crate::errors::TalliiError;
-use crate::services::auth::AuthenticatedUser;
-use crate::services::friends::models::{
-    FriendQueryParams, FriendRequest, FriendResponse, MeFriendQueryParams, MeFriendStatus,
-};
-use crate::services::users::models::User;
-use crate::services::users::db::UsersTable;
+use crate::services::users::models::PublicUser;
 
 pub struct FriendsTable;
 
 impl FriendsTable {
     /// Gets a list of followers of the provided username
-    pub async fn get_followers_by_id(pool: &PgPool, user_id: &i32) -> Result<Vec<User>, TalliiError> {
-        let followers = sqlx::query_as::<_, User>(
+    pub async fn get_followers_by_id(pool: &PgPool, user_id: &i32) -> Result<Vec<PublicUser>, TalliiError> {
+        let followers = sqlx::query_as::<_, PublicUser>(
             r#"
                 select
                     u.user_id,
@@ -39,8 +34,8 @@ impl FriendsTable {
     }
 
     /// Gets a list of users that the username is following
-    pub async fn get_following_by_id(pool: &PgPool, user_id: &i32) -> Result<Vec<User>, TalliiError> {
-        let followers = sqlx::query_as::<_, User>(
+    pub async fn get_following_by_id(pool: &PgPool, user_id: &i32) -> Result<Vec<PublicUser>, TalliiError> {
+        let followers = sqlx::query_as::<_, PublicUser>(
             r#"
                 select
                     u.user_id,
@@ -90,7 +85,7 @@ impl FriendsTable {
                     friends f
                 where
                     f.user_id = $1
-                    and f.friend_user_id = $1
+                    and f.friend_user_id = $2
             "#
         )
             .bind(user_id)

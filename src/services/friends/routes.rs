@@ -31,5 +31,5 @@ pub fn users_username_followers_routes() -> Resource {
 /// Resource routes for user username following
 pub fn users_username_following_routes() -> Resource {
     web::resource("/users/{username}/following")
-        .route(web::get().to(handlers::get_user_followers))
+        .route(web::get().to(handlers::get_user_following))
 }

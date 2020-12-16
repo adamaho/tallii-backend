@@ -3,9 +3,6 @@ use sqlx::PgPool;
 
 use crate::services::auth::AuthenticatedUser;
 use crate::services::friends::db::FriendsTable;
-use crate::services::friends::models::{
-    FriendOperation, FriendQueryParams, FriendRequest, MeFriendQueryParams,
-};
 
 use crate::services::TalliiResponse;
 use crate::services::users::db::UsersTable;
@@ -39,7 +36,7 @@ pub async fn follow_user(
     username: web::Path<String>,
     user: AuthenticatedUser
 ) -> TalliiResponse {
-    if let Some(friend) = UsersTable::get_by_username(&pool, &username).await {
+    if let Some(friend) = UsersTable::get_by_username(&pool, &username).await? {
         FriendsTable::follow_user_by_id(&pool, &user.user_id, &friend.user_id).await?;
 
         Ok(HttpResponse::NoContent().finish())
@@ -52,9 +49,9 @@ pub async fn follow_user(
 pub async fn unfollow_user(
     pool: web::Data<PgPool>,
     username: web::Path<String>,
-    _user: AuthenticatedUser
+    user: AuthenticatedUser
 ) -> TalliiResponse {
-    if let Some(friend) = UsersTable::get_by_username(&pool, &username).await {
+    if let Some(friend) = UsersTable::get_by_username(&pool, &username).await? {
         FriendsTable::unfollow_user_by_id(&pool, &user.user_id, &friend.user_id).await?;
 
         Ok(HttpResponse::NoContent().finish())
@@ -69,7 +66,7 @@ pub async fn get_user_followers(
     username: web::Path<String>,
     _user: AuthenticatedUser
 ) -> TalliiResponse {
-    if let Some(user) = UsersTable::get_by_username(&pool, &username).await {
+    if let Some(user) = UsersTable::get_by_username(&pool, &username).await? {
         let followers = FriendsTable::get_followers_by_id(&pool, &user.user_id).await?;
 
         Ok(HttpResponse::Ok().json(followers))
@@ -84,7 +81,7 @@ pub async fn get_user_following(
     username: web::Path<String>,
     _user: AuthenticatedUser
 ) -> TalliiResponse {
-    if let Some(user) = UsersTable::get_by_username(&pool, &username).await {
+    if let Some(user) = UsersTable::get_by_username(&pool, &username).await? {
         let following = FriendsTable::get_following_by_id(&pool, &user.user_id).await?;
 
         Ok(HttpResponse::Ok().json(following))

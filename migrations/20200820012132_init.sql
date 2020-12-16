@@ -20,8 +20,8 @@ create table users (
 
 -- Friends
 create table friends (
-    user_id varchar not null references users(username),
-    friend_user_id varchar not null references users(username),
+    user_id integer not null references users(user_id),
+    friend_user_id integer not null references users(user_id),
     state text not null, -- active, blocked
     created_at timestamp not null default current_timestamp,
     primary key (user_id, friend_user_id)
