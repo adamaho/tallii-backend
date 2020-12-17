@@ -6,7 +6,7 @@ use crate::services::auth::AuthenticatedUser;
 use crate::services::TalliiResponse;
 
 use super::db::EventMembersTable;
-use crate::services::events::members::models::UpdateMemberRequest;
+use crate::services::events::members::models::{UpdateMemberRequest, InviteMemberRequest};
 use crate::services::users::db::UsersTable;
 use actix_web::error::PayloadError::Http2Payload;
 use crate::errors::TalliiError;
@@ -24,6 +24,24 @@ pub async fn get_members(
     Ok(HttpResponse::Ok().json(members))
 }
 
+/// Invites an event member
+pub async fn invite_member(
+    pool: web::Data<PgPool>,
+    user: AuthenticatedUser,
+    event_id: web::Path<i32>,
+    invite_member_request: web::Json<InviteMemberRequest>,
+) -> TalliiResponse {
+
+    // check to make sure user is member of event
+    if let Some(_member) = EventMembersTable::get_member_by_user_id(&pool, &event_id, &user.user_id).await? {
+            EventMembersTable::create_one(&pool, &event_id, &invite_member_request).await?;
+
+            Ok(HttpResponse::NoContent().finish())
+    } else {
+        Err(TalliiError::FORBIDDEN.default())
+    }
+}
+
 /// Updates an event member
 pub async fn update_member(
     pool: web::Data<PgPool>,
@@ -38,7 +56,7 @@ pub async fn update_member(
 
         // check to make sure user is admin or themselves
         if member.role == String::from("admin") || user.user_id == user_id {
-            EventMembersTable::update(&pool, &user_id, &event_id, &update_member_request).await;
+            EventMembersTable::update(&pool, &user_id, &event_id, &update_member_request).await?;
 
             Ok(HttpResponse::NoContent().finish())
         } else {
@@ -62,7 +80,7 @@ pub async fn delete_member(
 
         // check to make sure user is admin or themselves
         if member.role == String::from("admin") || user.user_id == user_id {
-            EventMembersTable::delete(&pool, &user_id, &event_id).await;
+            EventMembersTable::delete(&pool, &user_id, &event_id).await?;
 
             Ok(HttpResponse::NoContent().finish())
         } else {

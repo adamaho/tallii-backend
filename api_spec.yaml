@@ -479,7 +479,6 @@ paths:
         500:
           $ref: '#/components/responses/InternalError'
 
-
   /api/v1/events/{event_id}/members/{user_id}:
     patch:
       operationId: updateMember
@@ -524,13 +523,15 @@ paths:
           required: true
           description: The event_id the member is a part of
           schema:
-            type: number
-        - name: username
+            type: integer
+            format: int32
+        - name: user_id
           in: path
           required: true
           description: The username of the member to update
           schema:
-            type: string
+            type: integer
+            format: int32
       responses:
         204:
           description: The member was removed
@@ -880,6 +881,35 @@ components:
           format: int32
         winner:
           type: boolean
+
+    InviteMemberRequest:
+      description: The request required to invite a member to the event
+      type: object
+      required:
+        - user_id
+      properties:
+        user_id:
+          type: integer
+          format: int32
+
+    UpdateMemberRequest:
+      description: The request required to update a member to the event
+      type: object
+      required:
+        - state
+        - role
+      properties:
+        state:
+          type: string
+          enum:
+            - pending
+            - declined
+            - active
+        role:
+          type: string
+          enum:
+            - member
+            - admin
 
     Error:
       description: An error has occurred.

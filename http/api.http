@@ -150,4 +150,28 @@ GET {{baseUrl}}/api/v1/events/5/members HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 
+### inviteMember
+POST {{baseUrl}}/api/v1/events/5/invitations HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "user_id": 2
+}
+
+### updateMember
+PATCH {{baseUrl}}/api/v1/events/5/members/1 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "role": "member",
+  "state": "active"
+}
+
+### removeMember
+DELETE {{baseUrl}}/api/v1/events/5/members/1 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
 

@@ -26,3 +26,9 @@ pub struct EventMemberResponse {
     pub avatar: Option<String>,
     pub taunt: Option<String>,
 }
+
+/// Representation of a member to update
+#[derive(Deserialize, Serialize, Debug)]
+pub struct InviteMemberRequest {
+    pub user_id: i32
+}

@@ -5,17 +5,17 @@ use sqlx::{PgPool, Transaction};
 use crate::errors::TalliiError;
 
 use super::models::{EventMember};
-use crate::services::events::members::models::{EventMemberResponse, UpdateMemberRequest};
+use crate::services::events::members::models::{EventMemberResponse, UpdateMemberRequest, InviteMemberRequest};
 
 pub struct EventMembersTable;
 
 impl EventMembersTable {
-    /// Creates many event players in the database
+    /// Creates many event members in the database
     pub async fn create_many(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
         event_id: &i32,
         user_id: &i32,
-        players: &Vec<i32>,
+        members: &Vec<i32>,
     ) -> Result<(), TalliiError> {
         // init the query
         let mut query = String::from("insert into events_members (event_id, user_id, state, role) values");
@@ -24,9 +24,9 @@ impl EventMembersTable {
         query.push_str(&format!("({}, {}, 'active', 'admin')", event_id, user_id));
 
         // create the queries for each of the new players and add them to the query string
-        for (i, user_id) in players.iter().enumerate() {
+        for (i, user_id) in members.iter().enumerate() {
             // if we are appending values onto the query we need to separate them with commas
-            if i <= players.len() - 1 {
+            if i <= members.len() - 1 {
                 query.push_str(",")
             }
 
@@ -35,6 +35,21 @@ impl EventMembersTable {
 
         // execute the query
         sqlx::query(&query).execute(tx).await?;
+
+        Ok(())
+    }
+
+    /// Creates a single event member in the database
+    pub async fn create_one(pool: &PgPool, event_id: &i32, member: &InviteMemberRequest) -> Result<(), TalliiError> {
+        sqlx::query(
+            r#"
+                insert into events_members (event_id, user_id, state, role) values ($1, $2, 'pending', 'member')
+            "#
+        )
+            .bind(event_id)
+            .bind(member.user_id)
+            .execute(pool)
+            .await?;
 
         Ok(())
     }
@@ -140,9 +155,9 @@ impl EventMembersTable {
                 delete from
                     events_members
                 where
-                    user_id = $3
+                    user_id = $1
                 and
-                    event_id = $4
+                    event_id = $2
             "#,
         )
             .bind(user_id)
