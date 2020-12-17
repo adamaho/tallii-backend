@@ -139,3 +139,15 @@ content-type: application/json
 GET {{baseUrl}}/api/v1/me/events/invitations HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
+
+### getMeEventInvitations
+GET {{baseUrl}}/api/v1/me/events/invitations HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### getEventMembers
+GET {{baseUrl}}/api/v1/events/5/members HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+

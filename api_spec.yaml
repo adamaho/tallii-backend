@@ -429,7 +429,7 @@ paths:
 
   /api/v1/events/{event_id}/members:
     get:
-      operationId: getMembers
+      operationId: getEventMembers
       description: The members associated with the provided event
       parameters:
         - name: event_id
