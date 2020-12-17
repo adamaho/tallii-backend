@@ -3,8 +3,8 @@ use actix_web::{web, Resource};
 use super::handlers;
 
 /// Resource routes for event players
-pub fn teams_routes() -> Resource {
-    web::resource("/teams")
+pub fn event_teams_routes() -> Resource {
+    web::resource("/events/{event_id}/teams")
         .route(web::get().to(handlers::get_teams))
         .route(web::post().to(handlers::create_team))
 }

@@ -368,7 +368,8 @@ paths:
           required: true
           description: The event to get
           schema:
-            type: number
+            type: integer
+            format: int32
       responses:
         200:
           description: The event that matches the provided event_id
@@ -437,7 +438,8 @@ paths:
           required: true
           description: The event to get the members of
           schema:
-            type: number
+            type: integer
+            format: int32
       responses:
         200:
           description: The members associated with the provided event
@@ -454,7 +456,7 @@ paths:
 
   /api/v1/events/{event_id}/invitations:
     post:
-      operationId: inviteMember
+      operationId: inviteEventMember
       description: Invites a member to the provided event
       parameters:
         - name: event_id
@@ -462,7 +464,8 @@ paths:
           required: true
           description: The event to get the members of
           schema:
-            type: number
+            type: integer
+            format: int32
       requestBody:
         required: true
         content:
@@ -481,7 +484,7 @@ paths:
 
   /api/v1/events/{event_id}/members/{user_id}:
     patch:
-      operationId: updateMember
+      operationId: updateEventMember
       description: Update a member that matches the provided user_id and event_id
       parameters:
         - name: event_id
@@ -515,7 +518,7 @@ paths:
         500:
           $ref: '#/components/responses/InternalError'
     delete:
-      operationId: removeMember
+      operationId: removeEventMember
       description: Removes a member from the provided event
       parameters:
         - name: event_id
@@ -546,7 +549,7 @@ paths:
 
   /api/v1/events/{event_id}/teams:
     get:
-      operationId: getTeams
+      operationId: getEventTeams
       description: The teams associated with the provided event
       parameters:
         - name: event_id
@@ -554,7 +557,8 @@ paths:
           required: true
           description: The event to get the teams of
           schema:
-            type: number
+            type: integer
+            format: int32
       responses:
         200:
           description: The teams associated with the provided event
@@ -569,7 +573,7 @@ paths:
         500:
           $ref: '#/components/responses/InternalError'
     post:
-      operationId: createTeam
+      operationId: createEventTeam
       description: Creates a team
       requestBody:
         required: true
@@ -851,16 +855,12 @@ components:
       description: The request required to create a team
       type: object
       required:
-        - event_id
         - name
-        - players
+        - members
       properties:
-        event_id:
-          type: integer
-          format: int32
         name:
           type: string
-        players:
+        members:
           type: array
           items:
             type: integer

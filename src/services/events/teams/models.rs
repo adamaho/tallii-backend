@@ -22,9 +22,8 @@ pub struct UpdateTeamRequest {
 /// Representation of a new Team
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct NewTeam {
-    pub event_id: i32,
     pub name: String,
-    pub players: Vec<i32>,
+    pub members: Vec<i32>,
 }
 
 /// Representation of a player on a team

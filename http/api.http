@@ -150,7 +150,7 @@ GET {{baseUrl}}/api/v1/events/5/members HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 
-### inviteMember
+### inviteEventMember
 POST {{baseUrl}}/api/v1/events/5/invitations HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
@@ -159,7 +159,7 @@ content-type: application/json
   "user_id": 2
 }
 
-### updateMember
+### updateEventMember
 PATCH {{baseUrl}}/api/v1/events/5/members/1 HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
@@ -169,9 +169,23 @@ content-type: application/json
   "state": "active"
 }
 
-### removeMember
+### removeEventMember
 DELETE {{baseUrl}}/api/v1/events/5/members/1 HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 
+### getEventTeams
+GET {{baseUrl}}/api/v1/events/6/teams HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### createEventTeam
+POST {{baseUrl}}/api/v1/events/6/teams HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "name": "Team 1",
+  "members": [1]
+}
 

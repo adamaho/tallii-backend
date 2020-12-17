@@ -32,3 +32,9 @@ pub struct EventMemberResponse {
 pub struct InviteMemberRequest {
     pub user_id: i32
 }
+
+/// Represents Member Existing
+#[derive(sqlx::FromRow, Debug)]
+pub struct MemberExists {
+    pub exists: bool
+}

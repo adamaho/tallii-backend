@@ -8,6 +8,7 @@ use super::models::{NewTeam, Team};
 use crate::services::events::teams::models::{
     TeamPlayer, TeamPlayerQueryParams, UpdateTeamRequest,
 };
+use crate::services::events::members::models::EventMember;
 
 pub struct EventsTeamsTable;
 
@@ -15,19 +16,20 @@ impl EventsTeamsTable {
     /// Creates an event team in the database
     pub async fn create(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
+        event_id: &i32,
         team: &NewTeam,
     ) -> Result<Team, TalliiError> {
         // execute the query
         let created_team = sqlx::query_as::<_, Team>(
             r#"
                 insert
-                    into teams (event_id, name)
+                    into events_teams (event_id, name)
                 values
                     ($1, $2)
                 returning *
             "#,
         )
-        .bind(&team.event_id)
+        .bind(event_id)
         .bind(&team.name)
         .fetch_one(tx)
         .await?;
@@ -88,30 +90,32 @@ impl EventsTeamsTable {
     }
 }
 
-pub struct TeamsPlayersTable;
+pub struct EventTeamMembersTable;
 
-impl TeamsPlayersTable {
+impl EventTeamMembersTable {
     /// Creates many event team players
     pub async fn create_many(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
         team_id: &i32,
-        players: &Vec<i32>,
+        members: &Vec<Option<EventMember>>,
     ) -> Result<(), TalliiError> {
+        // check if each member is a part of the event
+
         // init the query
         let mut query = String::from(
             r#"
                 insert
-                    into teams_players (team_id, player_id)
+                    into events_teams_members (team_id, member_id)
                 values
             "#,
         );
 
         // create the queries for each of the new participants
-        for (i, player_id) in players.into_iter().enumerate() {
-            query.push_str(&format!("({}, {})", team_id, player_id));
+        for (i, member) in members.into_iter().enumerate() {
+            query.push_str(&format!("({}, {})", team_id, member.as_ref().unwrap().member_id));
 
             // if we are appending values onto the query we need to separate them with commas
-            if i < players.len() - 1 {
+            if i < members.len() - 1 {
                 query.push_str(",")
             }
         }

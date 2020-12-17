@@ -5,7 +5,7 @@ use sqlx::{PgPool, Transaction};
 use crate::errors::TalliiError;
 
 use super::models::{EventMember};
-use crate::services::events::members::models::{EventMemberResponse, UpdateMemberRequest, InviteMemberRequest};
+use crate::services::events::members::models::{EventMemberResponse, UpdateMemberRequest, InviteMemberRequest, MemberExists};
 
 pub struct EventMembersTable;
 
@@ -52,6 +52,31 @@ impl EventMembersTable {
             .await?;
 
         Ok(())
+    }
+
+    /// Checks if a member exists in the database
+    pub async fn exists(pool: &PgPool, event_id: &i32, user_id: &i32) -> Result<bool, TalliiError> {
+        let exists = sqlx::query_as::<_, MemberExists>(
+            r#"
+                select
+                    exists (
+                        select
+                            1
+                        from
+                            events_members
+                        where
+                            event_id = $1
+                        and
+                            user_id = $2
+                    )
+            "#
+        )
+            .bind(event_id)
+            .bind(user_id)
+            .fetch_one(pool)
+            .await?;
+
+        Ok(exists.exists)
     }
 
     /// Gets a member by an event_id and user_id
