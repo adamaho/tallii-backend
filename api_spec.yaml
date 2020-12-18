@@ -12,7 +12,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginCredentials'
+              $ref: '#/components/schemas/LoginRequest'
       responses:
         200:
           description: The jwt token for the session of the user
@@ -34,7 +34,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignupCredentials'
+              $ref: '#/components/schemas/SignupRequest'
       responses:
         200:
           description: The jwt token for the session of the user
@@ -92,7 +92,7 @@ paths:
   /api/v1/users/check-email/{email}:
     get:
       operationId: checkUserEmail
-      description: Checks if the provided email is taken.
+      description: Checks if the provided email is taken
       parameters:
         - name: email
           in: path
@@ -111,7 +111,7 @@ paths:
   /api/v1/users/check-username/{username}:
     get:
       operationId: checkUsername
-      description: Checks if the provided username is taken.
+      description: Checks if the provided username is taken
       parameters:
         - name: username
           in: path
@@ -185,7 +185,7 @@ paths:
         - name: username
           in: path
           required: true
-          description: The user_id of the user to get the events for
+          description: The username of the user to get the events for
           schema:
             type: string
       responses:
@@ -392,7 +392,8 @@ paths:
           required: true
           description: The event to update
           schema:
-            type: number
+            type: integer
+            format: int32
       requestBody:
         required: true
         content:
@@ -417,7 +418,8 @@ paths:
           required: true
           description: The event to delete
           schema:
-            type: number
+            type: integer
+            format: int32
       responses:
         204:
           description: The event was deleted
@@ -575,6 +577,14 @@ paths:
     post:
       operationId: createEventTeam
       description: Creates a team
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to create team in
+          schema:
+            type: integer
+            format: int32
       requestBody:
         required: true
         content:
@@ -595,6 +605,21 @@ paths:
     patch:
       operationId: updateEventTeam
       description: Updates the team that matches the provided event_id and team_id
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to update the team in
+          schema:
+            type: integer
+            format: int32
+        - name: team_id
+          in: path
+          required: true
+          description: The team to update
+          schema:
+            type: integer
+            format: int32
       requestBody:
         required: true
         content:
@@ -613,6 +638,21 @@ paths:
     delete:
       operationId: deleteEventTeam
       description: Deletes the team that matches the provided event_id and team_id
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to delete the team in
+          schema:
+            type: integer
+            format: int32
+        - name: team_id
+          in: path
+          required: true
+          description: The team to delete
+          schema:
+            type: integer
+            format: int32
       responses:
         204:
           description: The team was deleted
@@ -648,7 +688,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TeamMember'
+                  $ref: '#/components/schemas/User'
         404:
           $ref: '#/components/responses/NotFound'
         500:
@@ -949,8 +989,8 @@ components:
           type: string
           format: date-time
 
-    LoginCredentials:
-      description: The body of the login request.
+    LoginRequest:
+      description: The body of the login request
       type: object
       required:
         - email
@@ -963,79 +1003,8 @@ components:
           type: string
           format: password
 
-    FriendRequest:
-      description: The body of the friend post request.
-      type: object
-      required:
-        - user_id
-        - operation
-      properties:
-        user_id:
-          type: integer
-          format: int32
-        operation:
-          type: string
-          enum:
-            - send_request
-            - accept_request
-            - cancel_request
-            - deny_request
-
-    Player:
-      description: The user that is a part of an event.
-      type: object
-      required:
-        - player_id
-        - event_id
-        - user_id
-        - username
-        - avatar
-        - taunt
-        - status
-        - created_at
-      properties:
-        player_id:
-          type: integer
-          format: int32
-        event_id:
-          type: integer
-          format: int32
-        user_id:
-          type: integer
-          format: int32
-        username:
-          type: string
-        avatar:
-          type: string
-          nullable: true
-        taunt:
-          type: string
-          nullable: true
-        status:
-          $ref: '#/components/schemas/PlayerStatus'
-        created_at:
-          type: string
-          format: date-time
-
-    UpdatePlayerRequest:
-      description: The player to update.
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          $ref: '#/components/schemas/PlayerStatus'
-
-    PlayerStatus:
-      description: The status of the player in the event.
-      type: string
-      enum:
-        - pending
-        - declined
-        - accepted
-
-    SignupCredentials:
-      description: The body of the signup request request.
+    SignupRequest:
+      description: The body of the signup request
       type: object
       required:
         - email
@@ -1078,24 +1047,6 @@ components:
           format: int32
         winner:
           type: boolean
-        created_at:
-          type: string
-          format: date-time
-
-    TeamPlayer:
-      description: A player that is a part of a team.
-      type: object
-      required:
-        - team_id
-        - player_id
-        - created_at
-      properties:
-        team_id:
-          type: integer
-          format: int32
-        player_id:
-          type: integer
-          format: int32
         created_at:
           type: string
           format: date-time
