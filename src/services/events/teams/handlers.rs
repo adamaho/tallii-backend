@@ -5,19 +5,19 @@ use sqlx::PgPool;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::TalliiResponse;
 
-use super::db::{EventsTeamsTable, EventTeamMembersTable};
+use super::db::{EventTeamMembersTable, EventsTeamsTable};
 use super::models::{NewTeam, TeamPlayerQueryParams, TeamQueryParams, UpdateTeamRequest};
-use crate::services::events::members::db::EventMembersTable;
 use crate::errors::TalliiError;
+use crate::services::events::members::db::EventMembersTable;
 use crate::services::events::members::models::EventMember;
 
 /// Gets all Teams and Members for an Event
 pub async fn get_teams(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
-    params: web::Query<TeamQueryParams>,
+    event_id: web::Path<i32>,
 ) -> TalliiResponse {
-    let teams = EventsTeamsTable::get_many(&pool, &params.event_id).await?;
+    let teams = EventsTeamsTable::get_many(&pool, &event_id).await?;
 
     Ok(HttpResponse::Ok().json(teams))
 }
@@ -42,12 +42,14 @@ pub async fn create_team(
 
     // get each member
     for user_id in team.members.clone().into_iter() {
-        event_members.push(EventMembersTable::get_member_by_user_id(&pool, &event_id, &user_id).await?);
+        event_members
+            .push(EventMembersTable::get_member_by_user_id(&pool, &event_id, &user_id).await?);
     }
 
     // if not all members return bad request
     if event_members.iter().any(|member| member.is_none()) {
-        return Err(TalliiError::BAD_REQUEST.message(String::from("Not all members are a part of this event.")));
+        return Err(TalliiError::BAD_REQUEST
+            .message(String::from("Not all members are a part of this event.")));
     }
 
     // start the transaction
@@ -69,22 +71,109 @@ pub async fn create_team(
 /// Updates a specific team
 pub async fn update_team(
     pool: web::Data<PgPool>,
-    _user: AuthenticatedUser,
-    team_id: web::Path<i32>,
+    user: AuthenticatedUser,
+    path_params: web::Path<(i32, i32)>,
     team: web::Json<UpdateTeamRequest>,
 ) -> TalliiResponse {
+    let (event_id, team_id) = path_params.into_inner();
+
+    // check if the user is a member
+    let is_member = EventMembersTable::exists(&pool, &event_id, &user.user_id).await?;
+
+    // if not a member return forbidden
+    if !is_member {
+        return Err(TalliiError::FORBIDDEN.default());
+    }
+
     EventsTeamsTable::update(&pool, &team_id, &team).await?;
 
     Ok(HttpResponse::Ok().finish())
 }
 
+/// deletes a specific team
+pub async fn delete_team(
+    pool: web::Data<PgPool>,
+    user: AuthenticatedUser,
+    path_params: web::Path<(i32, i32)>,
+) -> TalliiResponse {
+    let (event_id, team_id) = path_params.into_inner();
+
+    // check if the user is a member
+    let is_member = EventMembersTable::exists(&pool, &event_id, &user.user_id).await?;
+
+    // if not a member return forbidden
+    if !is_member {
+        return Err(TalliiError::FORBIDDEN.default());
+    }
+
+    EventsTeamsTable::delete(&pool, &team_id).await?;
+
+    Ok(HttpResponse::Ok().finish())
+}
+
 /// Gets all Teams and Members for an Event
-pub async fn get_team_players(
+pub async fn get_team_members(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
-    params: web::Query<TeamPlayerQueryParams>,
+    path_params: web::Path<(i32, i32)>,
 ) -> TalliiResponse {
-    let players = EventTeamMembersTable::get_many(&pool, &params).await?;
+    let (event_id, team_id) = path_params.into_inner();
 
-    Ok(HttpResponse::Ok().json(players))
+    let members = EventTeamMembersTable::get_many(&pool, &team_id).await?;
+
+    Ok(HttpResponse::Ok().json(members))
+}
+
+/// Removes a member from a team
+pub async fn delete_team_member(
+    pool: web::Data<PgPool>,
+    user: AuthenticatedUser,
+    path_params: web::Path<(i32, i32, i32)>,
+) -> TalliiResponse {
+    let (event_id, team_id, user_id) = path_params.into_inner();
+
+    // check if the user is a member
+    let is_member = EventMembersTable::exists(&pool, &event_id, &user.user_id).await?;
+
+    // if not a member return forbidden
+    if !is_member {
+        return Err(TalliiError::FORBIDDEN.default());
+    }
+
+    // delete the team member
+    EventTeamMembersTable::delete(&pool, &team_id, &user_id).await?;
+
+    Ok(HttpResponse::NoContent().finish())
+}
+
+/// Adds a member to a team
+pub async fn add_team_member(
+    pool: web::Data<PgPool>,
+    user: AuthenticatedUser,
+    path_params: web::Path<(i32, i32, i32)>,
+) -> TalliiResponse {
+    let (event_id, team_id, user_id) = path_params.into_inner();
+
+    // check if the user is a member
+    let is_requester_member = EventMembersTable::exists(&pool, &event_id, &user.user_id).await?;
+
+    // if not a member return forbidden
+    if !is_requester_member {
+        return Err(TalliiError::FORBIDDEN.default());
+    }
+
+    // check if the user is a member
+    let user_member = EventMembersTable::get_member_by_user_id(&pool, &event_id, &user_id).await?;
+
+    // if not a member return forbidden
+    if user_member.is_none() {
+        return Err(TalliiError::BAD_REQUEST.message(String::from(
+            "The provided user is not a member of this event.",
+        )));
+    }
+
+    // delete the team member
+    EventTeamMembersTable::create_one(&pool, &team_id, &user_member.unwrap()).await?;
+
+    Ok(HttpResponse::NoContent().finish())
 }

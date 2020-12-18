@@ -15,7 +15,7 @@ pub struct EventMember {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UpdateMemberRequest {
     pub state: String,
-    pub role: String
+    pub role: String,
 }
 
 /// Representation of a member response payload
@@ -30,11 +30,11 @@ pub struct EventMemberResponse {
 /// Representation of a member to update
 #[derive(Deserialize, Serialize, Debug)]
 pub struct InviteMemberRequest {
-    pub user_id: i32
+    pub user_id: i32,
 }
 
 /// Represents Member Existing
 #[derive(sqlx::FromRow, Debug)]
 pub struct MemberExists {
-    pub exists: bool
+    pub exists: bool,
 }

@@ -5,10 +5,11 @@ use sqlx::{PgPool, Transaction};
 use crate::errors::TalliiError;
 
 use super::models::{NewTeam, Team};
+use crate::services::events::members::models::EventMember;
 use crate::services::events::teams::models::{
     TeamPlayer, TeamPlayerQueryParams, UpdateTeamRequest,
 };
-use crate::services::events::members::models::EventMember;
+use crate::services::users::models::PublicUser;
 
 pub struct EventsTeamsTable;
 
@@ -42,14 +43,14 @@ impl EventsTeamsTable {
         let teams = sqlx::query_as::<_, Team>(
             r#"
                 select
-                    teams.team_id,
-                    teams.event_id,
-                    teams.name,
-                    teams.score,
-                    teams.winner,
-                    teams.created_at
+                    team_id,
+                    event_id,
+                    name,
+                    score,
+                    winner,
+                    created_at
                 from
-                    teams
+                    events_teams
                 where
                     event_id = $1;
             "#,
@@ -70,7 +71,7 @@ impl EventsTeamsTable {
         sqlx::query(
             r#"
                 update
-                    teams
+                    events_teams
                 set
                     name = $1,
                     score = $2,
@@ -82,6 +83,23 @@ impl EventsTeamsTable {
         .bind(&team.name)
         .bind(&team.score)
         .bind(&team.winner)
+        .bind(team_id)
+        .execute(pool)
+        .await?;
+
+        Ok(())
+    }
+
+    /// Delete a specific team
+    pub async fn delete(pool: &PgPool, team_id: &i32) -> Result<(), TalliiError> {
+        sqlx::query(
+            r#"
+                delete from
+                    events_teams
+                where
+                    team_id = $1
+            "#,
+        )
         .bind(team_id)
         .execute(pool)
         .await?;
@@ -112,7 +130,11 @@ impl EventTeamMembersTable {
 
         // create the queries for each of the new participants
         for (i, member) in members.into_iter().enumerate() {
-            query.push_str(&format!("({}, {})", team_id, member.as_ref().unwrap().member_id));
+            query.push_str(&format!(
+                "({}, {})",
+                team_id,
+                member.as_ref().unwrap().member_id
+            ));
 
             // if we are appending values onto the query we need to separate them with commas
             if i < members.len() - 1 {
@@ -126,31 +148,79 @@ impl EventTeamMembersTable {
         Ok(())
     }
 
-    // Gets team players for a single event
-    pub async fn get_many(
+    /// Creates a team member for a team
+    pub async fn create_one(
         pool: &PgPool,
-        params: &TeamPlayerQueryParams,
-    ) -> Result<Vec<TeamPlayer>, TalliiError> {
-        let players = sqlx::query_as::<_, TeamPlayer>(
+        team_id: &i32,
+        member: &EventMember,
+    ) -> Result<(), TalliiError> {
+        sqlx::query(
             r#"
-                select
-                    teams_players.team_id,
-                    teams_players.player_id,
-                    teams_players.created_at
-                from
-                    teams_players
-                left join
-                    teams t
-                on
-                    teams_players.team_id = t.team_id
-                where
-                    t.event_id = $1
+                insert into
+                    events_teams_members (team_id, member_id)
+                values
+                   ($1, $2)
             "#,
         )
-        .bind(params.event_id)
+        .bind(team_id)
+        .bind(member.member_id)
+        .execute(pool)
+        .await?;
+
+        Ok(())
+    }
+
+    /// Gets team members for a single event
+    pub async fn get_many(pool: &PgPool, team_id: &i32) -> Result<Vec<PublicUser>, TalliiError> {
+        let members = sqlx::query_as::<_, PublicUser>(
+            r#"
+                select
+                    u.user_id,
+                    u.avatar,
+                    u.username,
+                    u.taunt
+                from
+                    events_teams_members t
+                left join
+                    events_members em
+                on
+                    em.member_id = t.member_id
+                left join
+                    users u
+                on
+                    u.user_id = em.user_id
+                where
+                    t.team_id = $1
+            "#,
+        )
+        .bind(team_id)
         .fetch_all(pool)
         .await?;
 
-        Ok(players)
+        Ok(members)
+    }
+
+    /// Deletes a team member from a team
+    pub async fn delete(pool: &PgPool, team_id: &i32, user_id: &i32) -> Result<(), TalliiError> {
+        sqlx::query(
+            r#"
+                delete from
+                    events_teams_members etm
+                using
+                    events_members em
+                where
+                    etm.member_id = em.member_id
+                and
+                    em.user_id = $1
+                and
+                    etm.team_id = $2
+            "#,
+        )
+        .bind(user_id)
+        .bind(team_id)
+        .execute(pool)
+        .await?;
+
+        Ok(())
     }
 }

@@ -39,9 +39,13 @@ impl TalliiErrorCode {
     pub fn default(self) -> TalliiError {
         // match on the message
         let message = match self {
-            TalliiError::INTERNAL_SERVER_ERROR => "Oops, something seems to have gone wrong on our end.",
+            TalliiError::INTERNAL_SERVER_ERROR => {
+                "Oops, something seems to have gone wrong on our end."
+            }
             TalliiError::NOT_FOUND => "Cannot find resource.",
-            TalliiError::BAD_REQUEST => "Bad request. Double check to make sure you sent the correct request.",
+            TalliiError::BAD_REQUEST => {
+                "Bad request. Double check to make sure you sent the correct request."
+            }
             TalliiError::FORBIDDEN => "User does not have the permissions to fulfill request.",
             TalliiError::INVALID_INVITE_CODE => "The provided invite code is invalid.",
             TalliiError::UNAUTHORIZED => "User must log in to fulfill request.",

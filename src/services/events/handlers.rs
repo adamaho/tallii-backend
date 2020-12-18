@@ -5,14 +5,14 @@ use crate::services::auth::AuthenticatedUser;
 
 use super::db::EventsTable;
 
-use super::models::{CreatedEventResponse, CreateEventRequest};
+use super::models::{CreateEventRequest, CreatedEventResponse};
 
 use super::members::db::EventMembersTable;
 
-use crate::services::TalliiResponse;
-use crate::services::events::models::UpdateEventRequest;
 use crate::errors::TalliiError;
+use crate::services::events::models::UpdateEventRequest;
 use crate::services::users::db::UsersTable;
+use crate::services::TalliiResponse;
 
 /// Creates a new Event
 pub async fn create_event(
@@ -45,10 +45,7 @@ pub async fn create_event(
 }
 
 /// Gets all Events for me
-pub async fn get_me_events(
-    pool: web::Data<PgPool>,
-    user: AuthenticatedUser,
-) -> TalliiResponse {
+pub async fn get_me_events(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
     let events = EventsTable::get_events_for_user_id(&pool, &user.user_id, "active").await?;
 
     Ok(HttpResponse::Ok().json(events))
@@ -94,9 +91,11 @@ pub async fn update_event(
     pool: web::Data<PgPool>,
     user: AuthenticatedUser,
     event_id: web::Path<i32>,
-    update_event_request: web::Json<UpdateEventRequest>
+    update_event_request: web::Json<UpdateEventRequest>,
 ) -> TalliiResponse {
-    if let Some(member) = EventMembersTable::get_member_by_user_id(&pool, &event_id, &user.user_id).await? {
+    if let Some(member) =
+        EventMembersTable::get_member_by_user_id(&pool, &event_id, &user.user_id).await?
+    {
         if member.role == String::from("admin") {
             EventsTable::update_event_by_id(&pool, &event_id, &update_event_request).await?;
             Ok(HttpResponse::NoContent().finish())
@@ -114,7 +113,9 @@ pub async fn delete_event(
     user: AuthenticatedUser,
     event_id: web::Path<i32>,
 ) -> TalliiResponse {
-    if let Some(member) = EventMembersTable::get_member_by_user_id(&pool, &event_id, &user.user_id).await? {
+    if let Some(member) =
+        EventMembersTable::get_member_by_user_id(&pool, &event_id, &user.user_id).await?
+    {
         if member.role == String::from("admin") {
             EventsTable::delete_event_by_id(&pool, &event_id).await?;
 
@@ -126,4 +127,3 @@ pub async fn delete_event(
         Err(TalliiError::NOT_FOUND.default())
     }
 }
-

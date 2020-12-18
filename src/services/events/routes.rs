@@ -4,8 +4,7 @@ use super::handlers;
 
 /// Resource routes for events
 pub fn events_routes() -> Resource {
-    web::resource("/events")
-        .route(web::post().to(handlers::create_event))
+    web::resource("/events").route(web::post().to(handlers::create_event))
 }
 
 /// Resource routes for events
@@ -33,6 +32,5 @@ pub fn users_me_events_invites_routes() -> Resource {
 
 /// Resource routes for user username events
 pub fn users_username_events_routes() -> Resource {
-    web::resource("/users/{username}/events")
-        .route(web::get().to(handlers::get_users_events))
+    web::resource("/users/{username}/events").route(web::get().to(handlers::get_users_events))
 }

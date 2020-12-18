@@ -189,3 +189,39 @@ content-type: application/json
   "members": [1]
 }
 
+### updateEventTeam
+PATCH {{baseUrl}}/api/v1/events/6/teams/3 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "name": "Team 1",
+  "score": 100,
+  "winner": false
+}
+
+### deleteEventTeam
+DELETE {{baseUrl}}/api/v1/events/6/teams/3 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### getEventTeamMembers
+GET {{baseUrl}}/api/v1/events/6/teams/4/members HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### removeEventTeamMember
+DELETE {{baseUrl}}/api/v1/events/6/teams/4/members/1 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### addEventTeamMember
+PUT {{baseUrl}}/api/v1/events/6/teams/4/members/1 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### searchUsers
+GET {{baseUrl}}/api/v1/search/users?q=adam HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+

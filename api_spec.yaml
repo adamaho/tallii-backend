@@ -592,35 +592,8 @@ paths:
           $ref: '#/components/responses/InternalError'
 
   /api/v1/events/{event_id}/teams/{team_id}:
-    get:
-      operationId: getTeam
-      description: Gets an event that matches the provided event_id
-      parameters:
-        - name: event_id
-          in: path
-          required: true
-          description: The event to get the team of
-          schema:
-            type: number
-        - name: team_id
-          in: path
-          required: true
-          description: The team to get
-          schema:
-            type: number
-      responses:
-        200:
-          description: The team that matches the provided event_id and team_id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Team'
-        404:
-          $ref: '#/components/responses/NotFound'
-        500:
-          $ref: '#/components/responses/InternalError'
     patch:
-      operationId: updateTeam
+      operationId: updateEventTeam
       description: Updates the team that matches the provided event_id and team_id
       requestBody:
         required: true
@@ -638,7 +611,7 @@ paths:
         500:
           $ref: '#/components/responses/InternalError'
     delete:
-      operationId: deleteTeam
+      operationId: deleteEventTeam
       description: Deletes the team that matches the provided event_id and team_id
       responses:
         204:
@@ -652,7 +625,7 @@ paths:
 
   /api/v1/events/{event_id}/teams/{team_id}/members:
     get:
-      operationId: getTeamMembers,
+      operationId: getEventTeamMembers,
       description: Gets team members that matches the provided event_id and team_id
       parameters:
         - name: event_id
@@ -681,10 +654,10 @@ paths:
         500:
           $ref: '#/components/responses/InternalError'
 
-  /api/v1/events/{event_id}/teams/{team_id}/members/{username}:
+  /api/v1/events/{event_id}/teams/{team_id}/members/{user_id}:
     delete:
-      operationId: removeTeamMember
-      description: Deletes the team member matching the provided username
+      operationId: removeEventTeamMember
+      description: Deletes the team member matching the provided user_id
       parameters:
         - name: event_id
           in: path
@@ -698,10 +671,10 @@ paths:
           description: The team to get the members of
           schema:
             type: number
-        - name: username
+        - name: user_id
           in: path
           required: true
-          description: The username to update
+          description: The user_id to delete
           schema:
             type: string
       responses:
@@ -714,7 +687,7 @@ paths:
         500:
           $ref: '#/components/responses/InternalError'
     put:
-      operationId: addTeamMember
+      operationId: addEventTeamMember
       description: Adds the team member matching the provided username to the team
       parameters:
         - name: event_id
@@ -722,19 +695,22 @@ paths:
           required: true
           description: The event to get the team of
           schema:
-            type: number
+            type: integer
+            format: int32
         - name: team_id
           in: path
           required: true
           description: The team to get the members of
           schema:
-            type: number
-        - name: username
+            type: integer
+            format: int32
+        - name: user_id
           in: path
           required: true
           description: The username to add
           schema:
-            type: string
+            type: integer
+            format: int32
       responses:
         204:
           description: The team member was added

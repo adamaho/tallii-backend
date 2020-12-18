@@ -24,12 +24,10 @@ pub fn users_me_following_username_routes() -> Resource {
 
 /// Resource routes for user username followers
 pub fn users_username_followers_routes() -> Resource {
-    web::resource("/users/{username}/followers")
-        .route(web::get().to(handlers::get_user_followers))
+    web::resource("/users/{username}/followers").route(web::get().to(handlers::get_user_followers))
 }
 
 /// Resource routes for user username following
 pub fn users_username_following_routes() -> Resource {
-    web::resource("/users/{username}/following")
-        .route(web::get().to(handlers::get_user_following))
+    web::resource("/users/{username}/following").route(web::get().to(handlers::get_user_following))
 }

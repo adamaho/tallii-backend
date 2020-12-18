@@ -4,15 +4,12 @@ use sqlx::PgPool;
 use crate::services::auth::AuthenticatedUser;
 use crate::services::friends::db::FriendsTable;
 
-use crate::services::TalliiResponse;
-use crate::services::users::db::UsersTable;
 use crate::errors::TalliiError;
+use crate::services::users::db::UsersTable;
+use crate::services::TalliiResponse;
 
 /// Gets the followers of me
-pub async fn get_me_followers(
-    pool: web::Data<PgPool>,
-    user: AuthenticatedUser
-) -> TalliiResponse {
+pub async fn get_me_followers(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
     // get all users that me follows
     let followers = FriendsTable::get_followers_by_id(&pool, &user.user_id).await?;
 
@@ -20,10 +17,7 @@ pub async fn get_me_followers(
 }
 
 /// Gets the users me is following
-pub async fn get_me_following(
-    pool: web::Data<PgPool>,
-    user: AuthenticatedUser
-) -> TalliiResponse {
+pub async fn get_me_following(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
     // get all users that me follows
     let following = FriendsTable::get_following_by_id(&pool, &user.user_id).await?;
 
@@ -34,7 +28,7 @@ pub async fn get_me_following(
 pub async fn follow_user(
     pool: web::Data<PgPool>,
     username: web::Path<String>,
-    user: AuthenticatedUser
+    user: AuthenticatedUser,
 ) -> TalliiResponse {
     if let Some(friend) = UsersTable::get_by_username(&pool, &username).await? {
         FriendsTable::follow_user_by_id(&pool, &user.user_id, &friend.user_id).await?;
@@ -49,7 +43,7 @@ pub async fn follow_user(
 pub async fn unfollow_user(
     pool: web::Data<PgPool>,
     username: web::Path<String>,
-    user: AuthenticatedUser
+    user: AuthenticatedUser,
 ) -> TalliiResponse {
     if let Some(friend) = UsersTable::get_by_username(&pool, &username).await? {
         FriendsTable::unfollow_user_by_id(&pool, &user.user_id, &friend.user_id).await?;
@@ -64,7 +58,7 @@ pub async fn unfollow_user(
 pub async fn get_user_followers(
     pool: web::Data<PgPool>,
     username: web::Path<String>,
-    _user: AuthenticatedUser
+    _user: AuthenticatedUser,
 ) -> TalliiResponse {
     if let Some(user) = UsersTable::get_by_username(&pool, &username).await? {
         let followers = FriendsTable::get_followers_by_id(&pool, &user.user_id).await?;
@@ -79,7 +73,7 @@ pub async fn get_user_followers(
 pub async fn get_user_following(
     pool: web::Data<PgPool>,
     username: web::Path<String>,
-    _user: AuthenticatedUser
+    _user: AuthenticatedUser,
 ) -> TalliiResponse {
     if let Some(user) = UsersTable::get_by_username(&pool, &username).await? {
         let following = FriendsTable::get_following_by_id(&pool, &user.user_id).await?;

@@ -4,8 +4,10 @@ use sqlx::{PgPool, Transaction};
 
 use crate::errors::TalliiError;
 
-use super::models::{EventMember};
-use crate::services::events::members::models::{EventMemberResponse, UpdateMemberRequest, InviteMemberRequest, MemberExists};
+use super::models::EventMember;
+use crate::services::events::members::models::{
+    EventMemberResponse, InviteMemberRequest, MemberExists, UpdateMemberRequest,
+};
 
 pub struct EventMembersTable;
 
@@ -18,7 +20,8 @@ impl EventMembersTable {
         members: &Vec<i32>,
     ) -> Result<(), TalliiError> {
         // init the query
-        let mut query = String::from("insert into events_members (event_id, user_id, state, role) values");
+        let mut query =
+            String::from("insert into events_members (event_id, user_id, state, role) values");
 
         // add the current user to the players
         query.push_str(&format!("({}, {}, 'active', 'admin')", event_id, user_id));
@@ -40,7 +43,11 @@ impl EventMembersTable {
     }
 
     /// Creates a single event member in the database
-    pub async fn create_one(pool: &PgPool, event_id: &i32, member: &InviteMemberRequest) -> Result<(), TalliiError> {
+    pub async fn create_one(
+        pool: &PgPool,
+        event_id: &i32,
+        member: &InviteMemberRequest,
+    ) -> Result<(), TalliiError> {
         sqlx::query(
             r#"
                 insert into events_members (event_id, user_id, state, role) values ($1, $2, 'pending', 'member')
@@ -69,12 +76,12 @@ impl EventMembersTable {
                         and
                             user_id = $2
                     )
-            "#
+            "#,
         )
-            .bind(event_id)
-            .bind(user_id)
-            .fetch_one(pool)
-            .await?;
+        .bind(event_id)
+        .bind(user_id)
+        .fetch_one(pool)
+        .await?;
 
         Ok(exists.exists)
     }
@@ -83,7 +90,7 @@ impl EventMembersTable {
     pub async fn get_member_by_user_id(
         pool: &PgPool,
         event_id: &i32,
-        user_id: &i32
+        user_id: &i32,
     ) -> Result<Option<EventMember>, TalliiError> {
         let member = sqlx::query_as::<_, EventMember>(
             r#"
@@ -100,12 +107,12 @@ impl EventMembersTable {
                     event_id = $1
                 and
                     user_id = $2
-            "#
+            "#,
         )
-            .bind(event_id)
-            .bind(user_id)
-            .fetch_optional(pool)
-            .await?;
+        .bind(event_id)
+        .bind(user_id)
+        .fetch_optional(pool)
+        .await?;
 
         Ok(member)
     }
@@ -130,7 +137,7 @@ impl EventMembersTable {
                     em.user_id = u.user_id
                 where
                     event_id = $1
-            "#
+            "#,
         )
         .bind(event_id)
         .fetch_all(pool)
@@ -170,11 +177,7 @@ impl EventMembersTable {
     }
 
     /// Deletes a single member
-    pub async fn delete(
-        pool: &PgPool,
-        user_id: &i32,
-        event_id: &i32,
-    ) -> Result<(), TalliiError> {
+    pub async fn delete(pool: &PgPool, user_id: &i32, event_id: &i32) -> Result<(), TalliiError> {
         sqlx::query(
             r#"
                 delete from
@@ -185,10 +188,10 @@ impl EventMembersTable {
                     event_id = $2
             "#,
         )
-            .bind(user_id)
-            .bind(event_id)
-            .execute(pool)
-            .await?;
+        .bind(user_id)
+        .bind(event_id)
+        .execute(pool)
+        .await?;
 
         Ok(())
     }

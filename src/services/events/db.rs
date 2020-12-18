@@ -5,13 +5,14 @@ use sqlx::{PgPool, Transaction};
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
 
-use crate::services::events::models::{Event, EventResponse, EventRow, UpdateEventRequest, CreateEventRequest};
+use crate::services::events::models::{
+    CreateEventRequest, Event, EventResponse, EventRow, UpdateEventRequest,
+};
 use crate::services::users::models::PublicUser;
 
 pub struct EventsTable;
 
 impl EventsTable {
-
     /// Creates an event in the database
     pub async fn create(
         tx: &mut Transaction<PoolConnection<PgConnection>>,
@@ -30,11 +31,11 @@ impl EventsTable {
                     *
             "#,
         )
-            .bind(&new_event.name)
-            .bind(&new_event.description)
-            .bind(&user.user_id)
-            .fetch_one(tx)
-            .await?;
+        .bind(&new_event.name)
+        .bind(&new_event.description)
+        .bind(&user.user_id)
+        .fetch_one(tx)
+        .await?;
 
         Ok(event)
     }
@@ -43,7 +44,7 @@ impl EventsTable {
     pub async fn get_events_for_user_id(
         pool: &PgPool,
         user_id: &i32,
-        state: &str
+        state: &str,
     ) -> Result<Vec<EventResponse>, TalliiError> {
         let events = sqlx::query_as::<_, EventRow>(
             r#"
@@ -68,28 +69,26 @@ impl EventsTable {
                     events.creator_user_id = u.user_id
                 where
                     em.user_id = $1 and state = $2
-            "#
+            "#,
         )
-            .bind(user_id)
-            .bind(state)
-            .fetch_all(pool)
-            .await?
-            .into_iter()
-            .map(| event | {
-                EventResponse {
-                    event_id: event.event_id,
-                    name: event.name,
-                    description: event.description,
-                    creator: PublicUser {
-                        user_id: event.user_id,
-                        avatar: event.avatar,
-                        username: event.username,
-                        taunt: event.taunt
-                    },
-                    created_at: event.created_at
-                }
-            })
-            .collect();
+        .bind(user_id)
+        .bind(state)
+        .fetch_all(pool)
+        .await?
+        .into_iter()
+        .map(|event| EventResponse {
+            event_id: event.event_id,
+            name: event.name,
+            description: event.description,
+            creator: PublicUser {
+                user_id: event.user_id,
+                avatar: event.avatar,
+                username: event.username,
+                taunt: event.taunt,
+            },
+            created_at: event.created_at,
+        })
+        .collect();
 
         Ok(events)
     }
@@ -97,7 +96,7 @@ impl EventsTable {
     /// Gets events that a specific user id is a part of
     pub async fn get_event_by_id(
         pool: &PgPool,
-        event_id: &i32
+        event_id: &i32,
     ) -> Result<EventResponse, TalliiError> {
         let event = sqlx::query_as::<_, EventRow>(
             r#"
@@ -122,11 +121,11 @@ impl EventsTable {
                     events.creator_user_id = u.user_id
                 where
                     events.event_id = $1
-            "#
+            "#,
         )
-            .bind(event_id)
-            .fetch_one(pool)
-            .await?;
+        .bind(event_id)
+        .fetch_one(pool)
+        .await?;
 
         let event_to_return = EventResponse {
             event_id: event.event_id,
@@ -136,9 +135,9 @@ impl EventsTable {
                 user_id: event.user_id,
                 avatar: event.avatar,
                 username: event.username,
-                taunt: event.taunt
+                taunt: event.taunt,
             },
-            created_at: event.created_at
+            created_at: event.created_at,
         };
 
         Ok(event_to_return)
@@ -159,33 +158,30 @@ impl EventsTable {
                     description = $2
                 where
                     event_id = $3
-            "#
+            "#,
         )
-            .bind(&update_event_request.name)
-            .bind(&update_event_request.description)
-            .bind(event_id)
-            .execute(pool)
-            .await?;
+        .bind(&update_event_request.name)
+        .bind(&update_event_request.description)
+        .bind(event_id)
+        .execute(pool)
+        .await?;
 
         Ok(())
     }
 
     /// Updates an event with the provided event_id
-    pub async fn delete_event_by_id(
-        pool: &PgPool,
-        event_id: &i32
-    ) -> Result<(), TalliiError> {
+    pub async fn delete_event_by_id(pool: &PgPool, event_id: &i32) -> Result<(), TalliiError> {
         sqlx::query(
             r#"
                 delete from
                     events
                 where
                     event_id = $1
-            "#
+            "#,
         )
-            .bind(event_id)
-            .execute(pool)
-            .await?;
+        .bind(event_id)
+        .execute(pool)
+        .await?;
 
         Ok(())
     }
