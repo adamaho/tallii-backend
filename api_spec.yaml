@@ -5,7 +5,7 @@ info:
 paths:
   /api/v1/login:
     post:
-      operationId: login,
+      operationId: login
       description: Logs a user in if the provided credentials are correct
       requestBody:
         required: true
@@ -27,7 +27,7 @@ paths:
 
   /api/v1/signup:
     post:
-      operationId: signup,
+      operationId: signup
       description: Signs a user in if the provided credentials are correct
       requestBody:
         required: true
@@ -49,7 +49,7 @@ paths:
 
   /api/v1/invite-codes/{invite_code}:
     get:
-      operationId: checkInviteCode,
+      operationId: checkInviteCode
       description: Checks if the provided invite code is valid and not taken
       parameters:
         - name: invite_code
@@ -479,6 +479,8 @@ paths:
           description: The member was added
         401:
           $ref: '#/components/responses/NotAuthenticated'
+        403:
+          $ref: '#/components/responses/NotAuthorized'
         404:
           $ref: '#/components/responses/NotFound'
         500:
@@ -704,19 +706,22 @@ paths:
           required: true
           description: The event to get the team of
           schema:
-            type: number
+            type: integer
+            format: int32
         - name: team_id
           in: path
           required: true
           description: The team to get the members of
           schema:
-            type: number
+            type: integer
+            format: int32
         - name: user_id
           in: path
           required: true
           description: The user_id to delete
           schema:
-            type: string
+            type: integer
+            format: int32
       responses:
         204:
           description: The team member was deleted
@@ -844,14 +849,14 @@ components:
       type: object
       required:
         - name
-        - players
+        - members
       properties:
         name:
           type: string
         description:
           type: string
           nullable: true
-        players:
+        members:
           type: array
           items:
             type: integer
