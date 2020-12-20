@@ -84,8 +84,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        404:
+          $ref: '#/components/responses/NotFound'
         500:
           $ref: '#/components/responses/InternalError'
 
@@ -147,8 +149,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        404:
+          $ref: '#/components/responses/NotFound'
         500:
           $ref: '#/components/responses/InternalError'
 
@@ -172,8 +176,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        404:
+          $ref: '#/components/responses/NotFound'
         500:
           $ref: '#/components/responses/InternalError'
 
@@ -197,8 +203,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Event'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/NotAuthenticated'
+        404:
+          $ref: '#/components/responses/NotFound'
         500:
           $ref: '#/components/responses/InternalError'
 
@@ -215,8 +223,8 @@ paths:
                 $ref: '#/components/schemas/User'
         401:
           $ref: '#/components/responses/NotAuthenticated'
-        400:
-          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
         500:
           $ref: '#/components/responses/InternalError'
 
@@ -233,8 +241,6 @@ paths:
                 $ref: '#/components/schemas/User'
         401:
           $ref: '#/components/responses/NotAuthenticated'
-        400:
-          $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalError'
 
@@ -251,8 +257,6 @@ paths:
                 $ref: '#/components/schemas/User'
         401:
           $ref: '#/components/responses/NotAuthenticated'
-        400:
-          $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalError'
 
@@ -353,8 +357,8 @@ paths:
                 $ref: '#/components/schemas/CreateEventResponse'
         401:
           $ref: '#/components/responses/NotAuthenticated'
-        404:
-          $ref: '#/components/responses/NotFound'
+        400:
+          $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalError'
 
@@ -403,6 +407,8 @@ paths:
       responses:
         204:
           description: The event was updated
+        400:
+          $ref: '#/components/responses/BadRequest'
         403:
           $ref: '#/components/responses/NotAuthorized'
         404:
@@ -477,6 +483,8 @@ paths:
       responses:
         204:
           description: The member was added
+        400:
+          $ref: '#/components/responses/BadRequest'
         401:
           $ref: '#/components/responses/NotAuthenticated'
         403:
@@ -513,12 +521,12 @@ paths:
       responses:
         204:
           description: The member was updated
+        400:
+          $ref: '#/components/responses/BadRequest'
         401:
           $ref: '#/components/responses/NotAuthenticated'
         403:
           $ref: '#/components/responses/NotAuthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
         500:
           $ref: '#/components/responses/InternalError'
     delete:
@@ -546,8 +554,6 @@ paths:
           $ref: '#/components/responses/NotAuthenticated'
         403:
           $ref: '#/components/responses/NotAuthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
         500:
           $ref: '#/components/responses/InternalError'
 
@@ -598,8 +604,8 @@ paths:
           description: The team was created
         403:
           $ref: '#/components/responses/NotAuthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
+        400:
+          $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalError'
 
@@ -631,10 +637,10 @@ paths:
       responses:
         204:
           description: The team was updated
+        400:
+          $ref: '#/components/responses/BadRequest'
         403:
           $ref: '#/components/responses/NotAuthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
         500:
           $ref: '#/components/responses/InternalError'
     delete:
@@ -660,8 +666,6 @@ paths:
           description: The team was deleted
         403:
           $ref: '#/components/responses/NotAuthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
         500:
           $ref: '#/components/responses/InternalError'
 
@@ -727,8 +731,6 @@ paths:
           description: The team member was deleted
         403:
           $ref: '#/components/responses/NotAuthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
         500:
           $ref: '#/components/responses/InternalError'
     put:
@@ -759,10 +761,10 @@ paths:
       responses:
         204:
           description: The team member was added
+        400:
+          $ref: '#/components/responses/BadRequest'
         403:
           $ref: '#/components/responses/NotAuthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
         500:
           $ref: '#/components/responses/InternalError'
 
@@ -786,6 +788,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalError'
 

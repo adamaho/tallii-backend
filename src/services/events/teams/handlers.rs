@@ -117,7 +117,7 @@ pub async fn get_team_members(
     _user: AuthenticatedUser,
     path_params: web::Path<(i32, i32)>,
 ) -> TalliiResponse {
-    let (event_id, team_id) = path_params.into_inner();
+    let (_event_id, team_id) = path_params.into_inner();
 
     let members = EventTeamMembersTable::get_many(&pool, &team_id).await?;
 

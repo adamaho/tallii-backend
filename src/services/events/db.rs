@@ -124,23 +124,28 @@ impl EventsTable {
             "#,
         )
         .bind(event_id)
-        .fetch_one(pool)
+        .fetch_optional(pool)
         .await?;
 
-        let event_to_return = EventResponse {
-            event_id: event.event_id,
-            name: event.name,
-            description: event.description,
-            creator: PublicUser {
-                user_id: event.user_id,
-                avatar: event.avatar,
-                username: event.username,
-                taunt: event.taunt,
-            },
-            created_at: event.created_at,
-        };
+        match event {
+            Some(event) => {
+                let event_to_return = EventResponse {
+                    event_id: event.event_id,
+                    name: event.name,
+                    description: event.description,
+                    creator: PublicUser {
+                        user_id: event.user_id,
+                        avatar: event.avatar,
+                        username: event.username,
+                        taunt: event.taunt,
+                    },
+                    created_at: event.created_at,
+                };
 
-        Ok(event_to_return)
+                Ok(event_to_return)
+            },
+            None => Err(TalliiError::NOT_FOUND.default())
+        }
     }
 
     /// Updates an event with the provided event_id

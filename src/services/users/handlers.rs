@@ -73,7 +73,7 @@ pub async fn check_user_email(pool: web::Data<PgPool>, email: web::Path<String>)
     // execute the query
     match UsersTable::get_by_email(&pool, &email).await? {
         Some(_) => Err(TalliiError::EMAIL_TAKEN.default()),
-        None => Ok(HttpResponse::Ok().finish()),
+        None => Ok(HttpResponse::NoContent().finish()),
     }
 }
 
