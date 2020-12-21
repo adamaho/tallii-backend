@@ -5,6 +5,7 @@ use crate::services::events::members::routes::{
 };
 use crate::services::events::routes::{
     events_entity_routes, events_me_routes, events_routes, users_me_events_invites_routes,
+    users_username_events_routes,
 };
 use crate::services::events::teams::routes::{
     event_teams_entity_routes, event_teams_members_entity_routes, event_teams_members_routes,
@@ -39,6 +40,7 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
         .service(users_me_following_routes())
         .service(events_routes())
         .service(events_me_routes())
+        .service(users_username_events_routes())
         .service(events_entity_routes())
         .service(users_me_events_invites_routes())
         .service(event_members_invitations_routes())

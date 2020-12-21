@@ -143,8 +143,8 @@ impl EventsTable {
                 };
 
                 Ok(event_to_return)
-            },
-            None => Err(TalliiError::NOT_FOUND.default())
+            }
+            None => Err(TalliiError::NOT_FOUND.default()),
         }
     }
 

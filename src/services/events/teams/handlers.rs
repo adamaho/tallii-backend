@@ -6,7 +6,7 @@ use crate::services::auth::AuthenticatedUser;
 use crate::services::TalliiResponse;
 
 use super::db::{EventTeamMembersTable, EventsTeamsTable};
-use super::models::{NewTeam, TeamPlayerQueryParams, TeamQueryParams, UpdateTeamRequest};
+use super::models::{NewTeam, UpdateTeamRequest};
 use crate::errors::TalliiError;
 use crate::services::events::members::db::EventMembersTable;
 use crate::services::events::members::models::EventMember;

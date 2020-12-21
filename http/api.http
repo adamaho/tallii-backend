@@ -175,7 +175,7 @@ Authorization: Bearer {{token}}
 content-type: application/json
 
 ### getEventTeams
-GET {{baseUrl}}/api/v1/events/6/teams HTTP/1.1
+GET {{baseUrl}}/api/v1/events/1/teams HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 
@@ -201,7 +201,7 @@ content-type: application/json
 }
 
 ### deleteEventTeam
-DELETE {{baseUrl}}/api/v1/events/6/teams/3 HTTP/1.1
+DELETE {{baseUrl}}/api/v1/events/1/teams/7 HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 

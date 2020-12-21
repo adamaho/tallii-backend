@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 /// Database representation of a Friend
 #[derive(sqlx::FromRow, Debug, Serialize)]

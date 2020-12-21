@@ -8,8 +8,6 @@ use crate::services::TalliiResponse;
 use super::db::EventMembersTable;
 use crate::errors::TalliiError;
 use crate::services::events::members::models::{InviteMemberRequest, UpdateMemberRequest};
-use crate::services::users::db::UsersTable;
-use actix_web::error::PayloadError::Http2Payload;
 
 /// Gets all members in a single event
 pub async fn get_members(

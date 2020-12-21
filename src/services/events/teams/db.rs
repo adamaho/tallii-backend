@@ -6,9 +6,7 @@ use crate::errors::TalliiError;
 
 use super::models::{NewTeam, Team};
 use crate::services::events::members::models::EventMember;
-use crate::services::events::teams::models::{
-    TeamPlayer, TeamPlayerQueryParams, UpdateTeamRequest,
-};
+use crate::services::events::teams::models::UpdateTeamRequest;
 use crate::services::users::models::PublicUser;
 
 pub struct EventsTeamsTable;

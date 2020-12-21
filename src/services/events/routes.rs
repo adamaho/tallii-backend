@@ -20,11 +20,6 @@ pub fn events_entity_routes() -> Resource {
         .route(web::delete().to(handlers::delete_event))
 }
 
-/// Resource routes getting the events of the currently logged in user
-pub fn users_me_events_routes() -> Resource {
-    web::resource("/me/events").route(web::get().to(handlers::get_me_events))
-}
-
 /// Resource routes getting the event invites of the currently logged in user
 pub fn users_me_events_invites_routes() -> Resource {
     web::resource("/me/events/invitations").route(web::get().to(handlers::get_me_event_invitations))
