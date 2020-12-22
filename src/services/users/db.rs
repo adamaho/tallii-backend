@@ -1,6 +1,5 @@
 use futures::future::try_join_all;
 use nanoid::generate;
-use sqlx::postgres::PgQueryAs;
 use sqlx::PgPool;
 
 use crate::crypto::Crypto;

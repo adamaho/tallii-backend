@@ -2,10 +2,10 @@ use std::sync::Arc;
 
 use dotenv::dotenv;
 use serde::Deserialize;
-use sqlx::PgPool;
 use tracing::{info, instrument};
 
 use crate::crypto::Crypto;
+use sqlx::postgres::PgPoolOptions;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
@@ -40,9 +40,9 @@ impl Config {
     pub async fn setup_database(&self) -> Result<sqlx::PgPool, sqlx::Error> {
         info!("setting up database connection pool");
 
-        PgPool::builder()
+        PgPoolOptions::new()
             .connect_timeout(std::time::Duration::from_secs(60))
-            .build(&self.database_url)
+            .connect(&self.database_url)
             .await
     }
 

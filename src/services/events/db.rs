@@ -1,5 +1,3 @@
-use sqlx::pool::PoolConnection;
-use sqlx::postgres::{PgConnection, PgQueryAs};
 use sqlx::{PgPool, Transaction};
 
 use crate::errors::TalliiError;
@@ -15,7 +13,7 @@ pub struct EventsTable;
 impl EventsTable {
     /// Creates an event in the database
     pub async fn create(
-        tx: &mut Transaction<PoolConnection<PgConnection>>,
+        tx: &mut Transaction<'_, sqlx::Postgres>,
         new_event: &CreateEventRequest,
         user: &AuthenticatedUser,
     ) -> Result<Event, TalliiError> {
