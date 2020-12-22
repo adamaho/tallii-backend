@@ -1,5 +1,5 @@
 use actix_cors::Cors;
-use actix_web::{http::header, middleware::Logger, web, App, HttpServer};
+use actix_web::{middleware::Logger, web, App, HttpServer};
 use tracing::{info, instrument};
 
 mod config;
@@ -33,13 +33,11 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .wrap(
-                Cors::new()
-                    .allowed_origin("https://tallii.io")
+                Cors::default()
+                    .allowed_origin("https://www.tallii.io")
                     .allowed_methods(vec!["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
-                    .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
-                    .allowed_header(header::CONTENT_TYPE)
+                    .allow_any_header()
                     .max_age(3600)
-                    .finish(),
             )
             .wrap(Logger::default())
             .data(pool.clone())

@@ -32,6 +32,9 @@ RUN chmod +x start.sh
 # move the sqlx binary into the local bin
 COPY --from=builder /root/.cargo/bin/sqlx /usr/local/bin
 
+# put the cargo.toml in the right spot
+COPY Cargo.toml ./
+
 # move the backend binary into the local bin
 COPY --from=builder /usr/src/backend/target/x86_64-unknown-linux-musl/release/backend /usr/local/bin
 
