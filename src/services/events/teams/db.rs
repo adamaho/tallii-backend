@@ -50,7 +50,9 @@ impl EventsTeamsTable {
                 from
                     events_teams
                 where
-                    event_id = $1;
+                    event_id = $1
+                order by
+                    team_id asc
             "#,
         )
         .bind(event_id)

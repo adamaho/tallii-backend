@@ -58,8 +58,10 @@ pub async fn create_team(
     // create the team
     let new_team = EventsTeamsTable::create(&mut tx, &event_id, &team).await?;
 
-    // create the team members
-    EventTeamMembersTable::create_many(&mut tx, &new_team.team_id, &event_members).await?;
+    if team.members.len() > 0 {
+        // create the team members
+        EventTeamMembersTable::create_many(&mut tx, &new_team.team_id, &event_members).await?;
+    }
 
     // commit the transaction
     tx.commit().await?;
