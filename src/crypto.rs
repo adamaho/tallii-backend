@@ -58,7 +58,7 @@ impl Crypto {
 
         web::block(move || {
             // TODO: remove this and change to be a day again
-            let now = Utc::now() + Duration::days(365); // Expires in 1 year
+            let now = Utc::now() + Duration::days(7); // Expires in 1 year
             let claims = Claims {
                 sub: user_id,
                 username,
