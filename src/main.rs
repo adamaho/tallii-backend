@@ -27,14 +27,17 @@ async fn main() -> std::io::Result<()> {
 
     info!(
         "starting server at http://{}:{}",
-        config.hostname, config.port
+        &config.hostname, &config.port
     );
+
+    // get the cors url used for dev
+    let cors_url = config.clone().cors_url;
 
     HttpServer::new(move || {
         App::new()
             .wrap(
                 Cors::default()
-                    .allowed_origin("https://www.tallii.io")
+                    .allowed_origin(&cors_url)
                     .allowed_methods(vec!["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
                     .allow_any_header()
                     .max_age(3600)

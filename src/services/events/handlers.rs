@@ -93,15 +93,11 @@ pub async fn update_event(
     event_id: web::Path<i32>,
     update_event_request: web::Json<UpdateEventRequest>,
 ) -> TalliiResponse {
-    if let Some(member) =
+    if let Some(_member) =
         EventMembersTable::get_member_by_user_id(&pool, &event_id, &user.user_id).await?
     {
-        if member.role == String::from("admin") {
-            EventsTable::update_event_by_id(&pool, &event_id, &update_event_request).await?;
-            Ok(HttpResponse::NoContent().finish())
-        } else {
-            Err(TalliiError::FORBIDDEN.default())
-        }
+        EventsTable::update_event_by_id(&pool, &event_id, &update_event_request).await?;
+        Ok(HttpResponse::NoContent().finish())
     } else {
         Err(TalliiError::NOT_FOUND.default())
     }

@@ -7,10 +7,11 @@ use tracing::{info, instrument};
 use crate::crypto::Crypto;
 use sqlx::postgres::PgPoolOptions;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Config {
     pub hostname: String,
     pub port: i16,
+    pub cors_url: String,
     pub database_url: String,
     pub jwt_secret: String,
     pub hash_secret: String,

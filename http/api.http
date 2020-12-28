@@ -17,7 +17,7 @@ Authorization: Bearer {{token}}
 content-type: application/json
 
 {
-    "amount": 5
+    "amount": 2
 }
 
 ### Sign user up
@@ -36,10 +36,10 @@ POST {{baseUrl}}/api/v1/signup HTTP/1.1
 content-type: application/json
 
 {
-  "email": "bryanne@gmail.com",
-  "invite_code": "mBZoPP",
+  "email": "steve@gmail.com",
+  "invite_code": "kYuTmg",
   "password": "password",
-  "username": "bryanne"
+  "username": "steve"
 }
 
 ### Log user in
@@ -48,7 +48,7 @@ content-type: application/json
 
 {
     "email": "adam.aho@hey.com",
-    "password": "password"
+    "password": "theg.pef4crik-TWIX"
 }
 
 ### checkUsername
