@@ -429,8 +429,8 @@ paths:
             type: integer
             format: int32
       responses:
-        204:
-          description: The event was deleted
+        200:
+          $ref: '#/components/responses/Success'
         403:
           $ref: '#/components/responses/NotAuthorized'
         404:
@@ -803,6 +803,13 @@ components:
       bearerFormat: JWT
 
   responses:
+    Success:
+      description: Successfully finished request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Success'
+
     NotAuthenticated:
       description: Not authenticated
       content:
@@ -937,6 +944,18 @@ components:
           enum:
             - member
             - admin
+
+    Success:
+      description: An successful request.
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
 
     Error:
       description: An error has occurred.

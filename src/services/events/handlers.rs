@@ -12,7 +12,7 @@ use super::members::db::EventMembersTable;
 use crate::errors::TalliiError;
 use crate::services::events::models::UpdateEventRequest;
 use crate::services::users::db::UsersTable;
-use crate::services::TalliiResponse;
+use crate::services::{SuccessResponse, TalliiResponse};
 
 /// Creates a new Event
 pub async fn create_event(
@@ -115,7 +115,10 @@ pub async fn delete_event(
         if member.role == String::from("admin") {
             EventsTable::delete_event_by_id(&pool, &event_id).await?;
 
-            Ok(HttpResponse::NoContent().finish())
+            Ok(HttpResponse::Ok().json(SuccessResponse {
+                code: String::from("EVENT_DELETED"),
+                message: String::from("Event was deleted."),
+            }))
         } else {
             Err(TalliiError::FORBIDDEN.default())
         }

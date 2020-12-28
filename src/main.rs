@@ -40,7 +40,7 @@ async fn main() -> std::io::Result<()> {
                     .allowed_origin(&cors_url)
                     .allowed_methods(vec!["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
                     .allow_any_header()
-                    .max_age(3600)
+                    .max_age(3600),
             )
             .wrap(Logger::default())
             .data(pool.clone())
