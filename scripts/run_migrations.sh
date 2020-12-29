@@ -7,7 +7,3 @@ sqlx database create
 echo "Running any pending migrations"
 
 sqlx migrate run
-
-echo "Starting server"
-
-backend
