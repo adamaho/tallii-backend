@@ -6,7 +6,7 @@ use crate::services::friends::db::FriendsTable;
 
 use crate::errors::TalliiError;
 use crate::services::users::db::UsersTable;
-use crate::services::TalliiResponse;
+use crate::services::{SuccessResponse, TalliiResponse};
 
 /// Gets the followers of me
 pub async fn get_me_followers(pool: web::Data<PgPool>, user: AuthenticatedUser) -> TalliiResponse {
@@ -33,7 +33,10 @@ pub async fn follow_user(
     if let Some(friend) = UsersTable::get_by_username(&pool, &username).await? {
         FriendsTable::follow_user_by_id(&pool, &user.user_id, &friend.user_id).await?;
 
-        Ok(HttpResponse::NoContent().finish())
+        Ok(HttpResponse::Ok().json(SuccessResponse {
+            code: String::from("FOLLOWED_USER"),
+            message: String::from("The provided user has been followed."),
+        }))
     } else {
         Err(TalliiError::NOT_FOUND.default())
     }
@@ -48,7 +51,10 @@ pub async fn unfollow_user(
     if let Some(friend) = UsersTable::get_by_username(&pool, &username).await? {
         FriendsTable::unfollow_user_by_id(&pool, &user.user_id, &friend.user_id).await?;
 
-        Ok(HttpResponse::NoContent().finish())
+        Ok(HttpResponse::Ok().json(SuccessResponse {
+            code: String::from("UNFOLLOWED_USER"),
+            message: String::from("The provided user has been unfollowed."),
+        }))
     } else {
         Err(TalliiError::NOT_FOUND.default())
     }

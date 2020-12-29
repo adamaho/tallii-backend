@@ -4,7 +4,7 @@ use sqlx::PgPool;
 use crate::crypto::{Crypto, TokenResponse};
 use crate::errors::TalliiError;
 use crate::services::auth::AuthenticatedUser;
-use crate::services::TalliiResponse;
+use crate::services::{SuccessResponse, TalliiResponse};
 
 use super::db::{InviteCodesTable, UsersTable};
 use super::models::{CreateInviteCode, LoginUser, NewUser, UserQuery};
@@ -34,7 +34,10 @@ pub async fn check_invite_code(pool: web::Data<PgPool>, code: web::Path<String>)
     if !is_valid || user.is_some() {
         Err(TalliiError::INVALID_INVITE_CODE.default())
     } else {
-        Ok(HttpResponse::NoContent().finish())
+        Ok(HttpResponse::Ok().json(SuccessResponse {
+            code: String::from("VALID_INVITE_CODE"),
+            message: String::from("The provided invite code is valid."),
+        }))
     }
 }
 
@@ -64,7 +67,10 @@ pub async fn check_username(
     // execute the query
     match UsersTable::get_by_username(&pool, &username).await? {
         Some(_) => Err(TalliiError::USERNAME_TAKEN.default()),
-        None => Ok(HttpResponse::NoContent().finish()),
+        None => Ok(HttpResponse::Ok().json(SuccessResponse {
+            code: String::from("VALID_USERNAME"),
+            message: String::from("The provided username is valid."),
+        })),
     }
 }
 
@@ -73,7 +79,10 @@ pub async fn check_user_email(pool: web::Data<PgPool>, email: web::Path<String>)
     // execute the query
     match UsersTable::get_by_email(&pool, &email).await? {
         Some(_) => Err(TalliiError::EMAIL_TAKEN.default()),
-        None => Ok(HttpResponse::NoContent().finish()),
+        None => Ok(HttpResponse::Ok().json(SuccessResponse {
+            code: String::from("VALID_EMAIL"),
+            message: String::from("The provided email is valid."),
+        })),
     }
 }
 

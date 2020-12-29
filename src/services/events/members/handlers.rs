@@ -3,7 +3,7 @@ use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
 use crate::services::auth::AuthenticatedUser;
-use crate::services::TalliiResponse;
+use crate::services::{SuccessResponse, TalliiResponse};
 
 use super::db::EventMembersTable;
 use crate::errors::TalliiError;
@@ -35,7 +35,10 @@ pub async fn invite_member(
     {
         EventMembersTable::create_one(&pool, &event_id, &invite_member_request).await?;
 
-        Ok(HttpResponse::NoContent().finish())
+        Ok(HttpResponse::Ok().json(SuccessResponse {
+            code: String::from("INVITED_EVENT_MEMBER"),
+            message: String::from("The provided user was invited to event."),
+        }))
     } else {
         Err(TalliiError::FORBIDDEN.default())
     }
@@ -58,7 +61,10 @@ pub async fn update_member(
         if member.role == String::from("admin") || user.user_id == user_id {
             EventMembersTable::update(&pool, &user_id, &event_id, &update_member_request).await?;
 
-            Ok(HttpResponse::NoContent().finish())
+            Ok(HttpResponse::Ok().json(SuccessResponse {
+                code: String::from("UPDATED_EVENT_MEMBER"),
+                message: String::from("The provided member was updated."),
+            }))
         } else {
             Err(TalliiError::FORBIDDEN.default())
         }
@@ -83,7 +89,10 @@ pub async fn delete_member(
         if member.role == String::from("admin") || user.user_id == user_id {
             EventMembersTable::delete(&pool, &user_id, &event_id).await?;
 
-            Ok(HttpResponse::NoContent().finish())
+            Ok(HttpResponse::Ok().json(SuccessResponse {
+                code: String::from("EVENT_MEMBER_REMOVED"),
+                message: String::from("The provided member was removed."),
+            }))
         } else {
             Err(TalliiError::FORBIDDEN.default())
         }

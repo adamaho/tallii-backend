@@ -3,7 +3,7 @@ use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
 use crate::services::auth::AuthenticatedUser;
-use crate::services::TalliiResponse;
+use crate::services::{SuccessResponse, TalliiResponse};
 
 use super::db::{EventTeamMembersTable, EventsTeamsTable};
 use super::models::{NewTeam, UpdateTeamRequest};
@@ -67,7 +67,10 @@ pub async fn create_team(
     tx.commit().await?;
 
     // respond with created
-    Ok(HttpResponse::Created().finish())
+    Ok(HttpResponse::Ok().json(SuccessResponse {
+        code: String::from("CREATED_EVENT_TEAM"),
+        message: String::from("The provided team was created."),
+    }))
 }
 
 /// Updates a specific team
@@ -110,7 +113,10 @@ pub async fn delete_team(
 
     EventsTeamsTable::delete(&pool, &team_id).await?;
 
-    Ok(HttpResponse::Ok().finish())
+    Ok(HttpResponse::Ok().json(SuccessResponse {
+        code: String::from("DELETED_EVENT_TEAM"),
+        message: String::from("The provided team was deleted."),
+    }))
 }
 
 /// Gets all Teams and Members for an Event
@@ -145,7 +151,10 @@ pub async fn delete_team_member(
     // delete the team member
     EventTeamMembersTable::delete(&pool, &team_id, &user_id).await?;
 
-    Ok(HttpResponse::NoContent().finish())
+    Ok(HttpResponse::Ok().json(SuccessResponse {
+        code: String::from("DELETED_EVENT_TEAM_MEMBER"),
+        message: String::from("The provided team member was deleted."),
+    }))
 }
 
 /// Adds a member to a team
@@ -177,5 +186,8 @@ pub async fn add_team_member(
     // delete the team member
     EventTeamMembersTable::create_one(&pool, &team_id, &user_member.unwrap()).await?;
 
-    Ok(HttpResponse::NoContent().finish())
+    Ok(HttpResponse::Ok().json(SuccessResponse {
+        code: String::from("DELETED_EVENT_TEAM_MEMBER"),
+        message: String::from("The provided team member was deleted."),
+    }))
 }

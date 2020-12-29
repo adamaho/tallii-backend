@@ -97,7 +97,10 @@ pub async fn update_event(
         EventMembersTable::get_member_by_user_id(&pool, &event_id, &user.user_id).await?
     {
         EventsTable::update_event_by_id(&pool, &event_id, &update_event_request).await?;
-        Ok(HttpResponse::NoContent().finish())
+        Ok(HttpResponse::Ok().json(SuccessResponse {
+            code: String::from("UPDATED_EVENT"),
+            message: String::from("The provided event was updated"),
+        }))
     } else {
         Err(TalliiError::NOT_FOUND.default())
     }
