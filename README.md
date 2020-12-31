@@ -13,7 +13,3 @@ In order to develop in the backend you will need to make sure you have rust inst
     - On mac run: `tbd`
 3. Start the database container: `docker-compose up database`
 4. Build and run the application: `cargo run`
-
-Next
- - Convert usernames to user_ids in paths
- - Done everything up to /api/v1/events/{event_id}/teams in api spec

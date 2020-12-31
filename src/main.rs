@@ -38,6 +38,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(
                 Cors::default()
                     .allowed_origin(&cors_url)
+                    // .allow_any_origin()
                     .allowed_methods(vec!["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
                     .allow_any_header()
                     .max_age(3600),
