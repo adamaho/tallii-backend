@@ -9,11 +9,12 @@ insert into invite_codes (id) values ('aho');
 create table users (
     user_id serial primary key,
     username varchar(100) not null unique,
-    avatar text,
+    emoji text not null,
+    bg_color text not null,
     email text not null unique,
     password text not null,
     invite_code varchar not null unique references invite_codes(id),
-    taunt text,
+    bio text,
     verified boolean default false,
     created_at timestamp not null default current_timestamp
 );

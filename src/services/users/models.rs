@@ -4,12 +4,13 @@ use serde::{Deserialize, Serialize};
 #[derive(sqlx::FromRow, Serialize)]
 pub struct User {
     pub user_id: i32,
-    pub avatar: Option<String>,
+    pub emoji: String,
+    pub bg_color: String,
     pub email: String,
     pub password: String,
     pub invite_code: String,
     pub username: String,
-    pub taunt: Option<String>,
+    pub bio: Option<String>,
     pub verified: Option<bool>,
     pub created_at: chrono::NaiveDateTime,
 }
@@ -18,20 +19,22 @@ pub struct User {
 #[derive(sqlx::FromRow, Serialize)]
 pub struct MeUser {
     pub user_id: i32,
-    pub avatar: Option<String>,
+    pub emoji: String,
+    pub bg_color: String,
     pub email: String,
     pub username: String,
     pub verified: Option<bool>,
-    pub taunt: Option<String>,
+    pub bio: Option<String>,
 }
 
 /// Representation of a user that can be publicized
 #[derive(sqlx::FromRow, Deserialize, Serialize, Debug)]
 pub struct PublicUser {
     pub user_id: i32,
-    pub avatar: Option<String>,
+    pub emoji: String,
+    pub bg_color: String,
     pub username: String,
-    pub taunt: Option<String>,
+    pub bio: Option<String>,
 }
 
 /// Representation of a New User
@@ -46,8 +49,9 @@ pub struct NewUser {
 /// Representation of an User to Update
 #[derive(Debug, Deserialize)]
 pub struct EditUser {
-    pub avatar: String,
-    pub taunt: String,
+    pub emoji: String,
+    pub bg_color: String,
+    pub bio: String,
 }
 
 /// Representation of an User to Login

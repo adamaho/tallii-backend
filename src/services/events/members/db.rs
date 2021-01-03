@@ -125,8 +125,9 @@ impl EventMembersTable {
                 select
                     u.user_id,
                     u.username,
-                    u.avatar,
-                    u.taunt
+                    u.emoji,
+                    u.bg_color,
+                    u.bio
                 from
                     events_members em
                 inner join

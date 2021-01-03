@@ -992,7 +992,6 @@ components:
           $ref: '#/components/schemas/User'
         created_at:
           type: string
-          format: date-time
 
     Friend:
       description: A friend of the currently logged in user.
@@ -1105,7 +1104,10 @@ components:
         user_id:
           type: integer
           format: int32
-        avatar:
+        emoji:
+          type: string
+          nullable: true
+        bg_color:
           type: string
           nullable: true
         email:
@@ -1115,7 +1117,7 @@ components:
           type: string
         username:
           type: string
-        taunt:
+        bio:
           type: string
           nullable: true
         verified:
@@ -1127,18 +1129,22 @@ components:
       type: object
       required:
         - user_id
-        - avatar
+        - emoji
+        - bg_color
         - username
-        - taunt
+        - bio
       properties:
         user_id:
           type: integer
           format: int32
-        avatar:
+        emoji:
+          type: string
+          nullable: true
+        bg_color:
           type: string
           nullable: true
         username:
           type: string
-        taunt:
+        bio:
           type: string
           nullable: true

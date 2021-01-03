@@ -23,8 +23,9 @@ pub struct UpdateMemberRequest {
 pub struct EventMemberResponse {
     pub user_id: i32,
     pub username: String,
-    pub avatar: Option<String>,
-    pub taunt: Option<String>,
+    pub emoji: String,
+    pub bg_color: String,
+    pub bio: Option<String>,
 }
 
 /// Representation of a member to update

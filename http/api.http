@@ -36,10 +36,10 @@ POST {{baseUrl}}/api/v1/signup HTTP/1.1
 content-type: application/json
 
 {
-  "email": "steve@gmail.com",
-  "invite_code": "kYuTmg",
+  "email": "andrea@gmail.com",
+  "invite_code": "HVUBHp",
   "password": "password",
-  "username": "steve"
+  "username": "andrea"
 }
 
 ### Log user in
@@ -48,7 +48,7 @@ content-type: application/json
 
 {
     "email": "adam.aho@hey.com",
-    "password": "theg.pef4crik-TWIX"
+    "password": "password"
 }
 
 ### checkUsername
@@ -112,11 +112,11 @@ content-type: application/json
 {
   "name": "My Event",
   "description": "This is the description of the event",
-  "members": [2]
+  "members": []
 }
 
 ### getEvent
-GET {{baseUrl}}/api/v1/events/2 HTTP/1.1
+GET {{baseUrl}}/api/v1/events/1 HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 
@@ -151,12 +151,12 @@ Authorization: Bearer {{token}}
 content-type: application/json
 
 ### inviteEventMember
-POST {{baseUrl}}/api/v1/events/5/invitations HTTP/1.1
+POST {{baseUrl}}/api/v1/events/1/invitations HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 
 {
-  "user_id": 2
+  "user_id": 3
 }
 
 ### updateEventMember

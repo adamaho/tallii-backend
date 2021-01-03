@@ -1,3 +1,5 @@
+
+use rand::prelude::*;
 use futures::future::try_join_all;
 use nanoid::generate;
 use sqlx::PgPool;
@@ -6,6 +8,56 @@ use crate::crypto::Crypto;
 use crate::errors::TalliiError;
 
 use super::models::{InviteCode, NewUser, PublicUser, User, UserQuery};
+
+
+/// Emoji list for users
+#[allow(clippy::non_ascii_literal)]
+const EMOJIS: &[&str] = &[
+    "😀", "😁", "😂", "🤣", "😃", "😄", "😅", "😆", "😉", "😊", "😋", "😎", "🙂", "🤗", "🤩", "🤔",
+    "🤨", "😐", "😑", "😶", "🙄", "😏", "😴", "😌", "😒", "🙃", "😲", "🤯", "😬", "🥵", "🥶", "😳",
+    "🤪", "🤠", "🤡", "🥳", "🥴", "🥺", "🧐", "🤓", "😈", "👿", "👹", "👺", "💀", "👻", "👽", "🤖",
+    "😺", "😸", " ", "😼", "😽", "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🦝", "🐻", "🐼", "🦘", "🦡",
+    "🐨", "🐯", "🦁", "🐮", "🐷", "🐽", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒", "🐔", "🐧", "🐦", "🐤",
+];
+
+/// Color list for users
+const BACKGROUNDS: &[&str] = &[
+    "#F3F4F6",
+    "#FEE2E2",
+    "#FEF3C7",
+    "#D1FAE5",
+    "#DBEAFE",
+    "#E0E7FF",
+    "#EDE9FE",
+    "#FCE7F3",
+];
+
+/// Represents the avatar of the user
+pub struct Avatar {
+    background: &'static str,
+    emoji: &'static str
+}
+
+
+impl Avatar {
+    pub fn new() -> Avatar {
+        // init the rng thread
+        let mut rng = rand::thread_rng();
+
+        // get a random emoji
+        let emoji= EMOJIS[rng.gen_range(0..EMOJIS.len())];
+
+        // get random bg
+        let background = BACKGROUNDS[rng.gen_range(0..BACKGROUNDS.len())];
+
+        return Avatar {
+            emoji,
+            background
+        }
+    }
+}
+
+
 
 pub struct InviteCodesTable;
 
@@ -79,7 +131,7 @@ impl UsersTable {
         username: &String,
     ) -> Result<Option<PublicUser>, TalliiError> {
         let user_with_username = sqlx::query_as::<_, PublicUser>(
-            "select user_id, avatar, username, taunt from users where username = $1",
+            "select user_id, emoji, bg_color, username, bio from users where username = $1",
         )
         .bind(username)
         .fetch_optional(pool)
@@ -124,7 +176,7 @@ impl UsersTable {
         params: &UserQuery,
     ) -> Result<Vec<PublicUser>, TalliiError> {
         let matching_users = sqlx::query_as::<_, PublicUser>(
-            "select user_id, avatar, username, taunt from users where username like $1 limit 10",
+            "select user_id, emoji, bg_color, username, bio from users where username like $1 limit 10",
         )
         .bind(format!("%{}%", &params.q))
         .fetch_all(pool)
@@ -142,12 +194,17 @@ impl UsersTable {
         // hash the password
         let hashed_password = crypto.hash_password(&new_user.password).await?;
 
+        // generate default emoji, bg_color combo
+        let avatar = Avatar::new();
+
         // create the user and return the public user
         let user = sqlx::query_as::<_, PublicUser>(
-            "insert into users (email, password, invite_code, username) values ($1, $2, $3, $4) returning user_id, avatar, email, username, taunt, verified",
+            "insert into users (email, password, emoji, bg_color, invite_code, username) values ($1, $2, $3, $4, $5, $6) returning user_id, emoji, bg_color, email, username, bio, verified",
         )
             .bind(&new_user.email)
             .bind(hashed_password)
+            .bind(&avatar.emoji)
+            .bind(&avatar.background)
             .bind(&new_user.invite_code)
             .bind(&new_user.username)
             .fetch_one(pool)

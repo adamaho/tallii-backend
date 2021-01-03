@@ -52,8 +52,9 @@ impl EventsTable {
                     events.description,
                     u.user_id,
                     u.username,
-                    u.taunt,
-                    u.avatar,
+                    u.bio,
+                    u.emoji,
+                    u.bg_color,
                     events.created_at
                 from
                     events
@@ -80,9 +81,10 @@ impl EventsTable {
             description: event.description,
             creator: PublicUser {
                 user_id: event.user_id,
-                avatar: event.avatar,
+                emoji: event.emoji,
+                bg_color: event.bg_color,
                 username: event.username,
-                taunt: event.taunt,
+                bio: event.bio,
             },
             created_at: event.created_at,
         })
@@ -104,8 +106,9 @@ impl EventsTable {
                     events.description,
                     u.user_id,
                     u.username,
-                    u.taunt,
-                    u.avatar,
+                    u.bio,
+                    u.emoji,
+                    u.bg_color,
                     events.created_at
                 from
                     events
@@ -133,9 +136,10 @@ impl EventsTable {
                     description: event.description,
                     creator: PublicUser {
                         user_id: event.user_id,
-                        avatar: event.avatar,
+                        emoji: event.emoji,
+                        bg_color: event.bg_color,
                         username: event.username,
-                        taunt: event.taunt,
+                        bio: event.bio,
                     },
                     created_at: event.created_at,
                 };

@@ -19,9 +19,10 @@ pub struct EventRow {
     pub name: String,
     pub description: Option<String>,
     pub user_id: i32,
-    pub avatar: Option<String>,
+    pub emoji: String,
+    pub bg_color: String,
     pub username: String,
-    pub taunt: Option<String>,
+    pub bio: Option<String>,
     pub created_at: chrono::NaiveDateTime,
 }
 
