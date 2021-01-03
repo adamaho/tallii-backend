@@ -2,6 +2,14 @@ GET http://192.168.179.192:8000/api/v1/events/1/comments
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
 content-type: application/json
 
+<> 2021-01-03T170201.200.json
+
+###
+
+GET http://192.168.179.192:8000/api/v1/events/1/comments
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
+content-type: application/json
+
 <> 2021-01-03T162909.200.json
 
 ###
@@ -550,14 +558,6 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuY
 content-type: application/json
 
 <> 2020-12-22T154151.200.json
-
-###
-
-GET https://api.tallii.io/api/v1/invite-codes
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTY0MDE5NDg3MH0.WQCkoK1ODCnIXKyMylGyBxY_99XRplxLhueOa2mxjdU
-content-type: application/json
-
-<> 2020-12-22T151913.200.json
 
 ###
 

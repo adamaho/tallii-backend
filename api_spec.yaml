@@ -1243,7 +1243,7 @@ components:
       required:
         - comment_id
         - event_id
-        - user_id
+        - user
         - comment
         - created_at
       properties:
@@ -1253,9 +1253,8 @@ components:
         event_id:
           type: integer
           format: int32
-        user_id:
-          type: integer
-          format: int32
+        user:
+          $ref: '#/components/schemas/User'
         comment:
           type: string
         created_at:

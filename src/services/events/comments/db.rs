@@ -2,8 +2,9 @@ use sqlx::PgPool;
 
 use crate::errors::TalliiError;
 
-use super::models::{CreateEventCommentRequest, EventComment};
+use super::models::{CreateEventCommentRequest, EventCommentResponse, EventCommentRow};
 use crate::services::auth::AuthenticatedUser;
+use crate::services::users::models::PublicUser;
 
 pub struct EventCommentsTable;
 
@@ -12,20 +13,49 @@ impl EventCommentsTable {
     pub async fn get_comments_by_event_id(
         pool: &PgPool,
         event_id: &i32,
-    ) -> Result<Vec<EventComment>, TalliiError> {
-        let comments = sqlx::query_as::<_, EventComment>(
+    ) -> Result<Vec<EventCommentResponse>, TalliiError> {
+        let comments = sqlx::query_as::<_, EventCommentRow>(
             r#"
                 select
-                    *
+                    ec.comment_id,
+                    ec.event_id,
+                    ec.user_id,
+                    ec.comment,
+                    ec.created_at,
+                    u.emoji,
+                    u.bg_color,
+                    u.username,
+                    u.bio
                 from
-                    events_comments
+                    events_comments ec
+                left join
+                    users u
+                on
+                    ec.user_id = u.user_id
                 where
-                    event_id = $1
+                    ec.event_id = $1
             "#,
         )
         .bind(event_id)
         .fetch_all(pool)
-        .await?;
+        .await?
+            .into_iter()
+            .map(| row | {
+                return EventCommentResponse {
+                    comment_id: row.comment_id,
+                    event_id: row.event_id,
+                    user: PublicUser {
+                        user_id: row.user_id,
+                        username: row.username,
+                        emoji: row.emoji,
+                        bg_color: row.bg_color,
+                        bio: row.bio
+                    },
+                    comment: row.comment,
+                    created_at: row.created_at,
+                }
+            })
+            .collect();
 
         Ok(comments)
     }
