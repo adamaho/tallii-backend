@@ -36,10 +36,10 @@ POST {{baseUrl}}/api/v1/signup HTTP/1.1
 content-type: application/json
 
 {
-  "email": "andrea@gmail.com",
-  "invite_code": "HVUBHp",
+  "email": "bryanne@gmail.com",
+  "invite_code": "Ade_sk",
   "password": "password",
-  "username": "andrea"
+  "username": "bryanne"
 }
 
 ### Log user in
@@ -112,7 +112,7 @@ content-type: application/json
 {
   "name": "My Event",
   "description": "This is the description of the event",
-  "members": []
+  "members": [2]
 }
 
 ### getEvent
@@ -188,6 +188,25 @@ content-type: application/json
   "name": "Bubba's Best Team",
   "members": [4]
 }
+
+### getEventComments
+GET {{baseUrl}}/api/v1/events/1/comments HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+### createEventComment
+POST {{baseUrl}}/api/v1/events/1/comments HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "comment": "This is a thing and it is a comment."
+}
+
+### createEventComment
+DELETE {{baseUrl}}/api/v1/events/1/comments/1 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
 
 ### updateEventTeam
 PATCH {{baseUrl}}/api/v1/events/6/teams/3 HTTP/1.1

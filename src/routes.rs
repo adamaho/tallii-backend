@@ -22,6 +22,8 @@ use crate::services::users::routes::{
     users_username_search_routes,
 };
 
+use crate::services::events::comments::routes::{event_comments, event_comments_entity};
+
 pub fn define_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(invite_codes_routes())
         .service(invite_codes_entity_routes())
@@ -46,6 +48,8 @@ pub fn define_routes(cfg: &mut web::ServiceConfig) {
         .service(event_members_invitations_routes())
         .service(event_members_user_routes())
         .service(event_members_routes())
+        .service(event_comments())
+        .service(event_comments_entity())
         .service(event_teams_routes())
         .service(event_teams_entity_routes())
         .service(event_teams_members_routes())

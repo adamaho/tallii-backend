@@ -37,6 +37,15 @@ create table events (
     created_at timestamp not null default current_timestamp
 );
 
+-- Event Comments
+create table events_comments (
+    comment_id serial primary key,
+    event_id integer not null references events(event_id) on delete cascade,
+    user_id integer not null references users(user_id),
+    comment text not null,
+    created_at timestamp not null default current_timestamp
+);
+
 -- Event Members
 create table events_members (
     member_id serial primary key,

@@ -1,14 +1,12 @@
-
-use rand::prelude::*;
 use futures::future::try_join_all;
 use nanoid::generate;
+use rand::prelude::*;
 use sqlx::PgPool;
 
 use crate::crypto::Crypto;
 use crate::errors::TalliiError;
 
 use super::models::{InviteCode, NewUser, PublicUser, User, UserQuery};
-
 
 /// Emoji list for users
 #[allow(clippy::non_ascii_literal)]
@@ -22,22 +20,14 @@ const EMOJIS: &[&str] = &[
 
 /// Color list for users
 const BACKGROUNDS: &[&str] = &[
-    "#F3F4F6",
-    "#FEE2E2",
-    "#FEF3C7",
-    "#D1FAE5",
-    "#DBEAFE",
-    "#E0E7FF",
-    "#EDE9FE",
-    "#FCE7F3",
+    "#F3F4F6", "#FEE2E2", "#FEF3C7", "#D1FAE5", "#DBEAFE", "#E0E7FF", "#EDE9FE", "#FCE7F3",
 ];
 
 /// Represents the avatar of the user
 pub struct Avatar {
     background: &'static str,
-    emoji: &'static str
+    emoji: &'static str,
 }
-
 
 impl Avatar {
     pub fn new() -> Avatar {
@@ -45,19 +35,14 @@ impl Avatar {
         let mut rng = rand::thread_rng();
 
         // get a random emoji
-        let emoji= EMOJIS[rng.gen_range(0..EMOJIS.len())];
+        let emoji = EMOJIS[rng.gen_range(0..EMOJIS.len())];
 
         // get random bg
         let background = BACKGROUNDS[rng.gen_range(0..BACKGROUNDS.len())];
 
-        return Avatar {
-            emoji,
-            background
-        }
+        return Avatar { emoji, background };
     }
 }
-
-
 
 pub struct InviteCodesTable;
 

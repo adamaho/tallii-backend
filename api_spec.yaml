@@ -506,7 +506,7 @@ paths:
           required: true
           description: The event_id the member is a part of
           schema:
-            type: number
+            type: integer
         - name: user_id
           in: path
           required: true
@@ -681,13 +681,13 @@ paths:
           required: true
           description: The event to get the team of
           schema:
-            type: number
+            type: integer
         - name: team_id
           in: path
           required: true
           description: The team to get the members of
           schema:
-            type: number
+            type: integer
       responses:
         200:
           description: The team members that matches the provided event_id and team_id
@@ -765,6 +765,84 @@ paths:
           $ref: '#/components/responses/Success'
         400:
           $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/NotAuthorized'
+        500:
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/events/{event_id}/comments:
+    get:
+      operationId: getEventComments,
+      description: Gets the event comments
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to get the team of
+          schema:
+            type: integer
+      responses:
+        200:
+          description: The team members that matches the provided event_id and team_id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventComment'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+    post:
+      operationId: createEventComment
+      description: Creates a comment on an event.
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to add a comment to.
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventCommentRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/NotAuthorized'
+        500:
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/events/{event_id}/comments/{comment_id}:
+    delete:
+      operationId: deleteEventComment
+      description: Deletes the comment with the specified id
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to delete the comment in.
+          schema:
+            type: integer
+            format: int32
+        - name: comment_id
+          in: path
+          required: true
+          description: The comment to delete.
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
         403:
           $ref: '#/components/responses/NotAuthorized'
         500:
@@ -944,6 +1022,16 @@ components:
           enum:
             - member
             - admin
+
+    CreateEventCommentRequest:
+      description: The request required to create an event
+      type: object
+      required:
+        - comment
+      properties:
+        comment:
+          type: string
+
 
     Success:
       description: An successful request.
@@ -1148,3 +1236,27 @@ components:
         bio:
           type: string
           nullable: true
+
+    EventComment:
+      description: A comment on a specific event.
+      type: object
+      required:
+        - comment_id
+        - event_id
+        - user_id
+        - comment
+        - created_at
+      properties:
+        comment_id:
+          type: integer
+          format: int32
+        event_id:
+          type: integer
+          format: int32
+        user_id:
+          type: integer
+          format: int32
+        comment:
+          type: string
+        created_at:
+          type: string

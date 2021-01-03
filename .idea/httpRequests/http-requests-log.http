@@ -1,0 +1,563 @@
+GET http://192.168.179.192:8000/api/v1/events/1/comments
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
+content-type: application/json
+
+<> 2021-01-03T162909.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events/1/comments
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
+content-type: application/json
+
+{
+  "comment": "This is a thing and it is a comment."
+}
+
+<> 2021-01-03T162846.200.json
+
+###
+
+DELETE http://192.168.179.192:8000/api/v1/events/1/comments/1
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
+content-type: application/json
+
+<> 2021-01-03T162842.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events/1/comments
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
+content-type: application/json
+
+{
+  "comment": "This is a thing and it is a comment."
+}
+
+<> 2021-01-03T162836.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
+content-type: application/json
+
+{
+  "name": "My Event",
+  "description": "This is the description of the event",
+  "members": [2]
+}
+
+<> 2021-01-03T162829.201.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/signup
+content-type: application/json
+
+{
+  "email": "bryanne@gmail.com",
+  "invite_code": "Ade_sk",
+  "password": "password",
+  "username": "bryanne"
+}
+
+<> 2021-01-03T162818.200.json
+
+###
+
+GET http://192.168.179.192:8000/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
+content-type: application/json
+
+<> 2021-01-03T162812.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
+content-type: application/json
+
+{
+    "amount": 2
+}
+
+###
+
+POST http://192.168.179.192:8000/api/v1/signup
+content-type: application/json
+
+{
+    "email": "adam.aho@hey.com",
+    "invite_code": "aho",
+    "password": "password",
+    "username": "adamaho"
+}
+
+<> 2021-01-03T162806.200.json
+
+###
+
+DELETE http://192.168.179.192:8000/api/v1/events/1/comments/1
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
+content-type: application/json
+
+<> 2021-01-03T162702.500.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events/1/comments
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
+content-type: application/json
+
+{
+  "comment": "This is a thing and it is a comment."
+}
+
+<> 2021-01-03T162642.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
+content-type: application/json
+
+{
+  "name": "My Event",
+  "description": "This is the description of the event",
+  "members": [2,3]
+}
+
+<> 2021-01-03T162557.201.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/signup
+content-type: application/json
+
+{
+  "email": "bryanne@gmail.com",
+  "invite_code": "6cT5EB",
+  "password": "password",
+  "username": "bryanne"
+}
+
+<> 2021-01-03T162531.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/signup
+content-type: application/json
+
+{
+  "email": "andrea@gmail.com",
+  "invite_code": "gh2SuT",
+  "password": "password",
+  "username": "andrea"
+}
+
+<> 2021-01-03T162513.200.json
+
+###
+
+GET http://192.168.179.192:8000/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
+content-type: application/json
+
+<> 2021-01-03T162504.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDMxMzg1Nn0.fzHYi4DlYMVQe4MkjpKlBmU6Rpa3ZoZdmd0fBuiHsz8
+content-type: application/json
+
+{
+    "amount": 2
+}
+
+###
+
+POST http://192.168.179.192:8000/api/v1/signup
+content-type: application/json
+
+{
+    "email": "adam.aho@hey.com",
+    "invite_code": "aho",
+    "password": "password",
+    "username": "adamaho"
+}
+
+<> 2021-01-03T162416.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events/1/teams
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+{
+  "name": "Bubba's Best Team",
+  "members": [4]
+}
+
+<> 2021-01-03T120313.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events/1/teams
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+{
+  "name": "Adam's Best Team",
+  "members": [3]
+}
+
+<> 2021-01-03T120301.200.json
+
+###
+
+PUT http://192.168.179.192:8000/api/v1/events/1/teams/1/members/2
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+<> 2021-01-03T101758.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events/1/teams
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+{
+  "name": "Team 2",
+  "members": [3,4]
+}
+
+<> 2021-01-03T101742.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events/1/teams
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+{
+  "name": "Team 1",
+  "members": [1]
+}
+
+<> 2021-01-03T101728.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/signup
+content-type: application/json
+
+{
+  "email": "andrea@gmail.com",
+  "invite_code": "HVUBHp",
+  "password": "password",
+  "username": "andrea"
+}
+
+<> 2021-01-02T203125.200.json
+
+###
+
+GET http://192.168.179.192:8000/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+<> 2021-01-02T203119.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/signup
+content-type: application/json
+
+{
+  "email": "ruth@gmail.com",
+  "invite_code": "1Enwar",
+  "password": "password",
+  "username": "ruth"
+}
+
+<> 2021-01-02T203107.200.json
+
+###
+
+GET http://192.168.179.192:8000/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+<> 2021-01-02T203050.200.json
+
+###
+
+GET http://192.168.179.192:8000/api/v1/invite-codes/mBZoPP
+content-type: application/json
+
+<> 2021-01-02T203047.400.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+{
+    "amount": 2
+}
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events/1/invitations
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+{
+  "user_id": 3
+}
+
+<> 2021-01-02T193856.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/signup
+content-type: application/json
+
+{
+  "email": "steve@gmail.com",
+  "invite_code": "tKGP4b",
+  "password": "password",
+  "username": "steve"
+}
+
+<> 2021-01-02T193850.200.json
+
+###
+
+GET http://192.168.179.192:8000/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+<> 2021-01-02T193839.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events/1/invitations
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+{
+  "user_id": 2
+}
+
+<> 2021-01-02T190435.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events/5/invitations
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+{
+  "user_id": 2
+}
+
+<> 2021-01-02T190429.403.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/signup
+content-type: application/json
+
+{
+  "email": "bryanne@gmail.com",
+  "invite_code": "0f2y1H",
+  "password": "password",
+  "username": "bryanne"
+}
+
+<> 2021-01-02T190354.200.json
+
+###
+
+GET http://192.168.179.192:8000/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+<> 2021-01-02T190337.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+{
+    "amount": 2
+}
+
+###
+
+GET http://192.168.179.192:8000/api/v1/events/1
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+<> 2021-01-02T183953.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYxMDIzNTQwMX0.e-AoTNsSVu2wsMSFbB3BVbVZtV0kH7GfZAIgbpIq55g
+content-type: application/json
+
+{
+  "name": "My Event",
+  "description": "This is the description of the event",
+  "members": []
+}
+
+<> 2021-01-02T183717.201.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/login
+content-type: application/json
+
+{
+    "email": "adam.aho@hey.com",
+    "password": "password"
+}
+
+<> 2021-01-02T183641.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/events
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYwOTc3NzMzNX0.wMYsK4KlX7SuQbpRMuj2X0v4hlDuA1CAUZWx-Qy5mIY
+content-type: application/json
+
+{
+  "name": "My Event",
+  "description": "This is the description of the event",
+  "members": []
+}
+
+<> 2021-01-02T183627.401.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/signup
+content-type: application/json
+
+{
+    "email": "adam.aho@hey.com",
+    "invite_code": "aho",
+    "password": "password",
+    "username": "adamaho"
+}
+
+<> 2021-01-02T182758.200.json
+
+###
+
+POST http://192.168.179.192:8000/api/v1/login
+content-type: application/json
+
+{
+    "email": "adam.aho@hey.com",
+    "password": "password"
+}
+
+<> 2021-01-02T165408.200.json
+
+###
+
+GET https://api.tallii.io/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYwOTc3NzMzNX0.wMYsK4KlX7SuQbpRMuj2X0v4hlDuA1CAUZWx-Qy5mIY
+content-type: application/json
+
+<> 2020-12-28T112244.200.json
+
+###
+
+POST https://api.tallii.io/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTYwOTc3NzMzNX0.wMYsK4KlX7SuQbpRMuj2X0v4hlDuA1CAUZWx-Qy5mIY
+content-type: application/json
+
+{
+    "amount": 2
+}
+
+###
+
+POST https://api.tallii.io/api/v1/login
+content-type: application/json
+
+{
+    "email": "adam.aho@hey.com",
+    "password": "theg.pef4crik-TWIX"
+}
+
+<> 2020-12-28T112215.200.json
+
+###
+
+POST http://localhost:8000/api/v1/login
+content-type: application/json
+
+{
+    "email": "adam.aho@hey.com",
+    "password": "theg.pef4crik-TWIX"
+}
+
+###
+
+POST http://localhost:8000/api/v1/signup
+content-type: application/json
+
+{
+  "email": "steve@gmail.com",
+  "invite_code": "kYuTmg",
+  "password": "password",
+  "username": "steve"
+}
+
+<> 2020-12-22T154223.200.json
+
+###
+
+POST http://localhost:8000/api/v1/signup
+content-type: application/json
+
+{
+  "email": "steve@gmail.com",
+  "invite_code": "xMrszT",
+  "password": "password",
+  "username": "steve"
+}
+
+<> 2020-12-22T154209.400.json
+
+###
+
+GET http://localhost:8000/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTY0MDExMDE3N30.Z_413H1CoL7q1DbM0jMQE6ZzPpS4X7Aj8MLUwQxCAXs
+content-type: application/json
+
+<> 2020-12-22T154151.200.json
+
+###
+
+GET https://api.tallii.io/api/v1/invite-codes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRhbWFobyIsImV4cCI6MTY0MDE5NDg3MH0.WQCkoK1ODCnIXKyMylGyBxY_99XRplxLhueOa2mxjdU
+content-type: application/json
+
+<> 2020-12-22T151913.200.json
+
+###
+
