@@ -180,13 +180,13 @@ Authorization: Bearer {{token}}
 content-type: application/json
 
 ### createEventTeam
-POST {{baseUrl}}/api/v1/events/6/teams HTTP/1.1
+POST {{baseUrl}}/api/v1/events/1/teams HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 
 {
-  "name": "Team 1",
-  "members": [1]
+  "name": "Bubba's Best Team",
+  "members": [4]
 }
 
 ### updateEventTeam
@@ -216,7 +216,7 @@ Authorization: Bearer {{token}}
 content-type: application/json
 
 ### addEventTeamMember
-PUT {{baseUrl}}/api/v1/events/6/teams/4/members/1 HTTP/1.1
+PUT {{baseUrl}}/api/v1/events/1/teams/1/members/2 HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 

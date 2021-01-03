@@ -187,7 +187,7 @@ pub async fn add_team_member(
     EventTeamMembersTable::create_one(&pool, &team_id, &user_member.unwrap()).await?;
 
     Ok(HttpResponse::Ok().json(SuccessResponse {
-        code: String::from("DELETED_EVENT_TEAM_MEMBER"),
-        message: String::from("The provided team member was deleted."),
+        code: String::from("ADDED_EVENT_TEAM_MEMBER"),
+        message: String::from("The provided team member was added."),
     }))
 }

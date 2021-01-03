@@ -50,7 +50,7 @@ impl EventsTeamsTable {
                 where
                     event_id = $1
                 order by
-                    team_id asc
+                    score desc
             "#,
         )
         .bind(event_id)
@@ -174,9 +174,10 @@ impl EventTeamMembersTable {
             r#"
                 select
                     u.user_id,
-                    u.avatar,
+                    u.emoji,
+                    u.bg_color,
                     u.username,
-                    u.taunt
+                    u.bio
                 from
                     events_teams_members t
                 left join
