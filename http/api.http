@@ -179,6 +179,11 @@ GET {{baseUrl}}/api/v1/events/1/teams HTTP/1.1
 Authorization: Bearer {{token}}
 content-type: application/json
 
+### getEventTeam
+GET {{baseUrl}}/api/v1/events/1/teams/1 HTTP/1.1
+Authorization: Bearer {{token}}
+content-type: application/json
+
 ### createEventTeam
 POST {{baseUrl}}/api/v1/events/1/teams HTTP/1.1
 Authorization: Bearer {{token}}

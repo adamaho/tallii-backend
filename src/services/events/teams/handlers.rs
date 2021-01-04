@@ -11,13 +11,26 @@ use crate::errors::TalliiError;
 use crate::services::events::members::db::EventMembersTable;
 use crate::services::events::members::models::EventMember;
 
-/// Gets all Teams and Members for an Event
+/// Gets all Teams for an event
 pub async fn get_teams(
     pool: web::Data<PgPool>,
     _user: AuthenticatedUser,
     event_id: web::Path<i32>,
 ) -> TalliiResponse {
     let teams = EventsTeamsTable::get_many(&pool, &event_id).await?;
+
+    Ok(HttpResponse::Ok().json(teams))
+}
+
+/// Gets a single Team for an event
+pub async fn get_team(
+    pool: web::Data<PgPool>,
+    _user: AuthenticatedUser,
+    params: web::Path<(i32, i32)>,
+) -> TalliiResponse {
+    let (event_id, team_id) = params.into_inner();
+
+    let teams = EventsTeamsTable::get_one(&pool, &event_id, &team_id).await?;
 
     Ok(HttpResponse::Ok().json(teams))
 }

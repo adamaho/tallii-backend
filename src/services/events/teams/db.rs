@@ -34,6 +34,36 @@ impl EventsTeamsTable {
         Ok(created_team)
     }
 
+
+    // Gets a single team for an event
+    pub async fn get_one(pool: &PgPool, event_id: &i32, team_id: &i32) -> Result<Team, TalliiError> {
+        let teams = sqlx::query_as::<_, Team>(
+            r#"
+                select
+                    team_id,
+                    event_id,
+                    name,
+                    score,
+                    winner,
+                    created_at
+                from
+                    events_teams
+                where
+                    event_id = $1
+                and
+                    team_id = $2
+                order by
+                    score desc
+            "#,
+        )
+            .bind(event_id)
+            .bind(team_id)
+            .fetch_one(pool)
+            .await?;
+
+        Ok(teams)
+    }
+
     // Gets all teams for a single event
     pub async fn get_many(pool: &PgPool, event_id: &i32) -> Result<Vec<Team>, TalliiError> {
         let teams = sqlx::query_as::<_, Team>(

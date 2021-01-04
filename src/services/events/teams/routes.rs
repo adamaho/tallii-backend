@@ -12,6 +12,7 @@ pub fn event_teams_routes() -> Resource {
 /// Resource routes for teams entity
 pub fn event_teams_entity_routes() -> Resource {
     web::resource("/events/{event_id}/teams/{team_id}")
+        .route(web::get().to(handlers::get_team))
         .route(web::patch().to(handlers::update_team))
         .route(web::delete().to(handlers::delete_team))
 }
