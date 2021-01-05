@@ -252,4 +252,29 @@ impl EventTeamMembersTable {
 
         Ok(())
     }
+
+
+    /// Deletes a team member from a team
+    pub async fn delete_by_event_id(pool: &PgPool, event_id: &i32, user_id: &i32) -> Result<(), TalliiError> {
+        sqlx::query(
+            r#"
+                delete from
+                    events_teams_members etm
+                using
+                    events_members em
+                where
+                    etm.member_id = em.member_id
+                and
+                    em.user_id = $1
+                and
+                    em.event_id = $2
+            "#,
+        )
+            .bind(user_id)
+            .bind(event_id)
+            .execute(pool)
+            .await?;
+
+        Ok(())
+    }
 }

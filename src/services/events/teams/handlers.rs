@@ -170,6 +170,45 @@ pub async fn delete_team_member(
     }))
 }
 
+
+/// Changes team of the provided user
+pub async fn change_team(
+    pool: web::Data<PgPool>,
+    user: AuthenticatedUser,
+    path_params: web::Path<(i32, i32, i32)>,
+) -> TalliiResponse {
+    let (event_id, team_id, user_id) = path_params.into_inner();
+
+    // check if the user is a member
+    let is_requester_member = EventMembersTable::exists(&pool, &event_id, &user.user_id).await?;
+
+    // if not a member return forbidden
+    if !is_requester_member {
+        return Err(TalliiError::FORBIDDEN.default());
+    }
+
+    // check if the user is a member
+    let user_member = EventMembersTable::get_member_by_user_id(&pool, &event_id, &user_id).await?;
+
+    // if not a member return forbidden
+    if user_member.is_none() {
+        return Err(TalliiError::BAD_REQUEST.message(String::from(
+            "The provided user is not a member of this event.",
+        )));
+    }
+
+    // delete the team member
+    EventTeamMembersTable::delete_by_event_id(&pool, &event_id, &user_id).await?;
+
+    // add the team member to the new table
+    EventTeamMembersTable::create_one(&pool, &team_id, &user_member.unwrap()).await?;
+
+    Ok(HttpResponse::Ok().json(SuccessResponse {
+        code: String::from("CHANGED_USER_EVENT_TEAM"),
+        message: String::from("The provided member changed teams."),
+    }))
+}
+
 /// Adds a member to a team
 pub async fn add_team_member(
     pool: web::Data<PgPool>,
@@ -196,7 +235,7 @@ pub async fn add_team_member(
         )));
     }
 
-    // delete the team member
+    // add the team member
     EventTeamMembersTable::create_one(&pool, &team_id, &user_member.unwrap()).await?;
 
     Ok(HttpResponse::Ok().json(SuccessResponse {

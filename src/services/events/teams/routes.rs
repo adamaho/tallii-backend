@@ -27,5 +27,6 @@ pub fn event_teams_members_routes() -> Resource {
 pub fn event_teams_members_entity_routes() -> Resource {
     web::resource("/events/{event_id}/teams/{team_id}/members/{user_id}")
         .route(web::delete().to(handlers::delete_team_member))
-        .route(web::put().to(handlers::add_team_member))
+        .route(web::post().to(handlers::add_team_member))
+        .route(web::put().to(handlers::change_team))
 }

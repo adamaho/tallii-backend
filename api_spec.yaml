@@ -764,7 +764,7 @@ paths:
           $ref: '#/components/responses/NotAuthorized'
         500:
           $ref: '#/components/responses/InternalError'
-    put:
+    post:
       operationId: addEventTeamMember
       description: Adds the team member matching the provided username to the team
       parameters:
@@ -798,6 +798,41 @@ paths:
           $ref: '#/components/responses/NotAuthorized'
         500:
           $ref: '#/components/responses/InternalError'
+    put:
+      operationId: changeTeam
+      description: Changes the team of the provided user to the matching team id in path
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The event to get the team of
+          schema:
+            type: integer
+            format: int32
+        - name: team_id
+          in: path
+          required: true
+          description: The team to get the members of
+          schema:
+            type: integer
+            format: int32
+        - name: user_id
+          in: path
+          required: true
+          description: The username to add
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/NotAuthorized'
+        500:
+          $ref: '#/components/responses/InternalError'
+
 
   /api/v1/events/{event_id}/comments:
     get:
