@@ -105,7 +105,10 @@ pub async fn update_team(
 
     EventsTeamsTable::update(&pool, &team_id, &team).await?;
 
-    Ok(HttpResponse::Ok().finish())
+    Ok(HttpResponse::Ok().json(SuccessResponse {
+        code: String::from("UPDATED_EVENT_TEAM"),
+        message: String::from("The provided team was updated."),
+    }))
 }
 
 /// deletes a specific team
@@ -197,11 +200,17 @@ pub async fn change_team(
         )));
     }
 
+    // start the transaction
+    let mut tx = pool.begin().await?;
+
     // delete the team member
-    EventTeamMembersTable::delete_by_event_id(&pool, &event_id, &user_id).await?;
+    EventTeamMembersTable::delete_by_event_id(&mut tx, &event_id, &user_id).await?;
 
     // add the team member to the new table
-    EventTeamMembersTable::create_one(&pool, &team_id, &user_member.unwrap()).await?;
+    EventTeamMembersTable::create_one_tx(&mut tx, &team_id, &user_member.unwrap()).await?;
+
+    // commit the transaction
+    tx.commit().await?;
 
     Ok(HttpResponse::Ok().json(SuccessResponse {
         code: String::from("CHANGED_USER_EVENT_TEAM"),

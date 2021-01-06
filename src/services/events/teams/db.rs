@@ -198,6 +198,28 @@ impl EventTeamMembersTable {
         Ok(())
     }
 
+    /// Creates a team member for a team in a transaction
+    pub async fn create_one_tx(
+        tx: &mut Transaction<'_, sqlx::Postgres>,
+        team_id: &i32,
+        member: &EventMember,
+    ) -> Result<(), TalliiError> {
+        sqlx::query(
+            r#"
+                insert into
+                    events_teams_members (team_id, member_id)
+                values
+                   ($1, $2)
+            "#,
+        )
+            .bind(team_id)
+            .bind(member.member_id)
+            .execute(tx)
+            .await?;
+
+        Ok(())
+    }
+
     /// Gets team members for a single event
     pub async fn get_many(pool: &PgPool, team_id: &i32) -> Result<Vec<PublicUser>, TalliiError> {
         let members = sqlx::query_as::<_, PublicUser>(
@@ -255,7 +277,7 @@ impl EventTeamMembersTable {
 
 
     /// Deletes a team member from a team
-    pub async fn delete_by_event_id(pool: &PgPool, event_id: &i32, user_id: &i32) -> Result<(), TalliiError> {
+    pub async fn delete_by_event_id(tx: &mut Transaction<'_, sqlx::Postgres>, event_id: &i32, user_id: &i32) -> Result<(), TalliiError> {
         sqlx::query(
             r#"
                 delete from
@@ -272,7 +294,7 @@ impl EventTeamMembersTable {
         )
             .bind(user_id)
             .bind(event_id)
-            .execute(pool)
+            .execute(tx)
             .await?;
 
         Ok(())
