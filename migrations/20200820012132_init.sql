@@ -15,6 +15,7 @@ create table users (
     password text not null,
     invite_code varchar not null unique references invite_codes(id),
     bio text,
+    currency integer not null default 0,
     verified boolean default false,
     created_at timestamp not null default current_timestamp
 );
@@ -72,6 +73,15 @@ create table events_teams_members (
     member_id integer not null references events_members(member_id) on delete cascade,
     created_at timestamp not null default current_timestamp
 );
+
+-- Wager
+create table wagers (
+    wager_id serial primary key,
+    user_id integer not null references users(user_id),
+    team_id integer not null references events_teams(team_id) on delete cascade,
+    currency integer not null,
+    created_at timestamp not null default current_timestamp
+)
 
 
 
